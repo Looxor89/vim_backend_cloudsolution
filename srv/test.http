@@ -1,0 +1,228 @@
+### extended
+GET http://localhost:4004/odata/v4/catalog/extended()?ISMAIN=true&FILENAME=test&DOC_STATUS=INITIAL&DOCCATEGORY=POINV&CREATEDBY=maurizio
+Content-Type: application/json
+
+### extended
+GET http://localhost:4004/odata/v4/catalog/extended()?FILENAME=test&DOC_STATUS=INITIAL&CREATEDBY=maurizio&CREATEDAT=2023-09-03T22:00:00.000Z,2024-09-18T21:59:59.999Z
+Content-Type: application/json
+
+### capabilities
+GET http://localhost:4004/odata/v4/catalog/capabilities()
+Content-Type: application/json
+
+### users
+GET http://localhost:4004/odata/v4/catalog/users()
+Content-Type: application/json
+
+### lockStatus
+GET http://localhost:4004/odata/v4/catalog/lockStatus()?PackageId="FRafGrX5pZT-eypsj4g875GRSoI4"
+Content-Type: application/json
+
+### notes
+GET http://localhost:4004/odata/v4/catalog/notes()?PackageId="FRafGrX5pZT-eypsj4g875GRSoI4"
+Content-Type: application/json
+
+### list
+GET http://localhost:4004/odata/v4/catalog/list()?PackageId=416951bf-fdc6-4375-a5d3-d930a4afb311
+Content-Type: application/json
+
+### currency
+GET http://localhost:4004/odata/v4/catalog/currency()
+Content-Type: application/json
+
+### save
+POST http://localhost:4004/odata/v4/catalog/save HTTP/1.1
+Content-Type: application/json
+
+{
+    "payload": {
+        "PackageId": "12345678-1234-1234-1234-123456789012",
+        "Invoice": {
+            "ID": "23456789-2345-2345-2345-234567890123",
+            "header_Id": "34567890-3456-3456-3456-345678901234",
+            "body_Id": "45678901-4567-4567-4567-456789012345",
+            "navigation_to_PackageId": "12345678-1234-1234-1234-123456789012",
+            "header": {
+                "ID": "34567890-3456-3456-3456-345678901234",
+                "datiTrasmissione_Id": "56789012-5678-5678-5678-567890123456",
+                "cedentePrestatore_Id": "67890123-6789-6789-6789-678901234567",
+                "cessionarioCommittente_Id": "78901234-7890-7890-7890-789012345678",
+                "terzoIntermediarioOSoggettoEmittente_Id": "89012345-8901-8901-8901-890123456789",
+                "soggettoEmittente": "IT",
+                "datiTrasmissione": {
+                    "ID": "56789012-5678-5678-5678-567890123456",
+                    "idTrasmittente_Id": "45b24662-bca3-4908-81f5-c46b8ea75859",
+                    "contattiTrasmittente_Id": "1a0f7247-f410-45ec-89b7-aac2458f45de",
+                    "progressivoInvio": "001",
+                    "formatoTrasmissione": "FPA12",
+                    "codiceDestinatario": "ABC123XYZ",
+                    "idTrasmittente": {
+                        "ID": "45b24662-bca3-4908-81f5-c46b8ea75859",
+                        "idPaese": "IT",
+                        "idCodice": "idCodice"
+                    },
+                    "contattiTrasmittente": {
+                        "ID": "1a0f7247-f410-45ec-89b7-aac2458f45de",
+                        "telefono": "3348956098"
+                    }
+                },
+                "cedentePrestatore": {
+                    "ID": "67890123-6789-6789-6789-678901234567",
+                    "datiAnagrafici_Id": "78901234-7890-7890-7890-789012345678",
+                    "sede_Id": "89012345-8901-8901-8901-890123456789",
+                    "iscrizioneREA_Id": "57b5c536-da03-459b-9b6f-954bce3e67c6",
+                    "datiAnagrafici": {
+                        "ID": "78901234-7890-7890-7890-789012345678",
+                        "idFiscaleIVA_Id": "0eee07d1-e6f2-4ddd-8aa2-e2b10ff38b09",
+                        "anagrafica_Id": "e390c726-27ca-42fb-a3f4-bae0c1877b74",
+                        "codiceFiscale": "FRCSHT55T01F835H",
+                        "regimeFiscale": "RF01",
+                        "idFiscaleIVA": {
+                            "ID": "0eee07d1-e6f2-4ddd-8aa2-e2b10ff38b09",
+                            "idPaese": "IT",
+                            "idCodice": "id codice"
+                        },
+                        "anagrafica": {
+                            "ID": "e390c726-27ca-42fb-a3f4-bae0c1877b74",
+                            "denominazione": "denominazione"
+                        }
+                    },
+                    "sede": {
+                        "ID": "89012345-8901-8901-8901-890123456789",
+                        "indirizzo": "test indirizzo",
+                        "CAP": "80013",
+                        "comune": "Test comuna",
+                        "provincia": "NA",
+                        "nazione": "IT"
+                    },
+                    "iscrizioneREA": {
+                        "ID": "57b5c536-da03-459b-9b6f-954bce3e67c6",
+                        "ufficio": "test",
+                        "numeroREA": "80013424533",
+                        "capitaleSociale": 2000,
+                        "socioUnico": "IT",
+                        "statoLiquidazione": "SL"
+                    }
+                },
+                "cessionarioCommittente": {
+                    "ID": "78901234-7890-7890-7890-789012345678",
+                    "datiAnagrafici_Id": "83dad355-9a8c-4ce5-bc47-437aee3c534f",
+                    "sede_Id": "00162ed4-6e60-4c1d-8e48-0a1fc2504662",
+                    "datiAnagrafici": {
+                        "ID": "83dad355-9a8c-4ce5-bc47-437aee3c534f",
+                        "idFiscaleIVA_Id": "e019a10d-4991-4933-8e33-7e160cd0d3c3",
+                        "anagrafica_Id": "53273bda-2f75-4774-9a54-67aa6818e65c",
+                        "codiceFiscale": "GECSHT55T01F835H",
+                        "regimeFiscale": "RF03",
+                        "idFiscaleIVA": {
+                            "ID": "e019a10d-4991-4933-8e33-7e160cd0d3c3",
+                            "idPaese": "IT",
+                            "idCodice": "id codice"
+                        },
+                        "anagrafica": {
+                            "ID": "53273bda-2f75-4774-9a54-67aa6818e65c",
+                            "denominazione": "denominazione"
+                        }
+                    },
+                    "sede": {
+                        "ID": "00162ed4-6e60-4c1d-8e48-0a1fc2504662",
+                        "indirizzo": "test indirizzo",
+                        "CAP": "80213",
+                        "comune": "Test comuna",
+                        "provincia": "RM",
+                        "nazione": "IT"
+                    }
+                },
+                "terzoIntermediarioOSoggettoEmittente": {
+                    "ID": "89012345-8901-8901-8901-890123456789",
+                    "datiAnagrafici_Id": "983ee4e4-d6d0-4a98-8649-b1280f18c3d9",
+                    "datiAnagrafici": {
+                        "ID": "983ee4e4-d6d0-4a98-8649-b1280f18c3d9",
+                        "idFiscaleIVA_Id": "27358147-4fcb-4d19-99fd-69358c046587",
+                        "anagrafica_Id": "833eb37e-52c6-4111-8204-8adda111b51a",
+                        "codiceFiscale": "GECSHT55T01F835H",
+                        "regimeFiscale": "RF03",
+                        "idFiscaleIVA": {
+                            "ID": "27358147-4fcb-4d19-99fd-69358c046587",
+                            "idPaese": "IT",
+                            "idCodice": "id codice"
+                        },
+                        "anagrafica": {
+                            "ID": "833eb37e-52c6-4111-8204-8adda111b51a",
+                            "denominazione": "denominazione"
+                        }
+                    }
+                }
+            },
+            "body": {
+                "ID": "45678901-4567-4567-4567-456789012345",
+                "datiGenerali_Id": "17a0db4b-af4c-4544-ae03-fbc7e359027e",
+                "datiBeniServizi_Id": "9c36af6c-49c0-4cff-9bb8-b90a437b9687",
+                "datiPagamento_Id": "a5f0b8ae-871d-4c12-a0a6-e0ca8395ae59",
+                "allegati_Id": "3dd0b265-4947-44e3-9a61-3dc649f847f9",
+                "datiGenerali": {
+                    "ID": "17a0db4b-af4c-4544-ae03-fbc7e359027e",
+                    "datiGeneraliDocumento_Id": "25a19777-f9f4-4803-909c-d57999ebc9a4",
+                    "datiGeneraliDocumento": {
+                        "ID": "25a19777-f9f4-4803-909c-d57999ebc9a4",
+                        "tipoDocumento": "TD01",
+                        "divisa": "EUR",
+                        "data": "2024-09-23",
+                        "numero": "INV-12345",
+                        "importoTotaleDocumento": 1000,
+                        "causale": "Payment for services"
+                    }
+                },
+                "datiBeniServizi": {
+                    "ID": "9c36af6c-49c0-4cff-9bb8-b90a437b9687",
+                    "datiRiepilogo_Id": "78901234-7890-7890-7890-789012345678",
+                    "dettaglioLinee": [
+                        {
+                            "ID": "323382b2-2140-43a1-83de-7d1f106f917f",
+                            "datiBeniServizi_Id": "9c36af6c-49c0-4cff-9bb8-b90a437b9687",
+                            "codiceArticolo_Id": "720fab94-e21f-4d16-a781-fe2a8c3de063",
+                            "numeroLinea": 1,
+                            "descrizione": "descrizione linea",
+                            "quantita": 11,
+                            "prezzoUnitario": 100,
+                            "prezzoTotale": 100,
+                            "aliquotaIVA": 1,
+                            "codiceArticolo": {
+                                "ID": "720fab94-e21f-4d16-a781-fe2a8c3de063",
+                                "codiceTipo": "test codice tipo",
+                                "codiceValore": "test codice valore"
+                            }
+                        }
+                    ],
+                    "datiRiepilogo": {
+                        "ID": "78901234-7890-7890-7890-789012345678",
+                        "aliquotaIVA": 22,
+                        "imponibileImporto": 820,
+                        "imposta": 180
+                    }
+                },
+                "datiPagamento": {
+                    "ID": "a5f0b8ae-871d-4c12-a0a6-e0ca8395ae59",
+                    "dettaglioPagamento_Id": "89012345-8901-8901-8901-890123456789",
+                    "condizioniPagamento": "test",
+                    "dettaglioPagamento": {
+                        "ID": "89012345-8901-8901-8901-890123456789",
+                        "modalitaPagamento": "MP01",
+                        "dataScadenzaPagamento": "2024-10-01",
+                        "importoPagamento": 1000,
+                        "IBAN": "IT60X0542811101000000123456"
+                    }
+                },
+                "allegati": [
+                    {
+                        "ID": "3dd0b265-4947-44e3-9a61-3dc649f847f9",
+                        "ID_Body": "45678901-4567-4567-4567-456789012345",
+                        "nomeAttachment": "test.pdf",
+                        "formatoAttachment": "pdf",
+                        "attachment": "attachment"
+                    }
+                ]
+            }
+        }
+    }
+}

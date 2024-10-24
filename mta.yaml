@@ -1,0 +1,112 @@
+_schema-version: 3.3.0
+ID: VIM_backend
+version: 1.0.0
+description: "A simple CAP project."
+modules:
+  - name: VIM_backend-srv
+    type: nodejs
+    path: gen/srv
+    requires:
+      - name: VIM_backend-db
+      - name: VIM_backend-destination-service
+      - name: uaa_VIM_backend
+      - name: VIM_backend_applog
+      - name: VIM_backend_autoscaler
+        parameters:
+          path: ./autoscaler.json
+    provides:
+      - name: srv-api # required by consumers of CAP services (e.g. approuter)
+        properties:
+          srv-url: ${default-url}
+    parameters:
+      buildpack: nodejs_buildpack
+    build-parameters:
+      builder: npm
+    properties:
+      Path_API_SUPPLIER_INVOICE: "/sap/opu/odata/sap/API_SUPPLIERINVOICE_PROCESS_SRV/A_SupplierInvoice"
+      Path_API_GLACCOUNTLINEITEM: "/sap/opu/odata/sap/API_GLACCOUNTLINEITEM/GLAccountLineItem"
+      Path_API_CV_ATTACHMENT_SRV: "/sap/opu/odata/sap/API_CV_ATTACHMENT_SRV/AttachmentContentSet"
+      Path_API_GLAccount_Invoices_COMPLETE_BUT_SELECT_NEEDED: "/odata/v4/catalog/FatturaElettronica?$expand=body($expand=datiGenerali_DatiGeneraliDocumento_DatiRitenuta,datiGenerali_DatiGeneraliDocumento_DatiCassaPrevidenziale,datiGenerali_DatiGeneraliDocumento_ScontoMaggiorazione,datiGenerali_DatiGeneraliDocumento_Causale,datiGenerali_DatiOrdineAcquisto($expand=riferimentoNumeroLinea),datiBeniServizi_DettaglioLinee($expand=codiceArticolo,scontoMaggiorazione,altriDatiGestionali),datiBeniServizi_DatiRiepilogo,datiPagamento($expand=dettaglioPagamento),allegati,datiGenerali_DatiDDT($expand=riferimentoNumeroLinea))"
+      Path_API_GLAccount_Invoices: "/odata/v4/catalog/FatturaElettronica?$expand=body($select=datiGenerali_DatiGeneraliDocumento_Data,datiGenerali_DatiGeneraliDocumento_Divisa,datiGenerali_DatiGeneraliDocumento_ImportoTotaleDocumento,datiGenerali_DatiGeneraliDocumento_TipoDocumento;$expand=datiBeniServizi_DettaglioLinee,datiPagamento($expand=dettaglioPagamento($select=modalitaPagamento)))"
+      Path_API_PO_Invoices: "/odata/v4/catalog/FatturaElettronica?$expand=body($expand=datiGenerali_DatiGeneraliDocumento_DatiRitenuta,datiGenerali_DatiGeneraliDocumento_DatiCassaPrevidenziale,datiGenerali_DatiGeneraliDocumento_ScontoMaggiorazione,datiGenerali_DatiGeneraliDocumento_Causale,datiGenerali_DatiOrdineAcquisto($expand=riferimentoNumeroLinea),datiBeniServizi_DettaglioLinee($expand=codiceArticolo,scontoMaggiorazione,altriDatiGestionali),datiBeniServizi_DatiRiepilogo,datiPagamento($expand=dettaglioPagamento),allegati,datiGenerali_DatiDDT($expand=riferimentoNumeroLinea))"
+      Destination_OData_S4HANA: "odataS4_V2"
+      Destination_OData_BackEnd: "odataBackEnd"
+  - name: VIM_backend-db-deployer
+    type: hdb
+    path: gen/db
+    requires:
+      - name: VIM_backend-db
+    parameters:
+      buildpack: nodejs_buildpack
+  - name: VIM_backend-destination-content
+    type: com.sap.application.content
+    requires:
+      - name: VIM_backend-destination-service
+        parameters:
+          content-target: true
+      - name: uaa_VIM_backend
+        parameters:
+          service-key:
+            name: uaa_VIM_backend-key
+    parameters:
+      content:
+        instance:
+          destinations:
+            - Authentication: OAuth2UserTokenExchange
+              Name: VIM_backend_uaa_VIM_backend
+              ServiceInstanceName: VIM_backend-xsuaa-service
+              ServiceKeyName: uaa_VIM_backend-key
+              sap.cloud.service: VIM_backend
+          existing_destinations_policy: ignore
+    build-parameters:
+      no-source: true
+resources:
+  - name: VIM_backend-db
+    type: com.sap.xs.hdi-container
+    parameters:
+      service: hana
+      service-plan: hdi-shared
+  - name: VIM_backend-destination-service
+    type: org.cloudfoundry.managed-service
+    parameters:
+      config:
+        HTML5Runtime_enabled: true
+        init_data:
+          instance:
+            destinations:
+              - Authentication: NoAuthentication
+                Name: ui5
+                ProxyType: Internet
+                Type: HTTP
+                URL: https://ui5.sap.com
+            existing_destinations_policy: update
+        version: 1.0.0
+      service: destination
+      service-name: VIM_backend-destination-service
+      service-plan: lite
+  - name: VIM_backend_applog
+    parameters:
+      service-name: VIM_backend_applog
+      service: application-logs
+      service-plan: lite
+    type: org.cloudfoundry.managed-service
+  - name: VIM_backend_autoscaler
+    type: org.cloudfoundry.managed-service
+    parameters:
+      service: autoscaler
+      service-plan: standard
+  - name: uaa_VIM_backend
+    type: org.cloudfoundry.managed-service
+    parameters:
+      path: ./xs-security.json
+      service: xsuaa
+      service-name: VIM_backend-xsuaa-service
+      service-plan: application
+parameters:
+  enable-parallel-deployments: true
+build-parameters:
+  before-all:
+    - builder: custom
+      commands:
+        - npm install
+        - npx cds build --production

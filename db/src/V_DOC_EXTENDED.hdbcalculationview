@@ -1,0 +1,904 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Calculation:scenario xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:Calculation="http://www.sap.com/ndb/BiModelCalculation.ecore" id="V_DOC_EXTENDED" applyPrivilegeType="NONE" dataCategory="DIMENSION" dimensionType="STANDARD" schemaVersion="3.0" hierarchyGeneration="SQL" outputViewType="Projection" cacheInvalidationPeriod="NONE" enforceSqlExecution="true" application="BAS">
+<descriptions defaultDescription="V_DOC_EXTENDED"/>
+<localVariables/>
+<variableMappings/>
+<dataSources>
+  <DataSource id="VIM_DOC_WF">
+    <resourceUri>VIM_DOC_WF</resourceUri>
+  </DataSource>
+  <DataSource id="VIM_DATIORDINEACQUISTO">
+    <resourceUri>VIM_DATIORDINEACQUISTO</resourceUri>
+  </DataSource>
+  <DataSource id="Latest_Action$$$$VIM_DOC_WF$$">
+    <resourceUri>VIM_DOC_WF</resourceUri>
+  </DataSource>
+  <DataSource id="VIM_FATTURAELETTRONICABODY">
+    <resourceUri>VIM_FATTURAELETTRONICABODY</resourceUri>
+  </DataSource>
+  <DataSource id="VIM_FATTURAELETTRONICA">
+    <resourceUri>VIM_FATTURAELETTRONICA</resourceUri>
+  </DataSource>
+  <DataSource id="VIM_DOC_PACK">
+    <resourceUri>VIM_DOC_PACK</resourceUri>
+  </DataSource>
+  <DataSource id="VIM_AP_USERS">
+    <resourceUri>VIM_AP_USERS</resourceUri>
+  </DataSource>
+  <DataSource id="PACK_LJ_ACTION_LJ_MODUSER_LJ_ASSIGNUSER$$$$VIM_AP_USERS$$">
+    <resourceUri>VIM_AP_USERS</resourceUri>
+  </DataSource>
+  <DataSource id="PACK_LJ_ACTION_LJ_MODUSER_LJ_ASSIGNUSER_LJ_LOCKUSER$$$$VIM_AP_USERS$$">
+    <resourceUri>VIM_AP_USERS</resourceUri>
+  </DataSource>
+  <DataSource id="PACK_LJ_ACTION_LJ_MODUSER_LJ_ASSIGNUSER_LJ_LOCKUSER_LJ_ACTIONUSER$$$$VIM_AP_USERS$$">
+    <resourceUri>VIM_AP_USERS</resourceUri>
+  </DataSource>
+</dataSources>
+<snapshotProcedures/>
+<calculationViews>
+  <calculationView xsi:type="Calculation:AggregationView" id="MAX_SeqNo">
+    <viewAttributes>
+      <viewAttribute id="SEQNO" aggregationType="max"/>
+      <viewAttribute id="PACKAGEID"/>
+    </viewAttributes>
+    <calculatedViewAttributes/>
+    <restrictedViewAttributes/>
+    <input node="VIM_DOC_WF"/>
+  </calculationView>
+  <calculationView xsi:type="Calculation:AggregationView" id="Projection_ORDINEACQUISTO">
+    <viewAttributes>
+      <viewAttribute id="BODY_ID"/>
+      <viewAttribute id="ID_OCCUR" aggregationType="count"/>
+    </viewAttributes>
+    <calculatedViewAttributes/>
+    <restrictedViewAttributes/>
+    <input node="VIM_DATIORDINEACQUISTO">
+      <mapping xsi:type="Calculation:AttributeMapping" target="ID_OCCUR" source="BODY_ID"/>
+    </input>
+  </calculationView>
+  <calculationView xsi:type="Calculation:JoinView" id="Latest_Action" cardinality="CN_N" joinType="inner" filterExpressionLanguage="SQL">
+    <viewAttributes>
+      <viewAttribute id="PACKAGEID"/>
+      <viewAttribute id="SEQNO"/>
+      <viewAttribute id="ACTION"/>
+      <viewAttribute id="ACTIONBY"/>
+      <viewAttribute id="ACTIONAT"/>
+      <viewAttribute id="MAX_SEQNO"/>
+      <viewAttribute hidden="true" id="JOIN$PACKAGEID$PACKAGEID"/>
+    </viewAttributes>
+    <calculatedViewAttributes/>
+    <input node="Latest_Action$$$$VIM_DOC_WF$$">
+      <mapping xsi:type="Calculation:AttributeMapping" target="PACKAGEID" source="PACKAGEID"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="SEQNO" source="SEQNO"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="ACTION" source="ACTION"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="ACTIONBY" source="ACTIONBY"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="ACTIONAT" source="ACTIONAT"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="JOIN$PACKAGEID$PACKAGEID" source="PACKAGEID"/>
+    </input>
+    <input node="MAX_SeqNo">
+      <mapping xsi:type="Calculation:AttributeMapping" target="MAX_SEQNO" source="SEQNO"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="JOIN$PACKAGEID$PACKAGEID" source="PACKAGEID"/>
+    </input>
+    <filter>&quot;SEQNO&quot;=&quot;MAX_SEQNO&quot;</filter>
+    <joinAttribute name="JOIN$PACKAGEID$PACKAGEID"/>
+  </calculationView>
+  <calculationView xsi:type="Calculation:JoinView" id="PACK_JOIN_Fattura_1" cardinality="CN_N" joinType="leftOuter" multiJoinNode="PACK_JOIN_Fattura" multiJoinCentralTable="VIM_DOC_PACK" multiJoinOrder="Outside In">
+    <viewAttributes>
+      <viewAttribute id="TIPODOCUMENTO"/>
+      <viewAttribute id="NUMERO"/>
+      <viewAttribute id="ID_OCCUR"/>
+      <viewAttribute id="IMPORTOTOTALEDOCUMENTO"/>
+      <viewAttribute id="HEADER_ID"/>
+      <viewAttribute hidden="true" id="JOIN$ID$BODY_ID"/>
+    </viewAttributes>
+    <calculatedViewAttributes/>
+    <input node="VIM_FATTURAELETTRONICABODY">
+      <mapping xsi:type="Calculation:AttributeMapping" target="TIPODOCUMENTO" source="DATIGENERALI_DATIGENERALIDOCUMENTO_TIPODOCUMENTO"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="NUMERO" source="DATIGENERALI_DATIGENERALIDOCUMENTO_NUMERO"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="IMPORTOTOTALEDOCUMENTO" source="DATIGENERALI_DATIGENERALIDOCUMENTO_IMPORTOTOTALEDOCUMENTO"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="HEADER_ID" source="HEADER_ID"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="JOIN$ID$BODY_ID" source="ID"/>
+    </input>
+    <input node="Projection_ORDINEACQUISTO">
+      <mapping xsi:type="Calculation:AttributeMapping" target="ID_OCCUR" source="ID_OCCUR"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="JOIN$ID$BODY_ID" source="BODY_ID"/>
+    </input>
+    <joinAttribute name="JOIN$ID$BODY_ID"/>
+  </calculationView>
+  <calculationView xsi:type="Calculation:JoinView" id="PACK_JOIN_Fattura_2" cardinality="CN_N" joinType="inner" multiJoinNode="PACK_JOIN_Fattura" multiJoinCentralTable="VIM_DOC_PACK" multiJoinOrder="Outside In">
+    <viewAttributes>
+      <viewAttribute id="TIPODOCUMENTO"/>
+      <viewAttribute id="NUMERO"/>
+      <viewAttribute id="ID_OCCUR"/>
+      <viewAttribute id="IMPORTOTOTALEDOCUMENTO"/>
+      <viewAttribute id="NAVIGATION_TO_PACKAGEID"/>
+      <viewAttribute hidden="true" id="JOIN$HEADER_ID$ID"/>
+    </viewAttributes>
+    <calculatedViewAttributes/>
+    <input node="PACK_JOIN_Fattura_1">
+      <mapping xsi:type="Calculation:AttributeMapping" target="TIPODOCUMENTO" source="TIPODOCUMENTO"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="NUMERO" source="NUMERO"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="ID_OCCUR" source="ID_OCCUR"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="IMPORTOTOTALEDOCUMENTO" source="IMPORTOTOTALEDOCUMENTO"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="JOIN$HEADER_ID$ID" source="HEADER_ID"/>
+    </input>
+    <input node="VIM_FATTURAELETTRONICA">
+      <mapping xsi:type="Calculation:AttributeMapping" target="NAVIGATION_TO_PACKAGEID" source="NAVIGATION_TO_PACKAGEID"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="JOIN$HEADER_ID$ID" source="ID"/>
+    </input>
+    <joinAttribute name="JOIN$HEADER_ID$ID"/>
+  </calculationView>
+  <calculationView xsi:type="Calculation:JoinView" id="PACK_JOIN_Fattura_3" cardinality="CN_N" joinType="inner" multiJoinNode="PACK_JOIN_Fattura" multiJoinCentralTable="VIM_DOC_PACK" multiJoinOrder="Outside In">
+    <viewAttributes>
+      <viewAttribute id="PACKAGEID"/>
+      <viewAttribute id="STATUS"/>
+      <viewAttribute id="CREATEDAT"/>
+      <viewAttribute id="CREATEDBY"/>
+      <viewAttribute id="MODIFIEDAT"/>
+      <viewAttribute id="COMPANYCODE"/>
+      <viewAttribute id="COMPANYCODEDESC"/>
+      <viewAttribute id="PRIORITYCODE"/>
+      <viewAttribute id="MODIFIEDBY"/>
+      <viewAttribute id="ASSIGNEDTO"/>
+      <viewAttribute id="LOCKEDAT"/>
+      <viewAttribute id="LOCKEDBY"/>
+      <viewAttribute id="FLAG"/>
+      <viewAttribute id="TIPODOCUMENTO"/>
+      <viewAttribute id="NUMERO"/>
+      <viewAttribute id="ID_OCCUR"/>
+      <viewAttribute id="IMPORTOTOTALEDOCUMENTO"/>
+      <viewAttribute id="REFERENCEDOCUMENT"/>
+      <viewAttribute id="FISCALYEAR"/>
+      <viewAttribute hidden="true" id="JOIN$PACKAGEID$NAVIGATION_TO_PACKAGEID"/>
+    </viewAttributes>
+    <calculatedViewAttributes/>
+    <input node="VIM_DOC_PACK">
+      <mapping xsi:type="Calculation:AttributeMapping" target="CREATEDAT" source="CREATEDAT"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="CREATEDBY" source="CREATEDBY"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="MODIFIEDAT" source="MODIFIEDAT"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="PACKAGEID" source="PACKAGEID"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="MODIFIEDBY" source="MODIFIEDBY"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="STATUS" source="STATUS"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="LOCKEDAT" source="LOCKEDAT"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="LOCKEDBY" source="LOCKEDBY"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="ASSIGNEDTO" source="ASSIGNEDTO"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="FLAG" source="FLAG"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="COMPANYCODE" source="COMPANYCODE"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="COMPANYCODEDESC" source="COMPANYCODEDESC"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="PRIORITYCODE" source="PRIORITYCODE"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="REFERENCEDOCUMENT" source="REFERENCEDOCUMENT"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="FISCALYEAR" source="FISCALYEAR"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="JOIN$PACKAGEID$NAVIGATION_TO_PACKAGEID" source="PACKAGEID"/>
+    </input>
+    <input node="PACK_JOIN_Fattura_2">
+      <mapping xsi:type="Calculation:AttributeMapping" target="TIPODOCUMENTO" source="TIPODOCUMENTO"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="NUMERO" source="NUMERO"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="ID_OCCUR" source="ID_OCCUR"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="IMPORTOTOTALEDOCUMENTO" source="IMPORTOTOTALEDOCUMENTO"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="JOIN$PACKAGEID$NAVIGATION_TO_PACKAGEID" source="NAVIGATION_TO_PACKAGEID"/>
+    </input>
+    <joinAttribute name="JOIN$PACKAGEID$NAVIGATION_TO_PACKAGEID"/>
+  </calculationView>
+  <calculationView xsi:type="Calculation:NonEquiJoinView" id="PACK_LJ_ACTION" cardinality="CN_N" joinType="leftOuter">
+    <viewAttributes>
+      <viewAttribute id="PACKAGEID"/>
+      <viewAttribute id="DOC_STATUS"/>
+      <viewAttribute id="PACK_CREATEDAT"/>
+      <viewAttribute id="PACK_CREATEDBY"/>
+      <viewAttribute id="PACK_MODIFIEDAT"/>
+      <viewAttribute id="COMPANYCODE"/>
+      <viewAttribute id="COMPANYCODEDESC"/>
+      <viewAttribute id="PRIORITYCODE"/>
+      <viewAttribute id="LATEST_ACTION"/>
+      <viewAttribute id="LATEST_ACTIONBY"/>
+      <viewAttribute id="PACK_MODIFIEDBY"/>
+      <viewAttribute id="LATEST_ACTIONAT"/>
+      <viewAttribute id="PACK_ASSIGNEDTO"/>
+      <viewAttribute id="PACK_LOCKEDAT"/>
+      <viewAttribute id="PACK_LOCKEDBY"/>
+    
+      <viewAttribute id="TIPODOCUMENTO"/>
+      <viewAttribute id="NUMERO"/>
+      <viewAttribute id="ID_OCCUR"/>
+    
+      <viewAttribute id="IMPORTOTOTALEDOCUMENTO"/>
+    
+      <viewAttribute id="REFERENCEDOCUMENT"/>
+    
+      <viewAttribute id="FISCALYEAR"/>
+    </viewAttributes>
+    <calculatedViewAttributes/>
+    <input node="PACK_JOIN_Fattura_3">
+      <mapping xsi:type="Calculation:AttributeMapping" target="PACKAGEID" source="PACKAGEID"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="DOC_STATUS" source="STATUS"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="PACK_CREATEDAT" source="CREATEDAT"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="PACK_CREATEDBY" source="CREATEDBY"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="PACK_MODIFIEDAT" source="MODIFIEDAT"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="COMPANYCODE" source="COMPANYCODE"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="COMPANYCODEDESC" source="COMPANYCODEDESC"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="PRIORITYCODE" source="PRIORITYCODE"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="PACK_MODIFIEDBY" source="MODIFIEDBY"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="PACK_ASSIGNEDTO" source="ASSIGNEDTO"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="PACK_LOCKEDAT" source="LOCKEDAT"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="PACK_LOCKEDBY" source="LOCKEDBY"/>
+    
+      <mapping xsi:type="Calculation:AttributeMapping" target="TIPODOCUMENTO" source="TIPODOCUMENTO"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="NUMERO" source="NUMERO"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="ID_OCCUR" source="ID_OCCUR"/>
+    
+      <mapping xsi:type="Calculation:AttributeMapping" target="IMPORTOTOTALEDOCUMENTO" source="IMPORTOTOTALEDOCUMENTO"/>
+    
+      <mapping xsi:type="Calculation:AttributeMapping" target="REFERENCEDOCUMENT" source="REFERENCEDOCUMENT"/>
+    
+      <mapping xsi:type="Calculation:AttributeMapping" target="FISCALYEAR" source="FISCALYEAR"/>
+    </input>
+    <input node="Latest_Action">
+      <mapping xsi:type="Calculation:AttributeMapping" target="LATEST_ACTION" source="ACTION"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="LATEST_ACTIONBY" source="ACTIONBY"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="LATEST_ACTIONAT" source="ACTIONAT"/>
+    </input>
+    <joinAttribute leftColumn="PACKAGEID" rightColumn="PACKAGEID" operator="EQ"/>
+  </calculationView>
+  <calculationView xsi:type="Calculation:NonEquiJoinView" id="PACK_LJ_ACTION_LJ_MODUSER" cardinality="CN_N" joinType="leftOuter" ignoreMultipleOutputsForFilter="false">
+    <viewAttributes>
+      <viewAttribute id="MODUSER_EMAIL"/>
+      <viewAttribute id="MODUSER_FIRSTNAME"/>
+      <viewAttribute id="MODUSER_LASTNAME"/>
+      <viewAttribute id="MODUSER_FLAG"/>
+      <viewAttribute id="MODUSER_DEPARTEMENT"/>
+      <viewAttribute id="MODUSER_CUSTOMPARAM1"/>
+      <viewAttribute id="MODUSER_CUSTOMPARAM2"/>
+      <viewAttribute id="PACKAGEID"/>
+      <viewAttribute id="DOC_STATUS"/>
+      <viewAttribute id="PACK_CREATEDAT"/>
+      <viewAttribute id="PACK_CREATEDBY"/>
+      <viewAttribute id="PACK_MODIFIEDAT"/>
+      <viewAttribute id="COMPANYCODE"/>
+      <viewAttribute id="COMPANYCODEDESC"/>
+      <viewAttribute id="PRIORITYCODE"/>
+      <viewAttribute id="LATEST_ACTION"/>
+      <viewAttribute id="LATEST_ACTIONBY"/>
+      <viewAttribute id="PACK_MODIFIEDBY"/>
+      <viewAttribute id="LATEST_ACTIONAT"/>
+      <viewAttribute id="PACK_ASSIGNEDTO"/>
+      <viewAttribute id="PACK_LOCKEDAT"/>
+      <viewAttribute id="PACK_LOCKEDBY"/>
+    
+      <viewAttribute id="TIPODOCUMENTO"/>
+      <viewAttribute id="NUMERO"/>
+      <viewAttribute id="ID_OCCUR"/>
+    
+      <viewAttribute id="IMPORTOTOTALEDOCUMENTO"/>
+    
+      <viewAttribute id="REFERENCEDOCUMENT"/>
+    
+      <viewAttribute id="FISCALYEAR"/>
+    </viewAttributes>
+    <calculatedViewAttributes/>
+    <input node="PACK_LJ_ACTION">
+      <mapping xsi:type="Calculation:AttributeMapping" target="PACKAGEID" source="PACKAGEID"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="DOC_STATUS" source="DOC_STATUS"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="PACK_CREATEDAT" source="PACK_CREATEDAT"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="PACK_CREATEDBY" source="PACK_CREATEDBY"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="PACK_MODIFIEDAT" source="PACK_MODIFIEDAT"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="COMPANYCODE" source="COMPANYCODE"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="COMPANYCODEDESC" source="COMPANYCODEDESC"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="PRIORITYCODE" source="PRIORITYCODE"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="LATEST_ACTION" source="LATEST_ACTION"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="LATEST_ACTIONBY" source="LATEST_ACTIONBY"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="PACK_MODIFIEDBY" source="PACK_MODIFIEDBY"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="LATEST_ACTIONAT" source="LATEST_ACTIONAT"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="PACK_ASSIGNEDTO" source="PACK_ASSIGNEDTO"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="PACK_LOCKEDAT" source="PACK_LOCKEDAT"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="PACK_LOCKEDBY" source="PACK_LOCKEDBY"/>
+    
+      <mapping xsi:type="Calculation:AttributeMapping" target="TIPODOCUMENTO" source="TIPODOCUMENTO"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="NUMERO" source="NUMERO"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="ID_OCCUR" source="ID_OCCUR"/>
+    
+      <mapping xsi:type="Calculation:AttributeMapping" target="IMPORTOTOTALEDOCUMENTO" source="IMPORTOTOTALEDOCUMENTO"/>
+    
+      <mapping xsi:type="Calculation:AttributeMapping" target="REFERENCEDOCUMENT" source="REFERENCEDOCUMENT"/>
+    
+      <mapping xsi:type="Calculation:AttributeMapping" target="FISCALYEAR" source="FISCALYEAR"/>
+    </input>
+    <input node="VIM_AP_USERS">
+      <mapping xsi:type="Calculation:AttributeMapping" target="MODUSER_EMAIL" source="EMAIL"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="MODUSER_FIRSTNAME" source="FIRSTNAME"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="MODUSER_LASTNAME" source="LASTNAME"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="MODUSER_FLAG" source="FLAG"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="MODUSER_DEPARTEMENT" source="DEPARTEMENT"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="MODUSER_CUSTOMPARAM1" source="CUSTOMPARAM1"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="MODUSER_CUSTOMPARAM2" source="CUSTOMPARAM2"/>
+    </input>
+    <joinAttribute leftColumn="PACK_MODIFIEDBY" rightColumn="EMAIL" operator="EQ"/>
+  </calculationView>
+  <calculationView xsi:type="Calculation:NonEquiJoinView" id="PACK_LJ_ACTION_LJ_MODUSER_LJ_ASSIGNUSER" cardinality="CN_N" joinType="leftOuter">
+    <viewAttributes>
+      <viewAttribute id="MODUSER_EMAIL"/>
+      <viewAttribute id="MODUSER_FIRSTNAME"/>
+      <viewAttribute id="MODUSER_LASTNAME"/>
+      <viewAttribute id="MODUSER_FLAG"/>
+      <viewAttribute id="MODUSER_DEPARTEMENT"/>
+      <viewAttribute id="MODUSER_CUSTOMPARAM1"/>
+      <viewAttribute id="MODUSER_CUSTOMPARAM2"/>
+      <viewAttribute id="ASSIGNUSER_EMAIL"/>
+      <viewAttribute id="ASSIGNUSER_FIRSTNAME"/>
+      <viewAttribute id="ASSIGNUSER_LASTNAME"/>
+      <viewAttribute id="ASSIGNUSER_FLAG"/>
+      <viewAttribute id="ASSIGNUSER_DEPARTEMENT"/>
+      <viewAttribute id="ASSIGNUSER_CUSTOMPARAM1"/>
+      <viewAttribute id="ASSIGNUSER_CUSTOMPARAM2"/>
+      <viewAttribute id="PACKAGEID"/>
+      <viewAttribute id="DOC_STATUS"/>
+      <viewAttribute id="PACK_CREATEDAT"/>
+      <viewAttribute id="PACK_CREATEDBY"/>
+      <viewAttribute id="PACK_MODIFIEDAT"/>
+      <viewAttribute id="COMPANYCODE"/>
+      <viewAttribute id="COMPANYCODEDESC"/>
+      <viewAttribute id="PRIORITYCODE"/>
+      <viewAttribute id="LATEST_ACTION"/>
+      <viewAttribute id="LATEST_ACTIONBY"/>
+      <viewAttribute id="PACK_MODIFIEDBY"/>
+      <viewAttribute id="LATEST_ACTIONAT"/>
+      <viewAttribute id="PACK_ASSIGNEDTO"/>
+      <viewAttribute id="PACK_LOCKEDAT"/>
+      <viewAttribute id="PACK_LOCKEDBY"/>
+    
+      <viewAttribute id="TIPODOCUMENTO"/>
+      <viewAttribute id="NUMERO"/>
+      <viewAttribute id="ID_OCCUR"/>
+    
+      <viewAttribute id="IMPORTOTOTALEDOCUMENTO"/>
+    
+      <viewAttribute id="REFERENCEDOCUMENT"/>
+    
+      <viewAttribute id="FISCALYEAR"/>
+    </viewAttributes>
+    <calculatedViewAttributes/>
+    <input node="PACK_LJ_ACTION_LJ_MODUSER">
+      <mapping xsi:type="Calculation:AttributeMapping" target="MODUSER_EMAIL" source="MODUSER_EMAIL"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="MODUSER_FIRSTNAME" source="MODUSER_FIRSTNAME"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="MODUSER_LASTNAME" source="MODUSER_LASTNAME"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="MODUSER_FLAG" source="MODUSER_FLAG"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="MODUSER_DEPARTEMENT" source="MODUSER_DEPARTEMENT"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="MODUSER_CUSTOMPARAM1" source="MODUSER_CUSTOMPARAM1"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="MODUSER_CUSTOMPARAM2" source="MODUSER_CUSTOMPARAM2"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="PACKAGEID" source="PACKAGEID"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="DOC_STATUS" source="DOC_STATUS"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="PACK_CREATEDAT" source="PACK_CREATEDAT"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="PACK_CREATEDBY" source="PACK_CREATEDBY"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="PACK_MODIFIEDAT" source="PACK_MODIFIEDAT"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="COMPANYCODE" source="COMPANYCODE"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="COMPANYCODEDESC" source="COMPANYCODEDESC"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="PRIORITYCODE" source="PRIORITYCODE"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="LATEST_ACTION" source="LATEST_ACTION"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="LATEST_ACTIONBY" source="LATEST_ACTIONBY"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="PACK_MODIFIEDBY" source="PACK_MODIFIEDBY"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="LATEST_ACTIONAT" source="LATEST_ACTIONAT"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="PACK_ASSIGNEDTO" source="PACK_ASSIGNEDTO"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="PACK_LOCKEDAT" source="PACK_LOCKEDAT"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="PACK_LOCKEDBY" source="PACK_LOCKEDBY"/>
+    
+      <mapping xsi:type="Calculation:AttributeMapping" target="TIPODOCUMENTO" source="TIPODOCUMENTO"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="NUMERO" source="NUMERO"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="ID_OCCUR" source="ID_OCCUR"/>
+    
+      <mapping xsi:type="Calculation:AttributeMapping" target="IMPORTOTOTALEDOCUMENTO" source="IMPORTOTOTALEDOCUMENTO"/>
+    
+      <mapping xsi:type="Calculation:AttributeMapping" target="REFERENCEDOCUMENT" source="REFERENCEDOCUMENT"/>
+    
+      <mapping xsi:type="Calculation:AttributeMapping" target="FISCALYEAR" source="FISCALYEAR"/>
+    </input>
+    <input node="PACK_LJ_ACTION_LJ_MODUSER_LJ_ASSIGNUSER$$$$VIM_AP_USERS$$">
+      <mapping xsi:type="Calculation:AttributeMapping" target="ASSIGNUSER_EMAIL" source="EMAIL"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="ASSIGNUSER_FIRSTNAME" source="FIRSTNAME"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="ASSIGNUSER_LASTNAME" source="LASTNAME"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="ASSIGNUSER_FLAG" source="FLAG"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="ASSIGNUSER_DEPARTEMENT" source="DEPARTEMENT"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="ASSIGNUSER_CUSTOMPARAM1" source="CUSTOMPARAM1"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="ASSIGNUSER_CUSTOMPARAM2" source="CUSTOMPARAM2"/>
+    </input>
+    <joinAttribute leftColumn="PACK_ASSIGNEDTO" rightColumn="EMAIL" operator="EQ"/>
+  </calculationView>
+  <calculationView xsi:type="Calculation:NonEquiJoinView" id="PACK_LJ_ACTION_LJ_MODUSER_LJ_ASSIGNUSER_LJ_LOCKUSER" joinType="leftOuter">
+    <viewAttributes>
+      <viewAttribute id="MODUSER_EMAIL"/>
+      <viewAttribute id="MODUSER_FIRSTNAME"/>
+      <viewAttribute id="MODUSER_LASTNAME"/>
+      <viewAttribute id="MODUSER_FLAG"/>
+      <viewAttribute id="MODUSER_DEPARTEMENT"/>
+      <viewAttribute id="MODUSER_CUSTOMPARAM1"/>
+      <viewAttribute id="MODUSER_CUSTOMPARAM2"/>
+      <viewAttribute id="ASSIGNUSER_EMAIL"/>
+      <viewAttribute id="ASSIGNUSER_FIRSTNAME"/>
+      <viewAttribute id="ASSIGNUSER_LASTNAME"/>
+      <viewAttribute id="ASSIGNUSER_FLAG"/>
+      <viewAttribute id="ASSIGNUSER_DEPARTEMENT"/>
+      <viewAttribute id="ASSIGNUSER_CUSTOMPARAM1"/>
+      <viewAttribute id="ASSIGNUSER_CUSTOMPARAM2"/>
+      <viewAttribute id="LOCKUSER_EMAIL"/>
+      <viewAttribute id="LOCKUSER_FIRSTNAME"/>
+      <viewAttribute id="LOCKUSER_LASTNAME"/>
+      <viewAttribute id="LOCKUSER_FLAG"/>
+      <viewAttribute id="LOCKUSER_DEPARTEMENT"/>
+      <viewAttribute id="LOCKUSER_CUSTOMPARAM1"/>
+      <viewAttribute id="LOCKUSER_CUSTOMPARAM2"/>
+      <viewAttribute id="PACKAGEID"/>
+      <viewAttribute id="DOC_STATUS"/>
+      <viewAttribute id="PACK_CREATEDAT"/>
+      <viewAttribute id="PACK_CREATEDBY"/>
+      <viewAttribute id="PACK_MODIFIEDAT"/>
+      <viewAttribute id="COMPANYCODE"/>
+      <viewAttribute id="COMPANYCODEDESC"/>
+      <viewAttribute id="PRIORITYCODE"/>
+      <viewAttribute id="LATEST_ACTION"/>
+      <viewAttribute id="LATEST_ACTIONBY"/>
+      <viewAttribute id="PACK_MODIFIEDBY"/>
+      <viewAttribute id="LATEST_ACTIONAT"/>
+      <viewAttribute id="PACK_ASSIGNEDTO"/>
+      <viewAttribute id="PACK_LOCKEDAT"/>
+      <viewAttribute id="PACK_LOCKEDBY"/>
+    
+      <viewAttribute id="TIPODOCUMENTO"/>
+      <viewAttribute id="NUMERO"/>
+      <viewAttribute id="ID_OCCUR"/>
+    
+      <viewAttribute id="IMPORTOTOTALEDOCUMENTO"/>
+    
+      <viewAttribute id="REFERENCEDOCUMENT"/>
+    
+      <viewAttribute id="FISCALYEAR"/>
+    </viewAttributes>
+    <calculatedViewAttributes/>
+    <input node="PACK_LJ_ACTION_LJ_MODUSER_LJ_ASSIGNUSER">
+      <mapping xsi:type="Calculation:AttributeMapping" target="MODUSER_EMAIL" source="MODUSER_EMAIL"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="MODUSER_FIRSTNAME" source="MODUSER_FIRSTNAME"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="MODUSER_LASTNAME" source="MODUSER_LASTNAME"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="MODUSER_FLAG" source="MODUSER_FLAG"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="MODUSER_DEPARTEMENT" source="MODUSER_DEPARTEMENT"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="MODUSER_CUSTOMPARAM1" source="MODUSER_CUSTOMPARAM1"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="MODUSER_CUSTOMPARAM2" source="MODUSER_CUSTOMPARAM2"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="ASSIGNUSER_EMAIL" source="ASSIGNUSER_EMAIL"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="ASSIGNUSER_FIRSTNAME" source="ASSIGNUSER_FIRSTNAME"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="ASSIGNUSER_LASTNAME" source="ASSIGNUSER_LASTNAME"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="ASSIGNUSER_FLAG" source="ASSIGNUSER_FLAG"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="ASSIGNUSER_DEPARTEMENT" source="ASSIGNUSER_DEPARTEMENT"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="ASSIGNUSER_CUSTOMPARAM1" source="ASSIGNUSER_CUSTOMPARAM1"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="ASSIGNUSER_CUSTOMPARAM2" source="ASSIGNUSER_CUSTOMPARAM2"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="PACKAGEID" source="PACKAGEID"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="DOC_STATUS" source="DOC_STATUS"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="PACK_CREATEDAT" source="PACK_CREATEDAT"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="PACK_CREATEDBY" source="PACK_CREATEDBY"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="PACK_MODIFIEDAT" source="PACK_MODIFIEDAT"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="COMPANYCODE" source="COMPANYCODE"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="COMPANYCODEDESC" source="COMPANYCODEDESC"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="PRIORITYCODE" source="PRIORITYCODE"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="LATEST_ACTION" source="LATEST_ACTION"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="LATEST_ACTIONBY" source="LATEST_ACTIONBY"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="PACK_MODIFIEDBY" source="PACK_MODIFIEDBY"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="LATEST_ACTIONAT" source="LATEST_ACTIONAT"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="PACK_ASSIGNEDTO" source="PACK_ASSIGNEDTO"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="PACK_LOCKEDAT" source="PACK_LOCKEDAT"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="PACK_LOCKEDBY" source="PACK_LOCKEDBY"/>
+    
+      <mapping xsi:type="Calculation:AttributeMapping" target="TIPODOCUMENTO" source="TIPODOCUMENTO"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="NUMERO" source="NUMERO"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="ID_OCCUR" source="ID_OCCUR"/>
+    
+      <mapping xsi:type="Calculation:AttributeMapping" target="IMPORTOTOTALEDOCUMENTO" source="IMPORTOTOTALEDOCUMENTO"/>
+    
+      <mapping xsi:type="Calculation:AttributeMapping" target="REFERENCEDOCUMENT" source="REFERENCEDOCUMENT"/>
+    
+      <mapping xsi:type="Calculation:AttributeMapping" target="FISCALYEAR" source="FISCALYEAR"/>
+    </input>
+    <input node="PACK_LJ_ACTION_LJ_MODUSER_LJ_ASSIGNUSER_LJ_LOCKUSER$$$$VIM_AP_USERS$$">
+      <mapping xsi:type="Calculation:AttributeMapping" target="LOCKUSER_EMAIL" source="EMAIL"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="LOCKUSER_LASTNAME" source="LASTNAME"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="LOCKUSER_FLAG" source="FLAG"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="LOCKUSER_DEPARTEMENT" source="DEPARTEMENT"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="LOCKUSER_CUSTOMPARAM1" source="CUSTOMPARAM1"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="LOCKUSER_CUSTOMPARAM2" source="CUSTOMPARAM2"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="LOCKUSER_FIRSTNAME" source="FIRSTNAME"/>
+    </input>
+    <joinAttribute leftColumn="PACK_LOCKEDBY" rightColumn="EMAIL" operator="EQ"/>
+  </calculationView>
+  <calculationView xsi:type="Calculation:NonEquiJoinView" id="PACK_LJ_ACTION_LJ_MODUSER_LJ_ASSIGNUSER_LJ_LOCKUSER_LJ_ACTIONUSER" cardinality="CN_N" joinType="leftOuter">
+    <viewAttributes>
+      <viewAttribute id="MODUSER_EMAIL"/>
+      <viewAttribute id="MODUSER_FIRSTNAME"/>
+      <viewAttribute id="MODUSER_LASTNAME"/>
+      <viewAttribute id="MODUSER_FLAG"/>
+      <viewAttribute id="MODUSER_DEPARTEMENT"/>
+      <viewAttribute id="MODUSER_CUSTOMPARAM1"/>
+      <viewAttribute id="MODUSER_CUSTOMPARAM2"/>
+      <viewAttribute id="ASSIGNUSER_EMAIL"/>
+      <viewAttribute id="ASSIGNUSER_FIRSTNAME"/>
+      <viewAttribute id="ASSIGNUSER_LASTNAME"/>
+      <viewAttribute id="ASSIGNUSER_FLAG"/>
+      <viewAttribute id="ASSIGNUSER_DEPARTEMENT"/>
+      <viewAttribute id="ASSIGNUSER_CUSTOMPARAM1"/>
+      <viewAttribute id="ASSIGNUSER_CUSTOMPARAM2"/>
+      <viewAttribute id="LOCKUSER_EMAIL"/>
+      <viewAttribute id="LOCKUSER_FIRSTNAME"/>
+      <viewAttribute id="LOCKUSER_LASTNAME"/>
+      <viewAttribute id="LOCKUSER_FLAG"/>
+      <viewAttribute id="LOCKUSER_DEPARTEMENT"/>
+      <viewAttribute id="LOCKUSER_CUSTOMPARAM1"/>
+      <viewAttribute id="LOCKUSER_CUSTOMPARAM2"/>
+      <viewAttribute id="ACTIONUSER_EMAIL"/>
+      <viewAttribute id="ACTIONUSER_FIRSTNAME"/>
+      <viewAttribute id="ACTIONUSER_LASTNAME"/>
+      <viewAttribute id="ACTIONUSER_FLAG"/>
+      <viewAttribute id="ACTIONUSER_DEPARTEMENT"/>
+      <viewAttribute id="ACTIONUSER_CUSTOMPARAM1"/>
+      <viewAttribute id="ACTIONUSER_CUSTOMPARAM2"/>
+      <viewAttribute id="PACKAGEID"/>
+      <viewAttribute id="DOC_STATUS"/>
+      <viewAttribute id="PACK_CREATEDAT"/>
+      <viewAttribute id="PACK_CREATEDBY"/>
+      <viewAttribute id="PACK_MODIFIEDAT"/>
+      <viewAttribute id="COMPANYCODE"/>
+      <viewAttribute id="COMPANYCODEDESC"/>
+      <viewAttribute id="PRIORITYCODE"/>
+      <viewAttribute id="LATEST_ACTION"/>
+      <viewAttribute id="LATEST_ACTIONBY"/>
+      <viewAttribute id="PACK_MODIFIEDBY"/>
+      <viewAttribute id="LATEST_ACTIONAT"/>
+      <viewAttribute id="PACK_ASSIGNEDTO"/>
+      <viewAttribute id="PACK_LOCKEDAT"/>
+      <viewAttribute id="PACK_LOCKEDBY"/>
+    
+      <viewAttribute id="TIPODOCUMENTO"/>
+      <viewAttribute id="NUMERO"/>
+      <viewAttribute id="ID_OCCUR"/>
+    
+      <viewAttribute id="IMPORTOTOTALEDOCUMENTO"/>
+    
+      <viewAttribute id="REFERENCEDOCUMENT"/>
+    
+      <viewAttribute id="FISCALYEAR"/>
+    </viewAttributes>
+    <calculatedViewAttributes/>
+    <input node="PACK_LJ_ACTION_LJ_MODUSER_LJ_ASSIGNUSER_LJ_LOCKUSER">
+      <mapping xsi:type="Calculation:AttributeMapping" target="MODUSER_EMAIL" source="MODUSER_EMAIL"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="MODUSER_FIRSTNAME" source="MODUSER_FIRSTNAME"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="MODUSER_LASTNAME" source="MODUSER_LASTNAME"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="MODUSER_FLAG" source="MODUSER_FLAG"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="MODUSER_DEPARTEMENT" source="MODUSER_DEPARTEMENT"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="MODUSER_CUSTOMPARAM1" source="MODUSER_CUSTOMPARAM1"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="MODUSER_CUSTOMPARAM2" source="MODUSER_CUSTOMPARAM2"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="ASSIGNUSER_EMAIL" source="ASSIGNUSER_EMAIL"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="ASSIGNUSER_FIRSTNAME" source="ASSIGNUSER_FIRSTNAME"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="ASSIGNUSER_LASTNAME" source="ASSIGNUSER_LASTNAME"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="ASSIGNUSER_FLAG" source="ASSIGNUSER_FLAG"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="ASSIGNUSER_DEPARTEMENT" source="ASSIGNUSER_DEPARTEMENT"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="ASSIGNUSER_CUSTOMPARAM1" source="ASSIGNUSER_CUSTOMPARAM1"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="ASSIGNUSER_CUSTOMPARAM2" source="ASSIGNUSER_CUSTOMPARAM2"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="LOCKUSER_EMAIL" source="LOCKUSER_EMAIL"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="LOCKUSER_LASTNAME" source="LOCKUSER_LASTNAME"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="LOCKUSER_FLAG" source="LOCKUSER_FLAG"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="LOCKUSER_DEPARTEMENT" source="LOCKUSER_DEPARTEMENT"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="LOCKUSER_CUSTOMPARAM1" source="LOCKUSER_CUSTOMPARAM1"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="LOCKUSER_CUSTOMPARAM2" source="LOCKUSER_CUSTOMPARAM2"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="LOCKUSER_FIRSTNAME" source="LOCKUSER_FIRSTNAME"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="PACKAGEID" source="PACKAGEID"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="DOC_STATUS" source="DOC_STATUS"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="PACK_CREATEDAT" source="PACK_CREATEDAT"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="PACK_CREATEDBY" source="PACK_CREATEDBY"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="PACK_MODIFIEDAT" source="PACK_MODIFIEDAT"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="COMPANYCODE" source="COMPANYCODE"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="COMPANYCODEDESC" source="COMPANYCODEDESC"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="PRIORITYCODE" source="PRIORITYCODE"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="LATEST_ACTION" source="LATEST_ACTION"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="LATEST_ACTIONBY" source="LATEST_ACTIONBY"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="PACK_MODIFIEDBY" source="PACK_MODIFIEDBY"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="LATEST_ACTIONAT" source="LATEST_ACTIONAT"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="PACK_ASSIGNEDTO" source="PACK_ASSIGNEDTO"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="PACK_LOCKEDAT" source="PACK_LOCKEDAT"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="PACK_LOCKEDBY" source="PACK_LOCKEDBY"/>
+    
+      <mapping xsi:type="Calculation:AttributeMapping" target="TIPODOCUMENTO" source="TIPODOCUMENTO"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="NUMERO" source="NUMERO"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="ID_OCCUR" source="ID_OCCUR"/>
+    
+      <mapping xsi:type="Calculation:AttributeMapping" target="IMPORTOTOTALEDOCUMENTO" source="IMPORTOTOTALEDOCUMENTO"/>
+    
+      <mapping xsi:type="Calculation:AttributeMapping" target="REFERENCEDOCUMENT" source="REFERENCEDOCUMENT"/>
+    
+      <mapping xsi:type="Calculation:AttributeMapping" target="FISCALYEAR" source="FISCALYEAR"/>
+    </input>
+    <input node="PACK_LJ_ACTION_LJ_MODUSER_LJ_ASSIGNUSER_LJ_LOCKUSER_LJ_ACTIONUSER$$$$VIM_AP_USERS$$">
+      <mapping xsi:type="Calculation:AttributeMapping" target="ACTIONUSER_EMAIL" source="EMAIL"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="ACTIONUSER_FIRSTNAME" source="FIRSTNAME"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="ACTIONUSER_LASTNAME" source="LASTNAME"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="ACTIONUSER_FLAG" source="FLAG"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="ACTIONUSER_DEPARTEMENT" source="DEPARTEMENT"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="ACTIONUSER_CUSTOMPARAM1" source="CUSTOMPARAM1"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="ACTIONUSER_CUSTOMPARAM2" source="CUSTOMPARAM2"/>
+    </input>
+    <joinAttribute leftColumn="LATEST_ACTIONBY" rightColumn="EMAIL" operator="EQ"/>
+  </calculationView>
+</calculationViews>
+
+<logicalModel id="PACK_LJ_ACTION_LJ_MODUSER_LJ_ASSIGNUSER_LJ_LOCKUSER_LJ_ACTIONUSER" filterExpressionLanguage="SQL">
+  <attributes>
+    <attribute id="MODUSER_LASTNAME" order="1" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="MODUSER_LASTNAME"/>
+      <keyMapping columnObjectName="PACK_LJ_ACTION_LJ_MODUSER_LJ_ASSIGNUSER_LJ_LOCKUSER_LJ_ACTIONUSER" columnName="MODUSER_LASTNAME"/>
+    </attribute>
+    <attribute id="MODUSER_FIRSTNAME" order="2" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="MODUSER_FIRSTNAME"/>
+      <keyMapping columnObjectName="PACK_LJ_ACTION_LJ_MODUSER_LJ_ASSIGNUSER_LJ_LOCKUSER_LJ_ACTIONUSER" columnName="MODUSER_FIRSTNAME"/>
+    </attribute>
+    <attribute id="ASSIGNUSER_LASTNAME" order="4" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="LASTNAME"/>
+      <keyMapping columnObjectName="PACK_LJ_ACTION_LJ_MODUSER_LJ_ASSIGNUSER_LJ_LOCKUSER_LJ_ACTIONUSER" columnName="ASSIGNUSER_LASTNAME"/>
+    </attribute>
+    <attribute id="LOCKUSER_LASTNAME" order="5" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="LASTNAME"/>
+      <keyMapping columnObjectName="PACK_LJ_ACTION_LJ_MODUSER_LJ_ASSIGNUSER_LJ_LOCKUSER_LJ_ACTIONUSER" columnName="LOCKUSER_LASTNAME"/>
+    </attribute>
+    <attribute id="ASSIGNUSER_FIRSTNAME" order="6" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="FIRSTNAME"/>
+      <keyMapping columnObjectName="PACK_LJ_ACTION_LJ_MODUSER_LJ_ASSIGNUSER_LJ_LOCKUSER_LJ_ACTIONUSER" columnName="ASSIGNUSER_FIRSTNAME"/>
+    </attribute>
+    <attribute id="LOCKUSER_FIRSTNAME" order="8" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="FIRSTNAME"/>
+      <keyMapping columnObjectName="PACK_LJ_ACTION_LJ_MODUSER_LJ_ASSIGNUSER_LJ_LOCKUSER_LJ_ACTIONUSER" columnName="LOCKUSER_FIRSTNAME"/>
+    </attribute>
+    <attribute id="ACTIONUSER_FIRSTNAME" order="9" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="FIRSTNAME"/>
+      <keyMapping columnObjectName="PACK_LJ_ACTION_LJ_MODUSER_LJ_ASSIGNUSER_LJ_LOCKUSER_LJ_ACTIONUSER" columnName="ACTIONUSER_FIRSTNAME"/>
+    </attribute>
+    <attribute id="ACTIONUSER_LASTNAME" order="10" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="LASTNAME"/>
+      <keyMapping columnObjectName="PACK_LJ_ACTION_LJ_MODUSER_LJ_ASSIGNUSER_LJ_LOCKUSER_LJ_ACTIONUSER" columnName="ACTIONUSER_LASTNAME"/>
+    </attribute>
+    <attribute id="PACKAGEID" order="13" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="PACKAGEID"/>
+      <keyMapping columnObjectName="PACK_LJ_ACTION_LJ_MODUSER_LJ_ASSIGNUSER_LJ_LOCKUSER_LJ_ACTIONUSER" columnName="PACKAGEID"/>
+    </attribute>
+    <attribute id="DOC_STATUS" order="14" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="STATUS"/>
+      <keyMapping columnObjectName="PACK_LJ_ACTION_LJ_MODUSER_LJ_ASSIGNUSER_LJ_LOCKUSER_LJ_ACTIONUSER" columnName="DOC_STATUS"/>
+    </attribute>
+    <attribute id="CREATEDAT" order="15" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="CREATEDAT"/>
+      <keyMapping columnObjectName="PACK_LJ_ACTION_LJ_MODUSER_LJ_ASSIGNUSER_LJ_LOCKUSER_LJ_ACTIONUSER" columnName="PACK_CREATEDAT"/>
+    </attribute>
+    <attribute id="CREATEDBY" order="16" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="CREATEDBY"/>
+      <keyMapping columnObjectName="PACK_LJ_ACTION_LJ_MODUSER_LJ_ASSIGNUSER_LJ_LOCKUSER_LJ_ACTIONUSER" columnName="PACK_CREATEDBY"/>
+    </attribute>
+    <attribute id="LASTCHANGEDON" order="17" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="MODIFIEDAT"/>
+      <keyMapping columnObjectName="PACK_LJ_ACTION_LJ_MODUSER_LJ_ASSIGNUSER_LJ_LOCKUSER_LJ_ACTIONUSER" columnName="PACK_MODIFIEDAT"/>
+    </attribute>
+    <attribute id="ACTION" order="18" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="ACTION"/>
+      <keyMapping columnObjectName="PACK_LJ_ACTION_LJ_MODUSER_LJ_ASSIGNUSER_LJ_LOCKUSER_LJ_ACTIONUSER" columnName="LATEST_ACTION"/>
+    </attribute>
+    <attribute id="COMPANYCODE" order="19" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="COMPANYCODE"/>
+      <keyMapping columnObjectName="PACK_LJ_ACTION_LJ_MODUSER_LJ_ASSIGNUSER_LJ_LOCKUSER_LJ_ACTIONUSER" columnName="COMPANYCODE"/>
+    </attribute>
+    <attribute id="COMPANYCODEDESC" order="20" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="COMPANYCODEDESC"/>
+      <keyMapping columnObjectName="PACK_LJ_ACTION_LJ_MODUSER_LJ_ASSIGNUSER_LJ_LOCKUSER_LJ_ACTIONUSER" columnName="COMPANYCODEDESC"/>
+    </attribute>
+    <attribute id="PRIORITYCODE" order="21" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="PRIORITYCODE"/>
+      <keyMapping columnObjectName="PACK_LJ_ACTION_LJ_MODUSER_LJ_ASSIGNUSER_LJ_LOCKUSER_LJ_ACTIONUSER" columnName="PRIORITYCODE"/>
+    </attribute>
+    <attribute id="LASTCHANGEDBY" order="22" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="MODIFIEDBY"/>
+      <keyMapping columnObjectName="PACK_LJ_ACTION_LJ_MODUSER_LJ_ASSIGNUSER_LJ_LOCKUSER_LJ_ACTIONUSER" columnName="PACK_MODIFIEDBY"/>
+    </attribute>
+    <attribute id="LOCKEDAT" order="23" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="LOCKEDAT"/>
+      <keyMapping columnObjectName="PACK_LJ_ACTION_LJ_MODUSER_LJ_ASSIGNUSER_LJ_LOCKUSER_LJ_ACTIONUSER" columnName="PACK_LOCKEDAT"/>
+    </attribute>
+    <attribute id="LOCKEDBY" order="24" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="LOCKEDBY"/>
+      <keyMapping columnObjectName="PACK_LJ_ACTION_LJ_MODUSER_LJ_ASSIGNUSER_LJ_LOCKUSER_LJ_ACTIONUSER" columnName="PACK_LOCKEDBY"/>
+    </attribute>
+    <attribute id="ASSIGNEDTO" order="25" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="ASSIGNEDTO"/>
+      <keyMapping columnObjectName="PACK_LJ_ACTION_LJ_MODUSER_LJ_ASSIGNUSER_LJ_LOCKUSER_LJ_ACTIONUSER" columnName="PACK_ASSIGNEDTO"/>
+    </attribute>
+    <attribute id="ACTIONBY" order="26" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="ACTIONBY"/>
+      <keyMapping columnObjectName="PACK_LJ_ACTION_LJ_MODUSER_LJ_ASSIGNUSER_LJ_LOCKUSER_LJ_ACTIONUSER" columnName="LATEST_ACTIONBY"/>
+    </attribute>
+    <attribute id="INVOICENUMBER" order="27" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="DATIGENERALI_DATIGENERALIDOCUMENTO_NUMERO"/>
+      <keyMapping columnObjectName="PACK_LJ_ACTION_LJ_MODUSER_LJ_ASSIGNUSER_LJ_LOCKUSER_LJ_ACTIONUSER" columnName="NUMERO"/>
+    </attribute>
+    <attribute id="ID_OCCUR" order="29" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="BODY_ID"/>
+      <keyMapping columnObjectName="PACK_LJ_ACTION_LJ_MODUSER_LJ_ASSIGNUSER_LJ_LOCKUSER_LJ_ACTIONUSER" columnName="ID_OCCUR"/>
+    </attribute>
+  
+    <attribute id="IMPORTOTOTALEDOCUMENTO" order="30" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="DATIGENERALI_DATIGENERALIDOCUMENTO_IMPORTOTOTALEDOCUMENTO"/>
+  
+      <keyMapping columnObjectName="PACK_LJ_ACTION_LJ_MODUSER_LJ_ASSIGNUSER_LJ_LOCKUSER_LJ_ACTIONUSER" columnName="IMPORTOTOTALEDOCUMENTO"/>
+  
+    </attribute>
+  
+    <attribute id="REFERENCEDOCUMENT" order="31" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="REFERENCEDOCUMENT"/>
+  
+      <keyMapping columnObjectName="PACK_LJ_ACTION_LJ_MODUSER_LJ_ASSIGNUSER_LJ_LOCKUSER_LJ_ACTIONUSER" columnName="REFERENCEDOCUMENT"/>
+  
+    </attribute>
+  
+    <attribute id="FISCALYEAR" order="32" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="FISCALYEAR"/>
+  
+      <keyMapping columnObjectName="PACK_LJ_ACTION_LJ_MODUSER_LJ_ASSIGNUSER_LJ_LOCKUSER_LJ_ACTIONUSER" columnName="FISCALYEAR"/>
+  
+    </attribute>
+  </attributes>
+  <calculatedAttributes>
+    <calculatedAttribute id="LASTCHANGEDBYNAME" order="3" semanticType="empty" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="LASTCHANGEDBYNAME"/>
+      <keyCalculation datatype="NVARCHAR" expressionLanguage="SQL" length="101">
+        <formula>CONCAT(&quot;MODUSER_FIRSTNAME&quot;, CONCAT(' ', &quot;MODUSER_LASTNAME&quot;))</formula>
+      </keyCalculation>
+      </calculatedAttribute>
+    <calculatedAttribute id="ASSIGNEDTONAME" order="7" semanticType="empty" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="AssignedToName"/>
+      <keyCalculation datatype="NVARCHAR" expressionLanguage="SQL" length="101">
+        <formula>CONCAT(&quot;ASSIGNUSER_FIRSTNAME&quot;, CONCAT(' ', &quot;ASSIGNUSER_LASTNAME&quot;))</formula>
+      </keyCalculation>
+      </calculatedAttribute>
+    <calculatedAttribute id="LOCKEDBYNAME" order="11" semanticType="empty" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="LockedByName"/>
+      <keyCalculation datatype="NVARCHAR" expressionLanguage="SQL" length="101">
+        <formula>CONCAT(&quot;LOCKUSER_FIRSTNAME&quot;, CONCAT(' ', &quot;LOCKUSER_LASTNAME&quot;))</formula>
+      </keyCalculation>
+      </calculatedAttribute>
+    <calculatedAttribute id="ACTIONBYNAME" order="12" semanticType="empty" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="ActionByName"/>
+      <keyCalculation datatype="NVARCHAR" expressionLanguage="SQL" length="101">
+        <formula>CONCAT(&quot;ACTIONUSER_FIRSTNAME&quot;, CONCAT(' ', &quot;ACTIONUSER_LASTNAME&quot;))</formula>
+      </keyCalculation>
+      </calculatedAttribute>
+  
+    <calculatedAttribute id="DOCCATEGORY" order="28" semanticType="empty" displayAttribute="false" attributeHierarchyActive="false">
+  
+      <keyCalculation datatype="NVARCHAR" expressionLanguage="SQL" length="13">
+  
+        <formula>CASE &quot;ID_OCCUR&quot; 
+	 WHEN null then CASE  
+                     WHEN &quot;IMPORTOTOTALEDOCUMENTO&quot; &lt; 0 then 'NONPOCREDM' 
+                     ELSE 'NONPOINV' 
+                     END 
+	 ELSE CASE 
+            WHEN &quot;IMPORTOTOTALEDOCUMENTO&quot; &lt; 0 then 'POCREDM' 
+            ELSE 'POINV'
+            END 
+ END</formula>
+  
+      </keyCalculation>
+  
+      </calculatedAttribute>
+  </calculatedAttributes>
+  <baseMeasures/>
+  <calculatedMeasures/>
+  <restrictedMeasures/></logicalModel>
+<layout>
+  <shapes>
+    <shape expanded="true" modelObjectName="Output" modelObjectNameSpace="MeasureGroup">
+      <upperLeftCorner x="100" y="112"/>
+    
+      <rectangleSize width="160"/>
+    </shape>
+    <shape expanded="true" modelObjectName="MAX_SeqNo" modelObjectNameSpace="CalculationView">
+      <upperLeftCorner x="-611" y="1463"/>
+      <rectangleSize height="30" width="160"/>
+    </shape>
+    <shape expanded="true" modelObjectName="Projection_ORDINEACQUISTO" modelObjectNameSpace="CalculationView">
+      <upperLeftCorner x="-961" y="1453"/>
+      <rectangleSize height="30" width="160"/>
+    </shape>
+  
+    <shape expanded="true" modelObjectName="Latest_Action" modelObjectNameSpace="CalculationView">
+      <upperLeftCorner x="-611" y="1293"/>
+      <rectangleSize height="30" width="160"/>
+    </shape>
+    <shape modelObjectName="VIM_DOC_WF" modelObjectNameSpace="Latest_Action" modelObjectType="JoinNodeInput">
+      <upperLeftCorner x="20" y="30"/>
+      <rectangleSize width="154"/>
+    </shape>
+    <shape modelObjectName="MAX_SeqNo" modelObjectNameSpace="Latest_Action" modelObjectType="JoinNodeInput">
+      <upperLeftCorner x="320" y="30"/>
+      <rectangleSize width="149"/>
+    </shape>
+    <shape expanded="true" modelObjectName="PACK_LJ_ACTION" modelObjectNameSpace="CalculationView">
+      <upperLeftCorner x="-785" y="1109"/>
+      <rectangleSize height="30" width="160"/>
+    </shape>
+    <shape modelObjectName="PACK_JOIN_Fattura_3" modelObjectNameSpace="PACK_LJ_ACTION" modelObjectType="JoinNodeInput">
+      <upperLeftCorner x="20" y="30"/>
+      <rectangleSize width="250"/>
+    </shape><shape><upperLeftCorner/><rectangleSize/></shape><shape><upperLeftCorner/><rectangleSize/></shape><shape><upperLeftCorner/><rectangleSize/></shape><shape><upperLeftCorner/><rectangleSize/></shape><shape><upperLeftCorner/><rectangleSize/></shape><shape><upperLeftCorner/><rectangleSize/></shape><shape><upperLeftCorner/><rectangleSize/></shape><shape><upperLeftCorner/><rectangleSize/></shape><shape><upperLeftCorner/><rectangleSize/></shape><shape><upperLeftCorner/><rectangleSize/></shape>
+    <shape modelObjectName="Latest_Action" modelObjectNameSpace="PACK_LJ_ACTION" modelObjectType="JoinNodeInput">
+      <upperLeftCorner x="283" y="96"/>
+      <rectangleSize width="155"/>
+    </shape><shape><upperLeftCorner/><rectangleSize/></shape><shape><upperLeftCorner/><rectangleSize/></shape><shape><upperLeftCorner/><rectangleSize/></shape>
+    <shape expanded="true" modelObjectName="PACK_LJ_ACTION_LJ_MODUSER" modelObjectNameSpace="CalculationView">
+      <upperLeftCorner x="-543" y="935"/>
+      <rectangleSize height="30" width="160"/>
+    </shape>
+    <shape modelObjectName="PACK_LJ_ACTION" modelObjectNameSpace="PACK_LJ_ACTION_LJ_MODUSER" modelObjectType="JoinNodeInput">
+      <upperLeftCorner x="20" y="30"/>
+      <rectangleSize width="250"/>
+    </shape>
+    <shape modelObjectName="VIM_AP_USERS" modelObjectNameSpace="PACK_LJ_ACTION_LJ_MODUSER" modelObjectType="JoinNodeInput">
+      <upperLeftCorner x="320" y="30"/>
+      <rectangleSize width="177"/>
+    </shape>
+    <shape expanded="true" modelObjectName="PACK_LJ_ACTION_LJ_MODUSER_LJ_ASSIGNUSER" modelObjectNameSpace="CalculationView">
+      <upperLeftCorner x="-317" y="733"/>
+      <rectangleSize height="30" width="160"/>
+    </shape>
+    <shape modelObjectName="PACK_LJ_ACTION_LJ_MODUSER" modelObjectNameSpace="PACK_LJ_ACTION_LJ_MODUSER_LJ_ASSIGNUSER" modelObjectType="JoinNodeInput">
+      <upperLeftCorner x="20" y="30"/>
+      <rectangleSize width="250"/>
+    </shape>
+    <shape modelObjectName="VIM_AP_USERS" modelObjectNameSpace="PACK_LJ_ACTION_LJ_MODUSER_LJ_ASSIGNUSER" modelObjectType="JoinNodeInput">
+      <upperLeftCorner x="430" y="30"/>
+      <rectangleSize width="177"/>
+    </shape>
+    <shape expanded="true" modelObjectName="PACK_LJ_ACTION_LJ_MODUSER_LJ_ASSIGNUSER_LJ_LOCKUSER" modelObjectNameSpace="CalculationView">
+      <upperLeftCorner x="-117" y="510"/>
+      <rectangleSize height="30" width="160"/>
+    </shape>
+    <shape modelObjectName="PACK_LJ_ACTION_LJ_MODUSER_LJ_ASSIGNUSER" modelObjectNameSpace="PACK_LJ_ACTION_LJ_MODUSER_LJ_ASSIGNUSER_LJ_LOCKUSER" modelObjectType="JoinNodeInput">
+      <upperLeftCorner x="20" y="30"/>
+      <rectangleSize width="250"/>
+    </shape>
+    <shape modelObjectName="VIM_AP_USERS" modelObjectNameSpace="PACK_LJ_ACTION_LJ_MODUSER_LJ_ASSIGNUSER_LJ_LOCKUSER" modelObjectType="JoinNodeInput">
+      <upperLeftCorner x="488" y="30"/>
+      <rectangleSize width="177"/>
+    </shape>
+    <shape expanded="true" modelObjectName="PACK_LJ_ACTION_LJ_MODUSER_LJ_ASSIGNUSER_LJ_LOCKUSER_LJ_ACTIONUSER" modelObjectNameSpace="CalculationView">
+      <upperLeftCorner x="100" y="300"/>
+      <rectangleSize height="30" width="160"/>
+    </shape>
+  
+    <shape modelObjectName="PACK_LJ_ACTION_LJ_MODUSER_LJ_ASSIGNUSER_LJ_LOCKUSER" modelObjectNameSpace="PACK_LJ_ACTION_LJ_MODUSER_LJ_ASSIGNUSER_LJ_LOCKUSER_LJ_ACTIONUSER" modelObjectType="JoinNodeInput">
+      <upperLeftCorner x="20" y="30"/>
+      <rectangleSize width="250"/>
+    </shape>
+    <shape modelObjectName="VIM_AP_USERS" modelObjectNameSpace="PACK_LJ_ACTION_LJ_MODUSER_LJ_ASSIGNUSER_LJ_LOCKUSER_LJ_ACTIONUSER" modelObjectType="JoinNodeInput">
+      <upperLeftCorner x="635" y="552"/>
+      <rectangleSize width="177"/>
+    </shape>
+    <shape expanded="true" modelObjectName="PACK_JOIN_Fattura" modelObjectNameSpace="CalculationView">
+      <upperLeftCorner x="-961" y="1293"/>
+      <rectangleSize height="30" width="160"/>
+    </shape>
+  
+    <shape modelObjectName="VIM_DOC_PACK" modelObjectNameSpace="PACK_JOIN_Fattura" modelObjectType="JoinNodeInput" multiJoinViewNodeName="PACK_JOIN_Fattura">
+      <upperLeftCorner x="20" y="30"/>
+      <rectangleSize width="203"/>
+    </shape>
+    <shape modelObjectName="VIM_FATTURAELETTRONICA" modelObjectNameSpace="PACK_JOIN_Fattura" modelObjectType="JoinNodeInput" multiJoinViewNodeName="PACK_JOIN_Fattura">
+      <upperLeftCorner x="520" y="38"/>
+      <rectangleSize width="617"/>
+    </shape>
+    <shape modelObjectName="VIM_FATTURAELETTRONICABODY" modelObjectNameSpace="PACK_JOIN_Fattura" modelObjectType="JoinNodeInput" multiJoinViewNodeName="PACK_JOIN_Fattura">
+      <upperLeftCorner x="1395" y="51"/>
+      <rectangleSize width="494"/>
+    </shape>
+    <shape modelObjectName="Projection_ORDINEACQUISTO" modelObjectNameSpace="PACK_JOIN_Fattura" modelObjectType="JoinNodeInput" multiJoinViewNodeName="PACK_JOIN_Fattura">
+      <upperLeftCorner x="1981" y="62"/>
+      <rectangleSize width="136"/>
+    </shape></shapes>
+</layout>
+</Calculation:scenario>
