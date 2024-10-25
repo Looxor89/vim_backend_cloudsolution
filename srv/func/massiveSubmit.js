@@ -96,16 +96,48 @@ module.exports = async (request, tx) => {
 
                 let oPayload = poAccountBuildPayload(jsonInvoice);
 
-                const oResult = await serviceRequestS4_HANA.post(process.env['Path_API_SUPPLIER_INVOICE'], oPayload);
+                let oResult = await serviceRequestS4_HANA.post(process.env['Path_API_SUPPLIER_INVOICE'], oPayload),
+                sReferenceDocument = oResult.SupplierInvoice,
+                sFiscalYear = oResult.FiscalYear,
+                sCompanyCode = oResult.CompanyCode;
+
+                // Perform GET request in order to get AccountingDocument
+                oResult = await serviceRequestS4_HANA.get(process.env['Path_API_GLACCOUNTLINEITEM'] + `?$select=AccountingDocument&$format=json&$filter=ReferenceDocument eq '${sReferenceDocument}'&$top=1`);
+                let sAccountingDocument = oResult[0].AccountingDocument,
+                    LinkedSapObjectKey = sCompanyCode + sAccountingDocument.padStart(10, "0") + sFiscalYear,
+                    oInvoiceAttachments = jsonInvoice.body[0].allegati;
+
+                oInvoiceAttachments.forEach(async (oAttachment) => {
+                    let oBody = {
+                        "DocumentInfoRecordDocType": oAttachment.formatoAttachment,
+                        "Content": oAttachment.attachment,
+                        "Content-Disposition": "form-data",
+                        "name": "myFileUpload[]",
+                        "filename": oAttachment.nomeAttachment,
+                        "Content-Type": mimeTypes(oAttachment.formatoAttachment.toLowerCase())
+                    },
+                    oHeaders = {
+                        'slug': oAttachment.nomeAttachment,
+                        'BusinessObjectTypeName': 'BKPF',
+                        'LinkedSAPObjectKey': LinkedSapObjectKey
+                    };
+
+                    // Perform POST request
+                    await serviceRequestS4_HANA.post(
+                        process.env['Path_API_CV_ATTACHMENT_SRV'],
+                        oBody,
+                        oHeaders
+                    );
+                });
 
                 const updateDocPackQuery = UPDATE('DOC_PACK')
                     .set({
                         ModifiedBy: modifiedBy,
                         ModifiedAt: modifiedAt,
                         Status: 'POSTED',
-                        ReferenceDocument: oResult.SupplierInvoice,
-                        FiscalYear: oResult.FiscalYear,
-                        CompanyCode: oResult.CompanyCode
+                        ReferenceDocument: sReferenceDocument,
+                        FiscalYear: sFiscalYear,
+                        CompanyCode: sCompanyCode
                     })
                     .where({ PackageId: jsonInvoice.navigation_to_PackageId });
 
