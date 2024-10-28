@@ -41,6 +41,8 @@ context vim {
         CompanyCode       : String(4);
         CompanyCodeDesc   : String(40);
         PriorityCode      : String(2);
+        InvoiceName       : String(255);
+        InvoiceXML        : LargeString;
         Invoice           : Association to one FatturaElettronica
                               on Invoice.navigation_to = $self;
   }
