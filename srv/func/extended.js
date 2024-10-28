@@ -13,7 +13,7 @@ module.exports = async (request, tx) => {
 
         // If the user has permission to read specific data, set 'ASSIGNEDTO' to the user's ID.
         if (checkReadData(request.req)) {
-            params.ASSIGNEDTO = request.req.user.id;
+            params.ASSIGNEDTO = request.req.authInfo.getLogonName();
         }
 
         console.log("REQUEST: ", request.req);

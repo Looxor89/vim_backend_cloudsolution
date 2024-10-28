@@ -24,7 +24,7 @@ module.exports = async (request, tx) => {
                 AttachmentExtension,
                 Attachment
             } = request.data.payload,
-                updatedBy = request.req.user.id,
+                updatedBy = request.req.authInfo.getLogonName(),
                 updatedAt = new Date(),
                 data, updateDocPackQuery, insertAllegatiQuery;
 

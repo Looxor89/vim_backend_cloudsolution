@@ -17,7 +17,7 @@ module.exports = async (request, tx) => {
                 PackageId,
                 AssignedTo
             } = request.data.payload,
-                updatedBy = request.req.user.id,
+                updatedBy = request.req.authInfo.getLogonName(),
                 updatedAt = new Date(),
                 lockedAt = moment().utc().format('YYYY-MM-DD HH:mm:ss'),
                 data, query, updateDocPackQuery, insertDocWfQuery;

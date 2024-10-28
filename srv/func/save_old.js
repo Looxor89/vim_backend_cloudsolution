@@ -19,9 +19,9 @@ module.exports = async (request, tx) => {
             } = request.data.payload,
                 credit = null,
                 insertDocExtQuery,
-                createdBy = request.req.user.id,
+                createdBy = request.req.authInfo.getLogonName(),
                 createdAt = new Date(),
-                modifiedBy = request.req.user.id,
+                modifiedBy = request.req.authInfo.getLogonName(),
                 modifiedAt = new Date(),
                 data, updateDocPackQuery, updateDockListQuery;
             let jsonInvoice = JSON.parse(invoice),

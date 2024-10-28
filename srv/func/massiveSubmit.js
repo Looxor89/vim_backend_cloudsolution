@@ -18,7 +18,7 @@ module.exports = async (request, tx) => {
     }
 
     const aInvoices = request.data.payload;
-    const modifiedBy = request.req.user.id;
+    const modifiedBy = request.req.authInfo.getLogonName();
     const modifiedAt = new Date();
     let aGLAccountInvoices = [], aPOInvoices = [], aErrorInvoicesPackageId = [];
 

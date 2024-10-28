@@ -12,7 +12,7 @@ module.exports = async (request, tx) => {
             PackageId,
             Invoice
         } = request.data.payload,
-            modifiedBy = request.req.user.id,
+            modifiedBy = request.req.authInfo.getLogonName(),
             modifiedAt = new Date(),
             data;
         let jsonInvoice = JSON.parse(Invoice)

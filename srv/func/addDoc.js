@@ -18,8 +18,8 @@ module.exports = async (request, tx) => {
                 FileName,
                 ObjectStoreRef
             } = request.data.payload,
-                createdBy = request.req.user.id,
-                updatedBy = request.req.user.id,
+                createdBy = request.req.authInfo.getLogonName(),
+                updatedBy = request.req.authInfo.getLogonName(),
                 updatedAt = new Date(),
                 createdAt = new Date(),
                 data, updateDocPackQuery, insertDocListQuery;

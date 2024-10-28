@@ -64,7 +64,7 @@ module.exports = async (request, tx) => {
                 };
             }
 
-            LockUser = LockUser == null ? request.req.user.id : LockUser;
+            LockUser = LockUser == null ? request.req.authInfo.getLogonName() : LockUser;
             if (checkAdminScope(request.req)) {
                 sMode = 'ADMIN_REMOVE';
             }
