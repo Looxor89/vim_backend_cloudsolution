@@ -39,10 +39,9 @@ function getDateWithMilliseconds(sDate) {
 
 /**
  * 
- * @param {String} sDate 
  * @returns a string containing date in format /Date(1727733600000)/
  */
-function getDateWithMillisecondsWithoutParam(sDate) {
+function getDateWithMillisecondsWithoutParam() {
     return `/Date(${(new Date().getTime())})/`;
 };
 
