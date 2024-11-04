@@ -5,6 +5,28 @@ const { checkAdminScope, checkManagerScope, checkOperatorScope, checkReviewer_SC
 module.exports = async (request, tx) => {
     let props = null;  // Initialize props to store permissions/actions for the user.
 
+    props = {
+        action: {
+            forward: true,       // Allow forwarding actions.
+            assign: true,        // Allow assigning tasks.
+            reject: true,        // Allow rejecting items.
+            managelock: true,    // Allow managing locks on tasks.
+            save: true,          // Allow saving progress.
+            savesap: true,       // Allow SAP-related saves.
+            comment: true,       // Allow commenting.
+            upload: true,        // Allow file uploads.
+            download: true,      // Allow file downloads.
+            admin: true,         // Grant admin-specific permissions.
+            header_edit: true,   // Allow editing the header.
+            line_edit: true      // Allow editing line items.
+        }
+    }
+
+    return {
+        status: 200,
+        result: props  // Return permissions.
+    };
+
     // Check if the user has admin privileges.
     if (checkAdminScope(request.req)) {
         props = {

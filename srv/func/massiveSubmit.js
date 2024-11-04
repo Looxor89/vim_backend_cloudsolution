@@ -7,15 +7,6 @@ const moment = require('moment');
 "use strict";
 
 module.exports = async (request, tx) => {
-    // Check if the user has the necessary permissions to submit the action
-    if (!checkSubmitScope(request.req)) {
-        return {
-            code: '403',
-            message: 'Forbidden',
-            target: 'Missing the assign scope',
-            status: 403
-        };
-    }
 
     const aInvoices = request.data.payload;
     const modifiedBy = request.req.authInfo.getLogonName();
@@ -97,9 +88,9 @@ module.exports = async (request, tx) => {
                 let oPayload = poAccountBuildPayload(jsonInvoice);
 
                 let oResult = await serviceRequestS4_HANA.post(process.env['Path_API_SUPPLIER_INVOICE'], oPayload),
-                sReferenceDocument = oResult.SupplierInvoice,
-                sFiscalYear = oResult.FiscalYear,
-                sCompanyCode = oResult.CompanyCode;
+                    sReferenceDocument = oResult.SupplierInvoice,
+                    sFiscalYear = oResult.FiscalYear,
+                    sCompanyCode = oResult.CompanyCode;
 
                 // Perform GET request in order to get AccountingDocument
                 oResult = await serviceRequestS4_HANA.get(process.env['Path_API_GLACCOUNTLINEITEM'] + `?$select=AccountingDocument&$format=json&$filter=ReferenceDocument eq '${sReferenceDocument}'&$top=1`);
@@ -116,11 +107,11 @@ module.exports = async (request, tx) => {
                         "filename": oAttachment.nomeAttachment,
                         "Content-Type": mimeTypes(oAttachment.formatoAttachment.toLowerCase())
                     },
-                    oHeaders = {
-                        'slug': oAttachment.nomeAttachment,
-                        'BusinessObjectTypeName': 'BKPF',
-                        'LinkedSAPObjectKey': LinkedSapObjectKey
-                    };
+                        oHeaders = {
+                            'slug': oAttachment.nomeAttachment,
+                            'BusinessObjectTypeName': 'BKPF',
+                            'LinkedSAPObjectKey': LinkedSapObjectKey
+                        };
 
                     // Perform POST request
                     await serviceRequestS4_HANA.post(
