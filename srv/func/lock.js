@@ -37,8 +37,8 @@ module.exports = async (request, tx) => {
                 };
                 // Defining update dock_pack query
                 let updateDocPackQuery = UPDATE('DOC_PACK')
-                    .set(`LockedAt = '${LockedAt}', LockedBy = '${LockedBy}'`)
-                    .where(`PackageId = '${PackageId}'`);
+                    .set({ LockedAt: LockedAt, LockedBy: LockedBy })
+                    .where({ PackageId: PackageId });
                 // Execute the query and retrieve the data from the database.
                 let aResult = await tx.run(updateDocPackQuery);
 
