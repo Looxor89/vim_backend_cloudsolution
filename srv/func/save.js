@@ -1,6 +1,7 @@
 const { checkSaveScope } = require('./utils/scopes');
 const schema = require('./utils/validator');
 const moment = require('moment');
+const { v4: uuidv4 } = require('uuid');
 
 "use strict";
 
@@ -83,9 +84,16 @@ module.exports = async (request, tx) => {
                     }
                     delete oGoodsLineDetail.altriDatiGestionali;
 
-                    let query = UPDATE('DettaglioLinee')
-                        .set(oGoodsLineDetail)
-                        .where(`ID = '${oGoodsLineDetail.ID}'`);
+                    let query = null;
+                    if (oGoodsLineDetail.ID != null) {
+                        query = UPDATE('DettaglioLinee')
+                            .set(oGoodsLineDetail)
+                            .where(`ID = '${oGoodsLineDetail.ID}'`);
+                    } else {
+                        oGoodsLineDetail.ID = uuidv4();
+                        query = INSERT('DettaglioLinee')
+                            .set(oGoodsLineDetail);
+                    }
 
                     data = await tx.run(query);
                     handleQueryError(data);
