@@ -9,6 +9,10 @@ module.exports = async (request, tx) => {
     // Extract query parameters from the incoming request.
     let params = request.req.query;
 
+    // Extract pagination parameters ($top and $skip)
+    const top = parseInt(params.$top) || 10;   // Default value for $top is 10
+    const skip = parseInt(params.$skip) || 0;  // Default value for $skip is 0
+
     // If the user has permission to read specific data, set 'ASSIGNEDTO' to the user's ID.
     if (checkReadData(request.req)) {
         params.ASSIGNEDTO = request.req.authInfo.getLogonName();
@@ -21,56 +25,57 @@ module.exports = async (request, tx) => {
 
     try {
         // Build a base query to select all fields from the 'V_DOC_EXTENDED' table.
-        query = SELECT('*').from('V_DOC_EXTENDED');
+        query = SELECT('*').from('V_DOC_EXTENDED').limit(top, skip);
 
         // If there are parameters present in the request, proceed to process each one.
         if (params != null && Object.keys(params).length > 0) {
 
             // Iterate through each parameter in the request query.
             for (let i in params) {
+                if (i !== '$top' && i !== '$skip') {
+                    if (i === 'ASSIGNEDTO') {
+                        // Handle 'ASSIGNEDTO' parameter (filter for documents assigned to the user).
+                        let keys = parseMultipleParamsForDocPack(params[i]);
+                        whereConditions.push(`${i} LIKE ${keys[0]} OR (ACTION = 'FORWARD' AND ACTIONBY LIKE ${keys[0]})`);
 
-                if (i === 'ASSIGNEDTO') {
-                    // Handle 'ASSIGNEDTO' parameter (filter for documents assigned to the user).
-                    let keys = parseMultipleParamsForDocPack(params[i]);
-                    whereConditions.push(`${i} LIKE ${keys[0]} OR (ACTION = 'FORWARD' AND ACTIONBY LIKE ${keys[0]})`);
+                    } else if (i === 'CREATEDAT' || i === 'MODIFIEDAT') {
+                        // Handle date range parameters ('CREATEDAT' and 'MODIFIEDAT').
+                        let paramValues = params[i].split(',');
+                        whereConditions.push(`${i} BETWEEN '${paramValues[0]}' AND '${paramValues[1]}'`);
 
-                } else if (i === 'CREATEDAT' || i === 'MODIFIEDAT') {
-                    // Handle date range parameters ('CREATEDAT' and 'MODIFIEDAT').
-                    let paramValues = params[i].split(',');
-                    whereConditions.push(`${i} BETWEEN '${paramValues[0]}' AND '${paramValues[1]}'`);
+                    } else if (i === 'ISMAIN') {
+                        // Handle 'ISMAIN' parameter (whether the document is the main one).
+                        let paramValues = params[i].split(',');
+                        whereConditions.push(`${i} = ${paramValues.join()}`);
 
-                } else if (i === 'ISMAIN') {
-                    // Handle 'ISMAIN' parameter (whether the document is the main one).
-                    let paramValues = params[i].split(',');
-                    whereConditions.push(`${i} = ${paramValues.join()}`);
-
-                } else if (i === 'DOC_STATUS') {
-                    // Handle 'DOC_STATUS' parameter (the status of the document).
-                    let docstat = [];
-                    let paramValues = params[i].split(',');
-                    for (let j = 0; j < paramValues.length; j++) {
-                        docstat.push(`${i} = '${paramValues[j]}'`);
-                    }
-                    whereConditions.push(`(${docstat.join(' OR ')})`);
-
-                } else {
-                    // Handle generic filters for other parameters.
-                    let keys = parseMultipleParamsForDocPack(params[i]);
-
-                    // If the parameter contains a wildcard ('%'), use LIKE for partial matching.
-                    if (/\%/.test(keys)) {
-                        for (let j in keys) {
-                            if (i === 'DOCCATEGORY') {
-                                // Special handling for 'DOCCATEGORY'.
-                                whereConditions.push(`${i} = ${keys[j]}`);
-                            } else {
-                                // Apply LIKE for partial matching on other parameters.
-                                whereConditions.push(`${i} LIKE ${keys[j]}`);
-                            }
+                    } else if (i === 'DOC_STATUS') {
+                        // Handle 'DOC_STATUS' parameter (the status of the document).
+                        let docstat = [];
+                        let paramValues = params[i].split(',');
+                        for (let j = 0; j < paramValues.length; j++) {
+                            docstat.push(`${i} = '${paramValues[j]}'`);
                         }
+                        whereConditions.push(`(${docstat.join(' OR ')})`);
+
                     } else {
-                        // For non-wildcard parameters, use exact match with '='.
-                        whereConditions.push(`${i} = ${keys.join()}`);
+                        // Handle generic filters for other parameters.
+                        let keys = parseMultipleParamsForDocPack(params[i]);
+
+                        // If the parameter contains a wildcard ('%'), use LIKE for partial matching.
+                        if (/\%/.test(keys)) {
+                            for (let j in keys) {
+                                if (i === 'DOCCATEGORY') {
+                                    // Special handling for 'DOCCATEGORY'.
+                                    whereConditions.push(`${i} = ${keys[j]}`);
+                                } else {
+                                    // Apply LIKE for partial matching on other parameters.
+                                    whereConditions.push(`${i} LIKE ${keys[j]}`);
+                                }
+                            }
+                        } else {
+                            // For non-wildcard parameters, use exact match with '='.
+                            whereConditions.push(`${i} = ${keys.join()}`);
+                        }
                     }
                 }
             }
