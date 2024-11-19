@@ -298,6 +298,18 @@ module.exports = function (srv) {
     });
 
     /**
+     * Function for handling getInvoice requests based on role scopes.
+     * 
+     * This function listens for the 'getInvoice' event, which is used to get Invoice details (header and body).
+     * The logic is encapsulated in the './func/getInvoice' file.
+     * 
+     * @param {object} srv - Service object that manages request listeners and interactions with the data model.
+     */
+    srv.on('getInvoice', '*', async request => {
+        await performRequest(srv, request, './func/getInvoice');
+    });
+
+    /**
      * Function for handling add notes requests based on role scopes.
      * 
      * This function listens for the 'addNotes' event, which is used to adding notes for invoices.

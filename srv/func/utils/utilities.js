@@ -45,8 +45,33 @@ function getDateWithMillisecondsWithoutParam() {
     return `/Date(${(new Date().getTime())})/`;
 };
 
+/**
+ * 
+ * @param {String} sDate 
+ * @returns Date
+ */
+function formatDateFromString(sDate) {
+    let aDate = sDate.split("-"),
+    sYear = aDate[0], sMonth = aDate[1] - 1, sDay = aDate[2];
+    return new Date(sYear, sMonth, sDay);
+}
+
+/**
+ * 
+ * @param {Date} dDate 
+ * @returns Date in yyyy-MM-dd format
+ */
+function formatDateToString(dDate) {
+    let sYear = dDate.getFullYear(),
+    sMonth = dDate.getMonth() + 1,
+    sDay = dDate.getDate();
+    return sYear+"-"+sMonth+"-"+sDay;
+}
+
 module.exports = {
     parseMultipleParamsForDocPack,
     getDateWithMilliseconds,
-    getDateWithMillisecondsWithoutParam
+    getDateWithMillisecondsWithoutParam,
+    formatDateFromString,
+    formatDateToString
 }

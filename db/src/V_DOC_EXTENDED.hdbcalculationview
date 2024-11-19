@@ -16,6 +16,12 @@
   <DataSource id="VIM_DOC_WF">
     <resourceUri>VIM_DOC_WF</resourceUri>
   </DataSource>
+  <DataSource id="Invoice_Header_IntegrationInfo$$$$VIM_DOC_PACK$$">
+    <resourceUri>VIM_DOC_PACK</resourceUri>
+  </DataSource>
+  <DataSource id="VIM_INVOICEINTEGRATIONINFO">
+    <resourceUri>VIM_INVOICEINTEGRATIONINFO</resourceUri>
+  </DataSource>
   <DataSource id="VIM_FATTURAELETTRONICABODY">
     <resourceUri>VIM_FATTURAELETTRONICABODY</resourceUri>
   </DataSource>
@@ -48,7 +54,7 @@
       <mapping xsi:type="Calculation:AttributeMapping" target="ID_OCCUR" source="BODY_ID"/>
     </input>
   </calculationView>
-  <calculationView xsi:type="Calculation:NonEquiJoinView" id="Invoice_Header" cardinality="C1_1" joinType="leftOuter">
+  <calculationView xsi:type="Calculation:NonEquiJoinView" id="Invoice_Header_ItalianTrace" cardinality="C1_1" joinType="leftOuter">
     <viewAttributes>
       <viewAttribute id="CREATEDAT"/>
       <viewAttribute id="CREATEDBY"/>
@@ -60,8 +66,6 @@
       <viewAttribute id="LOCKEDBY"/>
       <viewAttribute id="ASSIGNEDTO"/>
       <viewAttribute id="FLAG"/>
-      <viewAttribute id="COMPANYCODE"/>
-      <viewAttribute id="COMPANYCODEDESC"/>
       <viewAttribute id="PRIORITYCODE"/>
       <viewAttribute id="REFERENCEDOCUMENT"/>
       <viewAttribute id="FISCALYEAR"/>
@@ -79,8 +83,6 @@
       <mapping xsi:type="Calculation:AttributeMapping" target="LOCKEDBY" source="LOCKEDBY"/>
       <mapping xsi:type="Calculation:AttributeMapping" target="ASSIGNEDTO" source="ASSIGNEDTO"/>
       <mapping xsi:type="Calculation:AttributeMapping" target="FLAG" source="FLAG"/>
-      <mapping xsi:type="Calculation:AttributeMapping" target="COMPANYCODE" source="COMPANYCODE"/>
-      <mapping xsi:type="Calculation:AttributeMapping" target="COMPANYCODEDESC" source="COMPANYCODEDESC"/>
       <mapping xsi:type="Calculation:AttributeMapping" target="PRIORITYCODE" source="PRIORITYCODE"/>
       <mapping xsi:type="Calculation:AttributeMapping" target="REFERENCEDOCUMENT" source="REFERENCEDOCUMENT"/>
       <mapping xsi:type="Calculation:AttributeMapping" target="FISCALYEAR" source="FISCALYEAR"/>
@@ -99,7 +101,23 @@
     <restrictedViewAttributes/>
     <input node="VIM_DOC_WF"/>
   </calculationView>
-  <calculationView xsi:type="Calculation:NonEquiJoinView" id="Invoice_Body" cardinality="CN_N" joinType="inner">
+  <calculationView xsi:type="Calculation:NonEquiJoinView" id="Invoice_Header_IntegrationInfo" cardinality="C1_1" joinType="leftOuter">
+    <viewAttributes>
+      <viewAttribute id="PACKAGEID"/>
+      <viewAttribute id="COMPANYCODE"/>
+      <viewAttribute id="INVOICEREFERENCEFISCALYEAR"/>
+    </viewAttributes>
+    <calculatedViewAttributes/>
+    <input node="Invoice_Header_IntegrationInfo$$$$VIM_DOC_PACK$$">
+      <mapping xsi:type="Calculation:AttributeMapping" target="PACKAGEID" source="PACKAGEID"/>
+    </input>
+    <input node="VIM_INVOICEINTEGRATIONINFO">
+      <mapping xsi:type="Calculation:AttributeMapping" target="COMPANYCODE" source="COMPANYCODE"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="INVOICEREFERENCEFISCALYEAR" source="INVOICEREFERENCEFISCALYEAR"/>
+    </input>
+    <joinAttribute leftColumn="PACKAGEID" rightColumn="NAVIGATION_TO_PACKAGEID" operator="EQ"/>
+  </calculationView>
+  <calculationView xsi:type="Calculation:NonEquiJoinView" id="Invoice_Body" cardinality="CN_N" joinType="leftOuter">
     <viewAttributes>
       <viewAttribute id="DATIGENERALI_DATIGENERALIDOCUMENTO_TIPODOCUMENTO"/>
       <viewAttribute id="DATIGENERALI_DATIGENERALIDOCUMENTO_NUMERO"/>
@@ -148,7 +166,7 @@
     <filter>&quot;SEQNO&quot;=&quot;MAX_SEQNO&quot;</filter>
     <joinAttribute name="JOIN$PACKAGEID$PACKAGEID"/>
   </calculationView>
-  <calculationView xsi:type="Calculation:NonEquiJoinView" id="Invoice" cardinality="CN_N" joinType="leftOuter">
+  <calculationView xsi:type="Calculation:NonEquiJoinView" id="Invoice_Header" cardinality="C1_1" joinType="leftOuter">
     <viewAttributes>
       <viewAttribute id="CREATEDAT"/>
       <viewAttribute id="CREATEDBY"/>
@@ -161,14 +179,54 @@
       <viewAttribute id="ASSIGNEDTO"/>
       <viewAttribute id="FLAG"/>
       <viewAttribute id="COMPANYCODE"/>
-      <viewAttribute id="COMPANYCODEDESC"/>
       <viewAttribute id="PRIORITYCODE"/>
       <viewAttribute id="REFERENCEDOCUMENT"/>
       <viewAttribute id="FISCALYEAR"/>
+      <viewAttribute id="ID_FATTURAELETTRONICA"/>
+    </viewAttributes>
+    <calculatedViewAttributes/>
+    <input node="Invoice_Header_ItalianTrace">
+      <mapping xsi:type="Calculation:AttributeMapping" target="CREATEDAT" source="CREATEDAT"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="CREATEDBY" source="CREATEDBY"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="MODIFIEDAT" source="MODIFIEDAT"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="PACKAGEID" source="PACKAGEID"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="MODIFIEDBY" source="MODIFIEDBY"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="STATUS" source="STATUS"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="LOCKEDAT" source="LOCKEDAT"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="LOCKEDBY" source="LOCKEDBY"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="ASSIGNEDTO" source="ASSIGNEDTO"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="FLAG" source="FLAG"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="PRIORITYCODE" source="PRIORITYCODE"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="REFERENCEDOCUMENT" source="REFERENCEDOCUMENT"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="ID_FATTURAELETTRONICA" source="ID_FATTURAELETTRONICA"/>
+    </input>
+    <input node="Invoice_Header_IntegrationInfo">
+      <mapping xsi:type="Calculation:AttributeMapping" target="COMPANYCODE" source="COMPANYCODE"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="FISCALYEAR" source="INVOICEREFERENCEFISCALYEAR"/>
+    </input>
+    <joinAttribute leftColumn="PACKAGEID" rightColumn="PACKAGEID" operator="EQ"/>
+  </calculationView>
+  <calculationView xsi:type="Calculation:NonEquiJoinView" id="Invoice" cardinality="CN_N" joinType="inner">
+    <viewAttributes>
       <viewAttribute id="DATIGENERALI_DATIGENERALIDOCUMENTO_TIPODOCUMENTO"/>
       <viewAttribute id="DATIGENERALI_DATIGENERALIDOCUMENTO_NUMERO"/>
       <viewAttribute id="DATIGENERALI_DATIGENERALIDOCUMENTO_IMPORTOTOTALEDOCUMENTO"/>
       <viewAttribute id="ID_OCCUR"/>
+    
+      <viewAttribute id="CREATEDAT"/>
+      <viewAttribute id="CREATEDBY"/>
+      <viewAttribute id="MODIFIEDAT"/>
+      <viewAttribute id="PACKAGEID"/>
+      <viewAttribute id="MODIFIEDBY"/>
+      <viewAttribute id="STATUS"/>
+      <viewAttribute id="LOCKEDAT"/>
+      <viewAttribute id="LOCKEDBY"/>
+      <viewAttribute id="ASSIGNEDTO"/>
+      <viewAttribute id="FLAG"/>
+      <viewAttribute id="COMPANYCODE"/>
+      <viewAttribute id="PRIORITYCODE"/>
+      <viewAttribute id="REFERENCEDOCUMENT"/>
+      <viewAttribute id="FISCALYEAR"/>
     </viewAttributes>
     <calculatedViewAttributes/>
     <input node="Invoice_Header">
@@ -183,7 +241,6 @@
       <mapping xsi:type="Calculation:AttributeMapping" target="ASSIGNEDTO" source="ASSIGNEDTO"/>
       <mapping xsi:type="Calculation:AttributeMapping" target="FLAG" source="FLAG"/>
       <mapping xsi:type="Calculation:AttributeMapping" target="COMPANYCODE" source="COMPANYCODE"/>
-      <mapping xsi:type="Calculation:AttributeMapping" target="COMPANYCODEDESC" source="COMPANYCODEDESC"/>
       <mapping xsi:type="Calculation:AttributeMapping" target="PRIORITYCODE" source="PRIORITYCODE"/>
       <mapping xsi:type="Calculation:AttributeMapping" target="REFERENCEDOCUMENT" source="REFERENCEDOCUMENT"/>
       <mapping xsi:type="Calculation:AttributeMapping" target="FISCALYEAR" source="FISCALYEAR"/>
@@ -207,8 +264,6 @@
       <viewAttribute id="PACK_LOCKEDAT"/>
       <viewAttribute id="PACK_LOCKEDBY"/>
       <viewAttribute id="PACK_ASSIGNEDTO"/>
-      <viewAttribute id="COMPANYCODE"/>
-      <viewAttribute id="COMPANYCODEDESC"/>
       <viewAttribute id="PRIORITYCODE"/>
       <viewAttribute id="REFERENCEDOCUMENT"/>
       <viewAttribute id="FISCALYEAR"/>
@@ -219,6 +274,8 @@
       <viewAttribute id="LATEST_ACTION"/>
       <viewAttribute id="LATEST_ACTIONBY"/>
       <viewAttribute id="LATEST_ACTIONAT"/>
+    
+      <viewAttribute id="COMPANYCODE"/>
     </viewAttributes>
     <calculatedViewAttributes/>
     <input node="Invoice">
@@ -231,8 +288,6 @@
       <mapping xsi:type="Calculation:AttributeMapping" target="PACK_LOCKEDAT" source="LOCKEDAT"/>
       <mapping xsi:type="Calculation:AttributeMapping" target="PACK_LOCKEDBY" source="LOCKEDBY"/>
       <mapping xsi:type="Calculation:AttributeMapping" target="PACK_ASSIGNEDTO" source="ASSIGNEDTO"/>
-      <mapping xsi:type="Calculation:AttributeMapping" target="COMPANYCODE" source="COMPANYCODE"/>
-      <mapping xsi:type="Calculation:AttributeMapping" target="COMPANYCODEDESC" source="COMPANYCODEDESC"/>
       <mapping xsi:type="Calculation:AttributeMapping" target="PRIORITYCODE" source="PRIORITYCODE"/>
       <mapping xsi:type="Calculation:AttributeMapping" target="REFERENCEDOCUMENT" source="REFERENCEDOCUMENT"/>
       <mapping xsi:type="Calculation:AttributeMapping" target="FISCALYEAR" source="FISCALYEAR"/>
@@ -240,6 +295,8 @@
       <mapping xsi:type="Calculation:AttributeMapping" target="DATIGENERALI_DATIGENERALIDOCUMENTO_NUMERO" source="DATIGENERALI_DATIGENERALIDOCUMENTO_NUMERO"/>
       <mapping xsi:type="Calculation:AttributeMapping" target="DATIGENERALI_DATIGENERALIDOCUMENTO_IMPORTOTOTALEDOCUMENTO" source="DATIGENERALI_DATIGENERALIDOCUMENTO_IMPORTOTOTALEDOCUMENTO"/>
       <mapping xsi:type="Calculation:AttributeMapping" target="ID_OCCUR" source="ID_OCCUR"/>
+    
+      <mapping xsi:type="Calculation:AttributeMapping" target="COMPANYCODE" source="COMPANYCODE"/>
     </input>
     <input node="Latest_Action">
       <mapping xsi:type="Calculation:AttributeMapping" target="LATEST_ACTION" source="ACTION"/>
@@ -259,8 +316,6 @@
       <viewAttribute id="PACK_LOCKEDAT"/>
       <viewAttribute id="PACK_LOCKEDBY"/>
       <viewAttribute id="PACK_ASSIGNEDTO"/>
-      <viewAttribute id="COMPANYCODE"/>
-      <viewAttribute id="COMPANYCODEDESC"/>
       <viewAttribute id="PRIORITYCODE"/>
       <viewAttribute id="REFERENCEDOCUMENT"/>
       <viewAttribute id="FISCALYEAR"/>
@@ -278,6 +333,8 @@
       <viewAttribute id="MODUSER_DEPARTEMENT"/>
       <viewAttribute id="MODUSER_CUSTOMPARAM1"/>
       <viewAttribute id="MODUSER_CUSTOMPARAM2"/>
+    
+      <viewAttribute id="COMPANYCODE"/>
     </viewAttributes>
     <calculatedViewAttributes/>
     <input node="Invoice_with_LatestAction">
@@ -290,8 +347,6 @@
       <mapping xsi:type="Calculation:AttributeMapping" target="PACK_LOCKEDAT" source="PACK_LOCKEDAT"/>
       <mapping xsi:type="Calculation:AttributeMapping" target="PACK_LOCKEDBY" source="PACK_LOCKEDBY"/>
       <mapping xsi:type="Calculation:AttributeMapping" target="PACK_ASSIGNEDTO" source="PACK_ASSIGNEDTO"/>
-      <mapping xsi:type="Calculation:AttributeMapping" target="COMPANYCODE" source="COMPANYCODE"/>
-      <mapping xsi:type="Calculation:AttributeMapping" target="COMPANYCODEDESC" source="COMPANYCODEDESC"/>
       <mapping xsi:type="Calculation:AttributeMapping" target="PRIORITYCODE" source="PRIORITYCODE"/>
       <mapping xsi:type="Calculation:AttributeMapping" target="REFERENCEDOCUMENT" source="REFERENCEDOCUMENT"/>
       <mapping xsi:type="Calculation:AttributeMapping" target="FISCALYEAR" source="FISCALYEAR"/>
@@ -302,6 +357,8 @@
       <mapping xsi:type="Calculation:AttributeMapping" target="LATEST_ACTION" source="LATEST_ACTION"/>
       <mapping xsi:type="Calculation:AttributeMapping" target="LATEST_ACTIONBY" source="LATEST_ACTIONBY"/>
       <mapping xsi:type="Calculation:AttributeMapping" target="LATEST_ACTIONAT" source="LATEST_ACTIONAT"/>
+    
+      <mapping xsi:type="Calculation:AttributeMapping" target="COMPANYCODE" source="COMPANYCODE"/>
     </input>
     <input node="VIM_AP_USERS">
       <mapping xsi:type="Calculation:AttributeMapping" target="MODUSER_EMAIL" source="EMAIL"/>
@@ -325,8 +382,6 @@
       <viewAttribute id="PACK_LOCKEDAT"/>
       <viewAttribute id="PACK_LOCKEDBY"/>
       <viewAttribute id="PACK_ASSIGNEDTO"/>
-      <viewAttribute id="COMPANYCODE"/>
-      <viewAttribute id="COMPANYCODEDESC"/>
       <viewAttribute id="PRIORITYCODE"/>
       <viewAttribute id="REFERENCEDOCUMENT"/>
       <viewAttribute id="FISCALYEAR"/>
@@ -351,6 +406,8 @@
       <viewAttribute id="ASSIGN_DEPARTEMENT"/>
       <viewAttribute id="ASSIGN_CUSTOMPARAM1"/>
       <viewAttribute id="ASSIGN_CUSTOMPARAM2"/>
+    
+      <viewAttribute id="COMPANYCODE"/>
     </viewAttributes>
     <calculatedViewAttributes/>
     <input node="Invoice_with_LatestAction_and_ModUser">
@@ -363,8 +420,6 @@
       <mapping xsi:type="Calculation:AttributeMapping" target="PACK_LOCKEDAT" source="PACK_LOCKEDAT"/>
       <mapping xsi:type="Calculation:AttributeMapping" target="PACK_LOCKEDBY" source="PACK_LOCKEDBY"/>
       <mapping xsi:type="Calculation:AttributeMapping" target="PACK_ASSIGNEDTO" source="PACK_ASSIGNEDTO"/>
-      <mapping xsi:type="Calculation:AttributeMapping" target="COMPANYCODE" source="COMPANYCODE"/>
-      <mapping xsi:type="Calculation:AttributeMapping" target="COMPANYCODEDESC" source="COMPANYCODEDESC"/>
       <mapping xsi:type="Calculation:AttributeMapping" target="PRIORITYCODE" source="PRIORITYCODE"/>
       <mapping xsi:type="Calculation:AttributeMapping" target="REFERENCEDOCUMENT" source="REFERENCEDOCUMENT"/>
       <mapping xsi:type="Calculation:AttributeMapping" target="FISCALYEAR" source="FISCALYEAR"/>
@@ -382,6 +437,8 @@
       <mapping xsi:type="Calculation:AttributeMapping" target="MODUSER_DEPARTEMENT" source="MODUSER_DEPARTEMENT"/>
       <mapping xsi:type="Calculation:AttributeMapping" target="MODUSER_CUSTOMPARAM1" source="MODUSER_CUSTOMPARAM1"/>
       <mapping xsi:type="Calculation:AttributeMapping" target="MODUSER_CUSTOMPARAM2" source="MODUSER_CUSTOMPARAM2"/>
+    
+      <mapping xsi:type="Calculation:AttributeMapping" target="COMPANYCODE" source="COMPANYCODE"/>
     </input>
     <input node="Invoice_with_LatestAction_and_ModUser_and_AssignUser$$$$VIM_AP_USERS$$">
       <mapping xsi:type="Calculation:AttributeMapping" target="ASSIGN_EMAIL" source="EMAIL"/>
@@ -405,8 +462,6 @@
       <viewAttribute id="PACK_LOCKEDAT"/>
       <viewAttribute id="PACK_LOCKEDBY"/>
       <viewAttribute id="PACK_ASSIGNEDTO"/>
-      <viewAttribute id="COMPANYCODE"/>
-      <viewAttribute id="COMPANYCODEDESC"/>
       <viewAttribute id="PRIORITYCODE"/>
       <viewAttribute id="REFERENCEDOCUMENT"/>
       <viewAttribute id="FISCALYEAR"/>
@@ -438,6 +493,8 @@
       <viewAttribute id="LOCKUSER_DEPARTEMENT"/>
       <viewAttribute id="LOCKUSER_CUSTOMPARAM1"/>
       <viewAttribute id="LOCKUSER_CUSTOMPARAM2"/>
+    
+      <viewAttribute id="COMPANYCODE"/>
     </viewAttributes>
     <calculatedViewAttributes/>
     <input node="Invoice_with_LatestAction_and_ModUser_and_AssignUser">
@@ -450,8 +507,6 @@
       <mapping xsi:type="Calculation:AttributeMapping" target="PACK_LOCKEDAT" source="PACK_LOCKEDAT"/>
       <mapping xsi:type="Calculation:AttributeMapping" target="PACK_LOCKEDBY" source="PACK_LOCKEDBY"/>
       <mapping xsi:type="Calculation:AttributeMapping" target="PACK_ASSIGNEDTO" source="PACK_ASSIGNEDTO"/>
-      <mapping xsi:type="Calculation:AttributeMapping" target="COMPANYCODE" source="COMPANYCODE"/>
-      <mapping xsi:type="Calculation:AttributeMapping" target="COMPANYCODEDESC" source="COMPANYCODEDESC"/>
       <mapping xsi:type="Calculation:AttributeMapping" target="PRIORITYCODE" source="PRIORITYCODE"/>
       <mapping xsi:type="Calculation:AttributeMapping" target="REFERENCEDOCUMENT" source="REFERENCEDOCUMENT"/>
       <mapping xsi:type="Calculation:AttributeMapping" target="FISCALYEAR" source="FISCALYEAR"/>
@@ -476,6 +531,8 @@
       <mapping xsi:type="Calculation:AttributeMapping" target="ASSIGN_DEPARTEMENT" source="ASSIGN_DEPARTEMENT"/>
       <mapping xsi:type="Calculation:AttributeMapping" target="ASSIGN_CUSTOMPARAM1" source="ASSIGN_CUSTOMPARAM1"/>
       <mapping xsi:type="Calculation:AttributeMapping" target="ASSIGN_CUSTOMPARAM2" source="ASSIGN_CUSTOMPARAM2"/>
+    
+      <mapping xsi:type="Calculation:AttributeMapping" target="COMPANYCODE" source="COMPANYCODE"/>
     </input>
     <input node="Invoice_with_LatestAction_and_ModUser_and_LockUser$$$$VIM_AP_USERS$$">
       <mapping xsi:type="Calculation:AttributeMapping" target="LOCKUSER_EMAIL" source="EMAIL"/>
@@ -499,8 +556,6 @@
       <viewAttribute id="PACK_LOCKEDAT"/>
       <viewAttribute id="PACK_LOCKEDBY"/>
       <viewAttribute id="PACK_ASSIGNEDTO"/>
-      <viewAttribute id="COMPANYCODE"/>
-      <viewAttribute id="COMPANYCODEDESC"/>
       <viewAttribute id="PRIORITYCODE"/>
       <viewAttribute id="REFERENCEDOCUMENT"/>
       <viewAttribute id="FISCALYEAR"/>
@@ -539,6 +594,8 @@
       <viewAttribute id="ACTIONUSER_DEPARTEMENT"/>
       <viewAttribute id="ACTIONUSER_CUSTOMPARAM1"/>
       <viewAttribute id="ACTIONUSER_CUSTOMPARAM2"/>
+    
+      <viewAttribute id="COMPANYCODE"/>
     </viewAttributes>
     <calculatedViewAttributes/>
     <input node="Invoice_with_LatestAction_and_ModUser_and_LockUser">
@@ -551,8 +608,6 @@
       <mapping xsi:type="Calculation:AttributeMapping" target="PACK_LOCKEDAT" source="PACK_LOCKEDAT"/>
       <mapping xsi:type="Calculation:AttributeMapping" target="PACK_LOCKEDBY" source="PACK_LOCKEDBY"/>
       <mapping xsi:type="Calculation:AttributeMapping" target="PACK_ASSIGNEDTO" source="PACK_ASSIGNEDTO"/>
-      <mapping xsi:type="Calculation:AttributeMapping" target="COMPANYCODE" source="COMPANYCODE"/>
-      <mapping xsi:type="Calculation:AttributeMapping" target="COMPANYCODEDESC" source="COMPANYCODEDESC"/>
       <mapping xsi:type="Calculation:AttributeMapping" target="PRIORITYCODE" source="PRIORITYCODE"/>
       <mapping xsi:type="Calculation:AttributeMapping" target="REFERENCEDOCUMENT" source="REFERENCEDOCUMENT"/>
       <mapping xsi:type="Calculation:AttributeMapping" target="FISCALYEAR" source="FISCALYEAR"/>
@@ -584,6 +639,8 @@
       <mapping xsi:type="Calculation:AttributeMapping" target="LOCKUSER_DEPARTEMENT" source="LOCKUSER_DEPARTEMENT"/>
       <mapping xsi:type="Calculation:AttributeMapping" target="LOCKUSER_CUSTOMPARAM1" source="LOCKUSER_CUSTOMPARAM1"/>
       <mapping xsi:type="Calculation:AttributeMapping" target="LOCKUSER_CUSTOMPARAM2" source="LOCKUSER_CUSTOMPARAM2"/>
+    
+      <mapping xsi:type="Calculation:AttributeMapping" target="COMPANYCODE" source="COMPANYCODE"/>
     </input>
     <input node="Invoice_with_LatestAction_and_ModUser_and_LockUser_and_ActionPerformedUser$$$$VIM_AP_USERS$$">
       <mapping xsi:type="Calculation:AttributeMapping" target="ACTIONUSER_EMAIL" source="EMAIL"/>
@@ -636,105 +693,104 @@
       <descriptions defaultDescription="ASSIGNEDTO"/>
       <keyMapping columnObjectName="Invoice_with_LatestAction_and_ModUser_and_LockUser_and_ActionPerformedUser" columnName="PACK_ASSIGNEDTO"/>
     </attribute>
-    <attribute id="COMPANYCODE" order="10" displayAttribute="false" attributeHierarchyActive="false">
-      <descriptions defaultDescription="COMPANYCODE"/>
-      <keyMapping columnObjectName="Invoice_with_LatestAction_and_ModUser_and_LockUser_and_ActionPerformedUser" columnName="COMPANYCODE"/>
-    </attribute>
-    <attribute id="COMPANYCODEDESC" order="11" displayAttribute="false" attributeHierarchyActive="false">
-      <descriptions defaultDescription="COMPANYCODEDESC"/>
-      <keyMapping columnObjectName="Invoice_with_LatestAction_and_ModUser_and_LockUser_and_ActionPerformedUser" columnName="COMPANYCODEDESC"/>
-    </attribute>
-    <attribute id="PRIORITYCODE" order="12" displayAttribute="false" attributeHierarchyActive="false">
+    <attribute id="PRIORITYCODE" order="10" displayAttribute="false" attributeHierarchyActive="false">
       <descriptions defaultDescription="PRIORITYCODE"/>
       <keyMapping columnObjectName="Invoice_with_LatestAction_and_ModUser_and_LockUser_and_ActionPerformedUser" columnName="PRIORITYCODE"/>
     </attribute>
-    <attribute id="REFERENCEDOCUMENT" order="13" displayAttribute="false" attributeHierarchyActive="false">
+    <attribute id="REFERENCEDOCUMENT" order="11" displayAttribute="false" attributeHierarchyActive="false">
       <descriptions defaultDescription="REFERENCEDOCUMENT"/>
       <keyMapping columnObjectName="Invoice_with_LatestAction_and_ModUser_and_LockUser_and_ActionPerformedUser" columnName="REFERENCEDOCUMENT"/>
     </attribute>
-    <attribute id="FISCALYEAR" order="14" displayAttribute="false" attributeHierarchyActive="false">
+    <attribute id="FISCALYEAR" order="12" displayAttribute="false" attributeHierarchyActive="false">
       <descriptions defaultDescription="FISCALYEAR"/>
       <keyMapping columnObjectName="Invoice_with_LatestAction_and_ModUser_and_LockUser_and_ActionPerformedUser" columnName="FISCALYEAR"/>
     </attribute>
-    <attribute id="INVOICENUMBER" order="15" displayAttribute="false" attributeHierarchyActive="false">
+    <attribute id="INVOICENUMBER" order="13" displayAttribute="false" attributeHierarchyActive="false">
       <descriptions defaultDescription="DATIGENERALI_DATIGENERALIDOCUMENTO_NUMERO"/>
       <keyMapping columnObjectName="Invoice_with_LatestAction_and_ModUser_and_LockUser_and_ActionPerformedUser" columnName="DATIGENERALI_DATIGENERALIDOCUMENTO_NUMERO"/>
     </attribute>
-    <attribute id="IMPORTOTOTALEDOCUMENTO" order="16" displayAttribute="false" attributeHierarchyActive="false">
+    <attribute id="IMPORTOTOTALEDOCUMENTO" order="14" displayAttribute="false" attributeHierarchyActive="false">
       <descriptions defaultDescription="DATIGENERALI_DATIGENERALIDOCUMENTO_IMPORTOTOTALEDOCUMENTO"/>
       <keyMapping columnObjectName="Invoice_with_LatestAction_and_ModUser_and_LockUser_and_ActionPerformedUser" columnName="DATIGENERALI_DATIGENERALIDOCUMENTO_IMPORTOTOTALEDOCUMENTO"/>
     </attribute>
-    <attribute id="ID_OCCUR" order="17" displayAttribute="false" attributeHierarchyActive="false">
+    <attribute id="ID_OCCUR" order="15" displayAttribute="false" attributeHierarchyActive="false">
       <descriptions defaultDescription="ID_OCCUR"/>
       <keyMapping columnObjectName="Invoice_with_LatestAction_and_ModUser_and_LockUser_and_ActionPerformedUser" columnName="ID_OCCUR"/>
     </attribute>
-    <attribute id="ACTION" order="18" displayAttribute="false" attributeHierarchyActive="false">
+    <attribute id="ACTION" order="16" displayAttribute="false" attributeHierarchyActive="false">
       <descriptions defaultDescription="ACTION"/>
       <keyMapping columnObjectName="Invoice_with_LatestAction_and_ModUser_and_LockUser_and_ActionPerformedUser" columnName="LATEST_ACTION"/>
     </attribute>
-    <attribute id="ACTIONBY" order="19" displayAttribute="false" attributeHierarchyActive="false">
+    <attribute id="ACTIONBY" order="17" displayAttribute="false" attributeHierarchyActive="false">
       <descriptions defaultDescription="ACTIONBY"/>
       <keyMapping columnObjectName="Invoice_with_LatestAction_and_ModUser_and_LockUser_and_ActionPerformedUser" columnName="LATEST_ACTIONBY"/>
     </attribute>
-    <attribute id="MODUSER_FIRSTNAME" order="20" displayAttribute="false" attributeHierarchyActive="false">
+    <attribute id="MODUSER_FIRSTNAME" order="18" displayAttribute="false" attributeHierarchyActive="false">
       <descriptions defaultDescription="FIRSTNAME"/>
       <keyMapping columnObjectName="Invoice_with_LatestAction_and_ModUser_and_LockUser_and_ActionPerformedUser" columnName="MODUSER_FIRSTNAME"/>
     </attribute>
-    <attribute id="MODUSER_LASTNAME" order="21" displayAttribute="false" attributeHierarchyActive="false">
+    <attribute id="MODUSER_LASTNAME" order="19" displayAttribute="false" attributeHierarchyActive="false">
       <descriptions defaultDescription="LASTNAME"/>
       <keyMapping columnObjectName="Invoice_with_LatestAction_and_ModUser_and_LockUser_and_ActionPerformedUser" columnName="MODUSER_LASTNAME"/>
     </attribute>
-    <attribute id="ASSIGNUSER_FIRSTNAME" order="22" displayAttribute="false" attributeHierarchyActive="false">
+    <attribute id="ASSIGNUSER_FIRSTNAME" order="20" displayAttribute="false" attributeHierarchyActive="false">
       <descriptions defaultDescription="FIRSTNAME"/>
       <keyMapping columnObjectName="Invoice_with_LatestAction_and_ModUser_and_LockUser_and_ActionPerformedUser" columnName="ASSIGN_FIRSTNAME"/>
     </attribute>
-    <attribute id="ASSIGNUSER_LASTNAME" order="23" displayAttribute="false" attributeHierarchyActive="false">
+    <attribute id="ASSIGNUSER_LASTNAME" order="21" displayAttribute="false" attributeHierarchyActive="false">
       <descriptions defaultDescription="LASTNAME"/>
       <keyMapping columnObjectName="Invoice_with_LatestAction_and_ModUser_and_LockUser_and_ActionPerformedUser" columnName="ASSIGN_LASTNAME"/>
     </attribute>
-    <attribute id="LOCKUSER_FIRSTNAME" order="24" displayAttribute="false" attributeHierarchyActive="false">
+    <attribute id="LOCKUSER_FIRSTNAME" order="22" displayAttribute="false" attributeHierarchyActive="false">
       <descriptions defaultDescription="FIRSTNAME"/>
       <keyMapping columnObjectName="Invoice_with_LatestAction_and_ModUser_and_LockUser_and_ActionPerformedUser" columnName="LOCKUSER_FIRSTNAME"/>
     </attribute>
-    <attribute id="LOCKUSER_LASTNAME" order="25" displayAttribute="false" attributeHierarchyActive="false">
+    <attribute id="LOCKUSER_LASTNAME" order="23" displayAttribute="false" attributeHierarchyActive="false">
       <descriptions defaultDescription="LASTNAME"/>
       <keyMapping columnObjectName="Invoice_with_LatestAction_and_ModUser_and_LockUser_and_ActionPerformedUser" columnName="LOCKUSER_LASTNAME"/>
     </attribute>
-    <attribute id="ACTIONUSER_FIRSTNAME" order="26" displayAttribute="false" attributeHierarchyActive="false">
+    <attribute id="ACTIONUSER_FIRSTNAME" order="24" displayAttribute="false" attributeHierarchyActive="false">
       <descriptions defaultDescription="FIRSTNAME"/>
       <keyMapping columnObjectName="Invoice_with_LatestAction_and_ModUser_and_LockUser_and_ActionPerformedUser" columnName="ACTIONUSER_FIRSTNAME"/>
     </attribute>
-    <attribute id="ACTIONUSER_LASTNAME" order="27" displayAttribute="false" attributeHierarchyActive="false">
+    <attribute id="ACTIONUSER_LASTNAME" order="25" displayAttribute="false" attributeHierarchyActive="false">
       <descriptions defaultDescription="LASTNAME"/>
       <keyMapping columnObjectName="Invoice_with_LatestAction_and_ModUser_and_LockUser_and_ActionPerformedUser" columnName="ACTIONUSER_LASTNAME"/>
     </attribute>
+  
+    <attribute id="COMPANYCODE" order="26" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="COMPANYCODE"/>
+  
+      <keyMapping columnObjectName="Invoice_with_LatestAction_and_ModUser_and_LockUser_and_ActionPerformedUser" columnName="COMPANYCODE"/>
+  
+    </attribute>
   </attributes>
   <calculatedAttributes>
-    <calculatedAttribute id="LASTCHANGEDBYNAME" order="28" semanticType="empty" displayAttribute="false" attributeHierarchyActive="false">
+    <calculatedAttribute id="LASTCHANGEDBYNAME" order="27" semanticType="empty" displayAttribute="false" attributeHierarchyActive="false">
       <descriptions defaultDescription="LASTCHANGEDBYNAME"/>
       <keyCalculation datatype="NVARCHAR" expressionLanguage="SQL" length="101">
         <formula>CONCAT(&quot;MODUSER_FIRSTNAME&quot;, CONCAT(' ', &quot;MODUSER_LASTNAME&quot;))</formula>
       </keyCalculation>
-      </calculatedAttribute>
-    <calculatedAttribute id="ASSIGNEDTONAME" order="29" semanticType="empty" displayAttribute="false" attributeHierarchyActive="false">
+    </calculatedAttribute>
+    <calculatedAttribute id="ASSIGNEDTONAME" order="28" semanticType="empty" displayAttribute="false" attributeHierarchyActive="false">
       <descriptions defaultDescription="AssignedToName"/>
-      <keyCalculation datatype="NCHAR" expressionLanguage="SQL" length="101">
+      <keyCalculation datatype="NVARCHAR" expressionLanguage="SQL" length="13">
         <formula>CONCAT(&quot;ASSIGNUSER_FIRSTNAME&quot;, CONCAT(' ', &quot;ASSIGNUSER_LASTNAME&quot;))</formula>
       </keyCalculation>
-      </calculatedAttribute>
-    <calculatedAttribute id="LOCKEDBYNAME" order="30" semanticType="empty" displayAttribute="false" attributeHierarchyActive="false">
+    </calculatedAttribute>
+    <calculatedAttribute id="LOCKEDBYNAME" order="29" semanticType="empty" displayAttribute="false" attributeHierarchyActive="false">
       <descriptions defaultDescription="LockedByName"/>
       <keyCalculation datatype="NVARCHAR" expressionLanguage="SQL" length="101">
         <formula>CONCAT(&quot;LOCKUSER_FIRSTNAME&quot;, CONCAT(' ', &quot;LOCKUSER_LASTNAME&quot;))</formula>
       </keyCalculation>
-      </calculatedAttribute>
-    <calculatedAttribute id="ACTIONBYNAME" order="31" semanticType="empty" displayAttribute="false" attributeHierarchyActive="false">
+    </calculatedAttribute>
+    <calculatedAttribute id="ACTIONBYNAME" order="30" semanticType="empty" displayAttribute="false" attributeHierarchyActive="false">
       <descriptions defaultDescription="ActionByName"/>
       <keyCalculation datatype="NVARCHAR" expressionLanguage="SQL" length="101">
         <formula>CONCAT(&quot;ACTIONUSER_FIRSTNAME&quot;, CONCAT(' ', &quot;ACTIONUSER_LASTNAME&quot;))</formula>
       </keyCalculation>
-      </calculatedAttribute>
-    <calculatedAttribute id="DOCCATEGORY" order="32" semanticType="empty" displayAttribute="false" attributeHierarchyActive="false">
+    </calculatedAttribute>
+    <calculatedAttribute id="DOCCATEGORY" order="31" semanticType="empty" displayAttribute="false" attributeHierarchyActive="false">
       <keyCalculation datatype="NVARCHAR" expressionLanguage="SQL" length="13">
         <formula>CASE &quot;ID_OCCUR&quot; 
 	 WHEN null then CASE  
@@ -747,7 +803,7 @@
             END 
  END</formula>
       </keyCalculation>
-      </calculatedAttribute>
+    </calculatedAttribute>
   </calculatedAttributes>
   <baseMeasures/>
   <calculatedMeasures/>
@@ -755,32 +811,45 @@
 <layout>
   <shapes>
     <shape expanded="true" modelObjectName="Output" modelObjectNameSpace="MeasureGroup">
-      <upperLeftCorner x="102.78772423995304" y="112"/>
+      <upperLeftCorner x="195" y="112"/>
     
       <rectangleSize width="545"/>
     </shape>
     <shape expanded="true" modelObjectName="Projection_ORDINEACQUISTO" modelObjectNameSpace="CalculationView">
-      <upperLeftCorner x="121.95351208090013" y="1316.9999928474426"/>
+      <upperLeftCorner x="91" y="1316"/>
       <rectangleSize height="30" width="160"/>
     </shape>
-    <shape expanded="true" modelObjectName="Invoice_Header" modelObjectNameSpace="CalculationView">
-      <upperLeftCorner x="331.9535120809002" y="1176.9999928474426"/>
+    <shape expanded="true" modelObjectName="Invoice_Header_ItalianTrace" modelObjectNameSpace="CalculationView">
+      <upperLeftCorner x="512" y="1316"/>
       <rectangleSize height="30" width="160"/>
     </shape>
-    <shape modelObjectName="VIM_DOC_PACK" modelObjectNameSpace="Invoice_Header" modelObjectType="JoinNodeInput">
+    <shape modelObjectName="VIM_DOC_PACK" modelObjectNameSpace="Invoice_Header_ItalianTrace" modelObjectType="JoinNodeInput">
       <upperLeftCorner x="20" y="30"/>
       <rectangleSize width="217"/>
     </shape>
-    <shape modelObjectName="VIM_FATTURAELETTRONICA" modelObjectNameSpace="Invoice_Header" modelObjectType="JoinNodeInput">
+    <shape modelObjectName="VIM_FATTURAELETTRONICA" modelObjectNameSpace="Invoice_Header_ItalianTrace" modelObjectType="JoinNodeInput">
       <upperLeftCorner x="320" y="30"/>
       <rectangleSize width="617"/>
     </shape>
     <shape expanded="true" modelObjectName="MAX_SeqNo" modelObjectNameSpace="CalculationView">
-      <upperLeftCorner x="541.9535120809002" y="1176.9999928474426"/>
+      <upperLeftCorner x="580" y="1156"/>
       <rectangleSize height="30" width="160"/>
     </shape>
+  
+    <shape expanded="true" modelObjectName="Invoice_Header_IntegrationInfo" modelObjectNameSpace="CalculationView">
+      <upperLeftCorner x="302" y="1316"/>
+      <rectangleSize height="30" width="160"/>
+    </shape>
+    <shape modelObjectName="VIM_DOC_PACK" modelObjectNameSpace="Invoice_Header_IntegrationInfo" modelObjectType="JoinNodeInput">
+      <upperLeftCorner x="20" y="30"/>
+      <rectangleSize width="217"/>
+    </shape>
+    <shape modelObjectName="VIM_INVOICEINTEGRATIONINFO" modelObjectNameSpace="Invoice_Header_IntegrationInfo" modelObjectType="JoinNodeInput">
+      <upperLeftCorner x="320" y="30"/>
+      <rectangleSize width="298"/>
+    </shape>
     <shape expanded="true" modelObjectName="Invoice_Body" modelObjectNameSpace="CalculationView">
-      <upperLeftCorner x="121.95351208090013" y="1176.9999928474426"/>
+      <upperLeftCorner x="159" y="1156"/>
       <rectangleSize height="30" width="160"/>
     </shape>
     <shape modelObjectName="VIM_FATTURAELETTRONICABODY" modelObjectNameSpace="Invoice_Body" modelObjectType="JoinNodeInput">
@@ -793,7 +862,7 @@
       <rectangleSize width="239"/>
     </shape>
     <shape expanded="true" modelObjectName="Latest_Action" modelObjectNameSpace="CalculationView">
-      <upperLeftCorner x="481.96765222297313" y="1016.9999940395355"/>
+      <upperLeftCorner x="529" y="996"/>
       <rectangleSize height="30" width="160"/>
     </shape>
     <shape modelObjectName="VIM_DOC_WF" modelObjectNameSpace="Latest_Action" modelObjectType="JoinNodeInput">
@@ -804,21 +873,34 @@
       <upperLeftCorner x="320" y="30"/>
       <rectangleSize width="149"/>
     </shape>
-  
-    <shape expanded="true" modelObjectName="Invoice" modelObjectNameSpace="CalculationView">
-      <upperLeftCorner x="148.6201787475668" y="1016.9999940395355"/>
+    <shape expanded="true" modelObjectName="Invoice_Header" modelObjectNameSpace="CalculationView">
+      <upperLeftCorner x="370" y="1156"/>
       <rectangleSize height="30" width="160"/>
     </shape>
-    <shape modelObjectName="Invoice_Header" modelObjectNameSpace="Invoice" modelObjectType="JoinNodeInput">
+    <shape modelObjectName="Invoice_Header_ItalianTrace" modelObjectNameSpace="Invoice_Header" modelObjectType="JoinNodeInput">
       <upperLeftCorner x="20" y="30"/>
       <rectangleSize width="229"/>
     </shape>
-    <shape modelObjectName="Invoice_Body" modelObjectNameSpace="Invoice" modelObjectType="JoinNodeInput">
+    <shape modelObjectName="Invoice_Header_IntegrationInfo" modelObjectNameSpace="Invoice_Header" modelObjectType="JoinNodeInput">
       <upperLeftCorner x="320" y="30"/>
+      <rectangleSize width="250"/>
+    </shape>
+  
+  
+    <shape expanded="true" modelObjectName="Invoice" modelObjectNameSpace="CalculationView">
+      <upperLeftCorner x="185" y="996"/>
+      <rectangleSize height="30" width="160"/>
+    </shape><shape><upperLeftCorner/><rectangleSize/></shape>
+    <shape modelObjectName="Invoice_Header" modelObjectNameSpace="Invoice" modelObjectType="JoinNodeInput">
+      <upperLeftCorner x="16" y="16"/>
+      <rectangleSize width="229"/>
+    </shape>
+    <shape modelObjectName="Invoice_Body" modelObjectNameSpace="Invoice" modelObjectType="JoinNodeInput">
+      <upperLeftCorner x="309" y="96"/>
       <rectangleSize width="494"/>
     </shape>
     <shape expanded="true" modelObjectName="Invoice_with_LatestAction" modelObjectNameSpace="CalculationView">
-      <upperLeftCorner x="313.35789075412913" y="856.9999952316284"/>
+      <upperLeftCorner x="389" y="836"/>
       <rectangleSize height="30" width="227"/>
     </shape>
     <shape modelObjectName="Invoice" modelObjectNameSpace="Invoice_with_LatestAction" modelObjectType="JoinNodeInput">
@@ -830,7 +912,7 @@
       <rectangleSize width="155"/>
     </shape>
     <shape expanded="true" modelObjectName="Invoice_with_LatestAction_and_ModUser" modelObjectNameSpace="CalculationView">
-      <upperLeftCorner x="246.35789075412913" y="716.9999952316284"/>
+      <upperLeftCorner x="322" y="696"/>
       <rectangleSize height="30" width="361"/>
     </shape>
     <shape modelObjectName="Invoice_with_LatestAction" modelObjectNameSpace="Invoice_with_LatestAction_and_ModUser" modelObjectType="JoinNodeInput">
@@ -842,7 +924,7 @@
       <rectangleSize width="177"/>
     </shape>
     <shape expanded="true" modelObjectName="Invoice_with_LatestAction_and_ModUser_and_AssignUser" modelObjectNameSpace="CalculationView">
-      <upperLeftCorner x="173.3857401478769" y="556.9999964237213"/>
+      <upperLeftCorner x="257" y="536"/>
       <rectangleSize height="30" width="462"/>
     </shape>
     <shape modelObjectName="Invoice_with_LatestAction_and_ModUser" modelObjectNameSpace="Invoice_with_LatestAction_and_ModUser_and_AssignUser" modelObjectType="JoinNodeInput">
@@ -854,7 +936,7 @@
       <rectangleSize width="177"/>
     </shape>
     <shape expanded="true" modelObjectName="Invoice_with_LatestAction_and_ModUser_and_LockUser" modelObjectNameSpace="CalculationView">
-      <upperLeftCorner x="155.7106243809588" y="396.9999976158142"/>
+      <upperLeftCorner x="235" y="376"/>
       <rectangleSize height="30" width="464"/>
     </shape>
     <shape modelObjectName="Invoice_with_LatestAction_and_ModUser_and_AssignUser" modelObjectNameSpace="Invoice_with_LatestAction_and_ModUser_and_LockUser" modelObjectType="JoinNodeInput">
@@ -866,7 +948,7 @@
       <rectangleSize width="177"/>
     </shape>
     <shape expanded="true" modelObjectName="Invoice_with_LatestAction_and_ModUser_and_LockUser_and_ActionPerformedUser" modelObjectNameSpace="CalculationView">
-      <upperLeftCorner x="92" y="236.9999988079071"/>
+      <upperLeftCorner x="180" y="236"/>
       <rectangleSize height="30" width="573"/>
     </shape>
     <shape modelObjectName="Invoice_with_LatestAction_and_ModUser_and_LockUser" modelObjectNameSpace="Invoice_with_LatestAction_and_ModUser_and_LockUser_and_ActionPerformedUser" modelObjectType="JoinNodeInput">
@@ -876,7 +958,6 @@
     <shape modelObjectName="VIM_AP_USERS" modelObjectNameSpace="Invoice_with_LatestAction_and_ModUser_and_LockUser_and_ActionPerformedUser" modelObjectType="JoinNodeInput">
       <upperLeftCorner x="580" y="42"/>
       <rectangleSize width="177"/>
-    </shape>
-  </shapes>
+    </shape></shapes>
 </layout>
 </Calculation:scenario>

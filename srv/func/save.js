@@ -1,293 +1,441 @@
 const { checkSaveScope } = require('./utils/scopes');
 const schema = require('./utils/validator');
-const moment = require('moment');
 const { v4: uuidv4 } = require('uuid');
 
 "use strict";
 
 module.exports = async (request, tx) => {
-    // Extract payload data from the incoming request.
-    let {
-        PackageId,
-        Invoice
-    } = request.data.payload,
-        modifiedBy = request.req.authInfo.getLogonName(),
-        modifiedAt = new Date(),
-        data;
-    let jsonInvoice = JSON.parse(Invoice)
-    // Validate incoming payload
-    let { error } = schema.action_save_submit.validate(jsonInvoice, { abortEarly: false });
-    let valid = error == null;
-    //If payload is valid then do assign
-    if (valid) {
-        try {
-            if (jsonInvoice.body[0].allegati) {
-                jsonInvoice.body[0].allegati.forEach(async oAttachment => {
-                    let query = UPDATE('Allegati')
-                        .set(oAttachment)
-                        .where(`ID = '${oAttachment.ID}'`);
+    const { PackageId,
+        Invoice,
+        RemovedPoLineDetails,
+        RemovedGlAccountLineDetails } = request.data.payload;
+    const modifiedBy = request.req.authInfo.getLogonName();
+    const modifiedAt = new Date();
 
-                    data = await tx.run(query);
-                    handleQueryError(data);
-                });
-            }
-            delete jsonInvoice.body[0].allegati;
+    let jsonInvoice;
 
-            if (jsonInvoice.body[0].datiBeniServizi_DatiRiepilogo) {
-                jsonInvoice.body[0].datiBeniServizi_DatiRiepilogo.forEach(async oGoodsRecap => {
-                    let query = UPDATE('DatiRiepilogo')
-                        .set(oGoodsRecap)
-                        .where(`ID = '${oGoodsRecap.ID}'`);
+    try {
+        jsonInvoice = JSON.parse(Invoice);
+    } catch (err) {
+        console.error('Failed to parse invoice JSON:', err);
+        return { status: 422, message: 'Invalid Invoice JSON' }
+    }
 
-                    data = await tx.run(query);
-                    handleQueryError(data);
-                });
-            }
-            delete jsonInvoice.body[0].datiBeniServizi_DatiRiepilogo;
+    const valid = validateInvoice(jsonInvoice);
+    if (!valid.status) {
+        return { status: 422, message: valid.message }
+    }
 
+    const aNewPoLineDetails = jsonInvoice.PORecords.filter(oLineDetail => oLineDetail.lineDetail_ID  === null);
+    const aNewGlAccountLineDetails = jsonInvoice.GLAccountRecords.filter(oLineDetail => oLineDetail.lineDetail_ID  === null);
 
-            if (jsonInvoice.body[0].datiBeniServizi_DettaglioLinee) {
-                jsonInvoice.body[0].datiBeniServizi_DettaglioLinee.forEach(async oGoodsLineDetail => {
-                    if (oGoodsLineDetail.codiceArticolo) {
-                        oGoodsLineDetail.codiceArticolo.forEach(async oArticle => {
-                            let query = UPDATE('CodiceArticolo')
-                                .set(oArticle)
-                                .where(`ID = '${oArticle.ID}'`);
+    try {
+        await handleAttachments(jsonInvoice.Allegati, tx);
+        await updateHeaders(jsonInvoice, tx);
+        await updateBodies(jsonInvoice, tx);
+        await updatePaymentDetails(jsonInvoice, tx);
+        await updateLineDetails(jsonInvoice, tx);
+        await updateDocPack(modifiedBy, modifiedAt, PackageId, tx);
+        await insertLineDetails(jsonInvoice, aNewPoLineDetails, aNewGlAccountLineDetails, tx);
+        await deleteLineDetails(RemovedPoLineDetails, RemovedGlAccountLineDetails, tx);
 
-                            data = await tx.run(query);
-                            handleQueryError(data);
-                        })
-                    }
-                    delete oGoodsLineDetail.codiceArticolo;
-
-                    if (oGoodsLineDetail.scontoMaggiorazione) {
-                        oGoodsLineDetail.scontoMaggiorazione.forEach(async oDiscount => {
-                            let query = UPDATE('ScontoMaggiorazione')
-                                .set(oDiscount)
-                                .where(`ID = '${oDiscount.ID}'`);
-
-                            data = await tx.run(query);
-                            handleQueryError(data);
-                        })
-                    }
-                    delete oGoodsLineDetail.scontoMaggiorazione;
-
-                    if (oGoodsLineDetail.altriDatiGestionali) {
-                        oGoodsLineDetail.altriDatiGestionali.forEach(async oOtherData => {
-                            let query = UPDATE('AltriDatiGestionali')
-                                .set(oOtherData)
-                                .where(`ID = '${oOtherData.ID}'`);
-
-                            data = await tx.run(query);
-                            handleQueryError(data);
-                        })
-                    }
-                    delete oGoodsLineDetail.altriDatiGestionali;
-
-                    let query = null;
-                    if (oGoodsLineDetail.ID != null) {
-                        query = UPDATE('DettaglioLinee')
-                            .set(oGoodsLineDetail)
-                            .where(`ID = '${oGoodsLineDetail.ID}'`);
-                    } else {
-                        oGoodsLineDetail.ID = uuidv4();
-                        query = INSERT('DettaglioLinee')
-                            .set(oGoodsLineDetail);
-                    }
-
-                    data = await tx.run(query);
-                    handleQueryError(data);
-                });
-            }
-            delete jsonInvoice.body[0].datiBeniServizi_DettaglioLinee;
-
-            if (jsonInvoice.body[0].datiGenerali_DatiDDT) {
-                jsonInvoice.body[0].datiGenerali_DatiDDT.forEach(async oGeneralDataDDT => {
-                    if (oGeneralDataDDT.riferimentoNumeroLinea) {
-                        oGeneralDataDDT.riferimentoNumeroLinea.forEach(async oLineNumberRef => {
-                            let query = UPDATE('RiferimentoNumeroLineaDDT')
-                                .set(oLineNumberRef)
-                                .where(`ID = '${oLineNumberRef.ID}'`);
-
-                            data = await tx.run(query);
-                            handleQueryError(data);
-                        })
-                    }
-                    delete oGeneralDataDDT.riferimentoNumeroLinea;
-
-                    let query = UPDATE('DatiDDT')
-                        .set(oGeneralDataDDT)
-                        .where(`ID = '${oGeneralDataDDT.ID}'`);
-
-                    data = await tx.run(query);
-                    handleQueryError(data);
-                });
-            }
-            delete jsonInvoice.body[0].datiGenerali_DatiDDT;
-
-            if (jsonInvoice.body[0].datiGenerali_DatiGeneraliDocumento_Causale) {
-                jsonInvoice.body[0].datiGenerali_DatiGeneraliDocumento_Causale.forEach(async oCausal => {
-                    let query = UPDATE('Causale')
-                        .set(oCausal)
-                        .where(`ID = '${oCausal.ID}'`);
-
-                    data = await tx.run(query); -
-                        handleQueryError(data);
-                });
-            }
-            delete jsonInvoice.body[0].datiGenerali_DatiGeneraliDocumento_Causale;
-
-            if (jsonInvoice.body[0].datiGenerali_DatiGeneraliDocumento_DatiCassaPrevidenziale) {
-                jsonInvoice.body[0].datiGenerali_DatiGeneraliDocumento_DatiCassaPrevidenziale.forEach(async oSocialSecurity => {
-                    let query = UPDATE('DatiCassaPrevidenziale')
-                        .set(oSocialSecurity)
-                        .where(`ID = '${oSocialSecurity.ID}'`);
-
-                    data = await tx.run(query);
-                    handleQueryError(data);
-                });
-            }
-            delete jsonInvoice.body[0].datiGenerali_DatiGeneraliDocumento_DatiRitenuta;
-
-            if (jsonInvoice.body[0].datiGenerali_DatiGeneraliDocumento_DatiRitenuta) {
-                jsonInvoice.body[0].datiGenerali_DatiGeneraliDocumento_DatiRitenuta.forEach(async oWithholding => {
-                    let query = UPDATE('DatiRitenuta')
-                        .set(oWithholding)
-                        .where(`ID = '${oWithholding.ID}'`);
-
-                    data = await tx.run(query);
-                    handleQueryError(data);
-                });
-            }
-            delete jsonInvoice.body[0].datiGenerali_DatiGeneraliDocumento_DatiRitenuta;
-
-            if (jsonInvoice.body[0].datiGenerali_DatiGeneraliDocumento_ScontoMaggiorazione) {
-                jsonInvoice.body[0].datiGenerali_DatiGeneraliDocumento_ScontoMaggiorazione.forEach(async oDiscount => {
-                    let query = UPDATE('ScontoMaggiorazione')
-                        .set(oDiscount)
-                        .where(`ID = '${oDiscount.ID}'`);
-
-                    data = await tx.run(query);
-                    handleQueryError(data);
-                })
-            }
-            delete jsonInvoice.body[0].datiGenerali_DatiGeneraliDocumento_ScontoMaggiorazione;
-
-            if (jsonInvoice.body[0].datiGenerali_DatiOrdineAcquisto) {
-                jsonInvoice.body[0].datiGenerali_DatiOrdineAcquisto.forEach(async oPurchaseOrder => {
-                    if (oPurchaseOrder.riferimentoNumeroLinea) {
-                        oPurchaseOrder.riferimentoNumeroLinea.forEach(async oLineNumberRef => {
-                            let query = UPDATE('RiferimentoNumeroLinea')
-                                .set(oLineNumberRef)
-                                .where(`ID = '${oLineNumberRef.ID}'`);
-
-                            data = await tx.run(query);
-                            handleQueryError(data);
-                        })
-                    }
-                    delete oPurchaseOrder.riferimentoNumeroLinea;
-
-                    let query = UPDATE('DatiOrdineAcquisto')
-                        .set(oPurchaseOrder)
-                        .where(`ID = '${oPurchaseOrder.ID}'`);
-
-                    data = await tx.run(query);
-                    handleQueryError(data);
-                });
-            }
-            delete jsonInvoice.body[0].datiGenerali_DatiOrdineAcquisto;
-
-            if (jsonInvoice.body[0].datiPagamento) {
-                jsonInvoice.body[0].datiPagamento.forEach(async oPaymentData => {
-                    if (oPaymentData.dettaglioPagamento) {
-                        oPaymentData.dettaglioPagamento.forEach(async oPaymentDetail => {
-                            let query = UPDATE('DettaglioPagamento')
-                                .set(oPaymentDetail)
-                                .where(`ID = '${oPaymentDetail.ID}'`);
-
-                            data = await tx.run(query);
-                            handleQueryError(data);
-                        })
-                    }
-                    delete oPaymentData.dettaglioPagamento;
-
-                    let query = UPDATE('DatiPagamento')
-                        .set(oPaymentData)
-                        .where(`ID = '${oPaymentData.ID}'`);
-
-                    data = await tx.run(query);
-                    handleQueryError(data);
-                });
-            }
-            delete jsonInvoice.body[0].datiPagamento;
-
-            let bodyQuery = UPDATE('FatturaElettronicaBody')
-                .set(jsonInvoice.body[0])
-                .where(`ID = '${jsonInvoice.body[0].ID}'`);
-
-            data = await tx.run(bodyQuery);
-            handleQueryError(data);
-            delete jsonInvoice.body;
-
-            let headerQuery = UPDATE('FatturaElettronica')
-                .set(jsonInvoice)
-                .where(`ID = '${jsonInvoice.ID}'`);
-
-            data = await tx.run(headerQuery);
-            handleQueryError(data);
-
-            async function handleQueryError(data) {
-                // Return the result with status code, number of affected rows as count, and message.
-                if (data == null || data == undefined) {
-                    await tx.rollback();
-                    return {
-                        status: 500,
-                        message: 'Update failed'
-                    };
-                }
-            }
-
-            // Defining update dock_pack query
-            updateDocPackQuery = UPDATE('DOC_PACK')
-                .set(`ModifiedBy = '${modifiedBy}', ModifiedAt = '${modifiedAt}'`)
-                .where(`PackageId = '${PackageId}'`);
-            // Execute the query and retrieve the data from the database.
-            data = await tx.run(updateDocPackQuery);
-
-            // Return the result with status code, number of affected rows as count, and message.
-            if (data == null || data == undefined) {
-                await tx.rollback();
-                return {
-                    status: 500,
-                    message: 'Update failed'
-                };
-            }
-
-            // Return the status code and message.
-            return {
-                status: 201,
-                message: `Data stored in database`
-            };
-
-        } catch (err) {
-            // Log any errors that occur during the query execution.
-            console.error(`Error during save operation: ${err}`);
-            await tx.rollback(err);
-            // Return a 500 Internal Server Error response in case of an error.
-            return {
-                status: 500,
-                message: 'Internal server error'
-            };
-        }
-    } else {
-        console.error(error);
-        // If the payload does not correct, return a 422 Invalid POST Payload.
-        return {
-            code: '422',
-            message: 'Error',
-            target: 'Invalid POST Payload',
-            status: 422
-        };
-
+        return { status: 201, message: 'Data stored in database' }
+    } catch (err) {
+        console.error('Error during save operation:', err);
+        await tx.rollback(err);
+        return { status: 500, message: 'Internal Server Error' }
     }
 };
+
+// Helper function to validate the invoice
+function validateInvoice(invoice) {
+    const { error } = schema.action_save_submit.validate(invoice, { abortEarly: false });
+    let valid = error == null;
+    let details = error ? error.message : null;
+    return { status: valid, message: details };
+}
+
+// Handle attachment updates
+async function handleAttachments(attachments, tx) {
+    if (!attachments || attachments.length === 0) return;
+    for (const attachment of attachments) {
+        const query = UPDATE('Allegati')
+            .set(attachment)
+            .where({ ID: attachment.ID });
+        await executeQuery(tx, query);
+    }
+}
+
+// Update main records
+async function updateHeaders(jsonInvoice, tx) {
+    const fatturaQuery = UPDATE('FatturaElettronica')
+        .set({ "datiTrasmissione_IdPaese": jsonInvoice.SupplyingCountry })
+        .where(`ID = '${jsonInvoice.header_Id_ItalianInvoiceTrace}'`);
+
+    const invoiceQuery = UPDATE('InvoiceIntegrationInfo')
+        .set({
+            "transaction": jsonInvoice.Transaction,
+            "companyCode": jsonInvoice.CompanyCode,
+            "invoiceReceiptDate": jsonInvoice.InvoiceReceiptDate,
+            "postingDate": jsonInvoice.PostingDate,
+            "invoicingParty": jsonInvoice.InvoicingParty,
+            "supplierPostingLineItemText": jsonInvoice.SupplierPostingLineItemText,
+            "taxIsCalculatedAutomatically": jsonInvoice.TaxIsCalculatedAutomatically,
+            "dueCalculationBaseDate": jsonInvoice.DueCalculationBaseDate,
+            "manualCashDiscount": jsonInvoice.ManualCashDiscount,
+            "paymentTerms": jsonInvoice.PaymentTerms,
+            "cashDiscount1Days": jsonInvoice.CashDiscount1Days,
+            "cashDiscount1Percent": jsonInvoice.CashDiscount1Percent,
+            "cashDiscount2Days": jsonInvoice.CashDiscount2Days,
+            "fixedCashDiscount": jsonInvoice.FixedCashDiscount,
+            "netPaymentDays": jsonInvoice.NetPaymentDays,
+            "bPBankAccountInternalID": jsonInvoice.BPBankAccountInternalID,
+            "invoiceReference": jsonInvoice.InvoiceReference,
+            "invoiceReferenceFiscalYear": jsonInvoice.InvoiceReferenceFiscalYear,
+            "houseBank": jsonInvoice.HouseBank,
+            "houseBankAccount": jsonInvoice.HouseBankAccount,
+            "paymentBlockingReason": jsonInvoice.PaymentBlockingReason,
+            "paymentReason": jsonInvoice.PaymentReason,
+            "unplannedDeliveryCost": jsonInvoice.UnplannedDeliveryCost,
+            "documentHeaderText": jsonInvoice.DocumentHeaderText,
+            "assignmentReference": jsonInvoice.AssignmentReference,
+            "isEUTriangularDeal": jsonInvoice.IsEUTriangularDeal,
+            "taxReportingDate": jsonInvoice.TaxReportingDate,
+            "taxFulfillmentDate": jsonInvoice.TaxFulfillmentDate,
+            "withholdingTaxType": jsonInvoice.WithholdingTaxType,
+            "withholdingTaxCode": jsonInvoice.WithholdingTaxCode,
+            "withholdingTaxBaseAmount": jsonInvoice.WithholdingTaxBaseAmount,
+            "whldgTaxBaseIsEnteredManually": jsonInvoice.WhldgTaxBaseIsEnteredManually,
+            "refDocumentCategory": jsonInvoice.RefDocumentCategory,
+            "to_SelectedPurchaseOrders_PurchaseOrder": jsonInvoice.To_SelectedPurchaseOrders_PurchaseOrder,
+            "to_SelectedPurchaseOrders_PurchaseOrderItem": jsonInvoice.To_SelectedPurchaseOrders_PurchaseOrderItem,
+            "to_SelectedDeliveryNotes_InboundDeliveryNote": jsonInvoice.To_SelectedDeliveryNotes_InboundDeliveryNote,
+            "to_SelectedServiceEntrySheets_ServiceEntrySheet": jsonInvoice.To_SelectedServiceEntrySheets_ServiceEntrySheet,
+            "to_SelectedServiceEntrySheets_ServiceEntrySheetItem": jsonInvoice.To_SelectedServiceEntrySheets_ServiceEntrySheetItem
+        })
+        .where(`ID = '${jsonInvoice.header_Id_InvoiceIntegrationInfo}'`);
+
+    await executeQuery(tx, fatturaQuery);
+    await executeQuery(tx, invoiceQuery);
+}
+
+// Update invoice body details
+async function updateBodies(invoice, tx) {
+    const bodyId = invoice.PORecords.length > 0
+        ? invoice.PORecords[0].bodyInvoiceItalianTrace_Id
+        : invoice.GLAccountRecords[0].bodyInvoiceItalianTrace_Id;
+
+    const queryFatturaElettronicaBody = UPDATE('FatturaElettronicaBody')
+        .set({
+            datiGenerali_DatiGeneraliDocumento_Data: invoice.DocumentDate,
+            datiGenerali_DatiGeneraliDocumento_Divisa: invoice.Currency,
+            datiGenerali_DatiGeneraliDocumento_Numero: invoice.SupplierInvoiceIDByInvcgParty,
+            datiGenerali_DatiGeneraliDocumento_ImportoTotaleDocumento: invoice.InvoiceGrossAmount,
+            datiGenerali_DatiGeneraliDocumento_TipoDocumento: invoice.AccountingDocumentType
+        })
+        .where({ ID: bodyId });
+
+    await executeQuery(tx, queryFatturaElettronicaBody);
+}
+
+// Update payment details
+async function updatePaymentDetails(invoice, tx) {
+    const bodyId = invoice.PORecords.length > 0
+        ? invoice.PORecords[0].bodyInvoiceItalianTrace_Id
+        : invoice.GLAccountRecords[0].bodyInvoiceItalianTrace_Id;
+    const paymentData = await executeQuery(tx, SELECT('ID').from('DatiPagamento').where({ body_Id: bodyId }));
+
+    for (const oPaymentData of paymentData) {
+        const query = UPDATE('DettaglioPagamento')
+            .set({ "modalitaPagamento": invoice.PaymentMethod })
+            .where(`datiPagamento_Id = '${oPaymentData.ID}'`);
+        await executeQuery(tx, query);
+    }
+}
+
+// Update line details for PO and GL Account records
+async function updateLineDetails(invoice, tx) {
+    await updatePOLineDetails(invoice.PORecords, tx);
+    await updateGLAccountLineDetails(invoice.GLAccountRecords, tx);
+}
+
+// Insert line details for PO and GL Account records if any
+async function insertLineDetails(invoice, aNewPoLineDetails, aNewGlAccountLineDetails, tx) {
+    await insertPOLineDetails(aNewPoLineDetails, invoice.header_Id_InvoiceIntegrationInfo, tx);
+    await insertGLAccountLineDetails(aNewGlAccountLineDetails, invoice.header_Id_InvoiceIntegrationInfo, tx);
+}
+
+// Delete line details for PO and GL Account records if any
+async function deleteLineDetails(RemovedPoLineDetails, RemovedGlAccountLineDetails, tx) {
+    let aPoLineDetails_Ids = RemovedPoLineDetails.map(detail => detail.lineDetail_ID);
+    let aBodyPOIntegrationInfo_Ids = RemovedPoLineDetails.map(detail => detail.bodyPOIntegrationInfo_Id);
+    let aGlAccountLineDetails_Ids = RemovedGlAccountLineDetails.map(detail => detail.lineDetail_ID);
+    let aBodyGLAccountIntegrationInfo_Ids = RemovedGlAccountLineDetails.map(detail => detail.bodyGLAccountIntegrationInfo_Id);
+
+    await deletePOLineDetails(aPoLineDetails_Ids, aBodyPOIntegrationInfo_Ids, tx);
+    await deleteGLAccountLineDetails(aGlAccountLineDetails_Ids, aBodyGLAccountIntegrationInfo_Ids, tx);
+}
+
+async function deletePOLineDetails(aPoLineDetails_Ids, aBodyPOIntegrationInfo_Ids, tx) {
+    if (aPoLineDetails_Ids.length > 0) {
+        var lineQuery = DELETE.from('DettaglioLinee')
+            .where({ ID: { in: aPoLineDetails_Ids } });
+        var poQuery = DELETE.from('POIntegrationInfoBody')
+            .where({ ID: { in: aBodyPOIntegrationInfo_Ids } });
+    
+        await executeQuery(tx, lineQuery);
+        await executeQuery(tx, poQuery);
+    }
+}
+
+async function updatePOLineDetails(poRecords, tx) {
+    for (const oLineDetail of poRecords) {
+        if (oLineDetail.lineDetail_ID) {
+            const lineQuery = UPDATE('DettaglioLinee')
+                .set({
+                    "prezzoTotale": oLineDetail.SupplierInvoiceItemAmount,
+                    "quantita": oLineDetail.PurchaseOrderQuantityUnit,
+                    "prezzoUnitario": oLineDetail.PurchaseOrderPriceUnit,
+                    "aliquotaIVA": oLineDetail.TaxCode,
+                    "descrizione": oLineDetail.SupplierInvoiceItemText
+                })
+                .where(`ID = '${oLineDetail.lineDetail_ID}'`);
+
+            const poQuery = UPDATE('POIntegrationInfoBody')
+                .set({
+                    "purchaseOrder": oLineDetail.PurchaseOrder,
+                    "purchaseOrderItem": oLineDetail.PurchaseOrderItem,
+                    "plant": oLineDetail.Plant,
+                    "isSubsequentDebitCredit": oLineDetail.IsSubsequentDebitCredit,
+                    "quantityInPurchaseOrderUnit": oLineDetail.QuantityInPurchaseOrderPriceUnit,
+                    "qtyInPurchaseOrderPriceUnit": oLineDetail.QtyInPurchaseOrderPriceUnit,
+                    "isNotCashDiscountLiable": oLineDetail.IsNotCashDiscountLiable,
+                    "serviceEntrySheet": oLineDetail.ServiceEntrySheet,
+                    "serviceEntrySheetItem": oLineDetail.ServiceEntrySheetItem,
+                    "isFinallyInvoiced": oLineDetail.IsFinallyInvoiced,
+                    "taxDeterminationDate": oLineDetail.TaxDeterminationDate,
+                    "costCenter": oLineDetail.CostCenter,
+                    "controllingArea": oLineDetail.ControllingArea,
+                    "businessArea": oLineDetail.BusinessArea,
+                    "profitCenter": oLineDetail.ProfitCenter,
+                    "functionalArea": oLineDetail.FunctionalArea,
+                    "wBSElement": oLineDetail.WBSElement,
+                    "salesOrder": oLineDetail.SalesOrder,
+                    "salesOrderItem": oLineDetail.SalesOrderItem,
+                    "internalOrder": oLineDetail.InternalOrder,
+                    "commitmentItem": oLineDetail.CommitmentItem,
+                    "fundsCenter": oLineDetail.FundsCenter,
+                    "fund": oLineDetail.Fund,
+                    "grantID": oLineDetail.GrantID,
+                    "profitabilitySegment": oLineDetail.profitabilitySegment
+                })
+                .where(`ID = '${oLineDetail.bodyPOIntegrationInfo_Id}'`);
+
+            await executeQuery(tx, lineQuery);
+            await executeQuery(tx, poQuery);
+        }
+    }
+}
+
+async function insertPOLineDetails(aNewPoLineDetails, header_Id_InvoiceIntegrationInfo, tx) {
+    var aNewLineDetailRecords = [];
+    var aNewPoIntegrationInfoBodyRecords = [];
+    for (const oLineDetail of aNewPoLineDetails) {
+        const lineDetail_ID = uuidv4();
+        const bodyPOIntegrationInfo_ID = uuidv4();
+        aNewLineDetailRecords.push({
+            "ID": lineDetail_ID,
+            "body_Id": oLineDetail.bodyInvoiceItalianTrace_Id,
+            "bodyPOIntegrationInfo_ID": bodyPOIntegrationInfo_ID,
+            "prezzoTotale": oLineDetail.SupplierInvoiceItemAmount,
+            "quantita": oLineDetail.PurchaseOrderQuantityUnit,
+            "prezzoUnitario": oLineDetail.PurchaseOrderPriceUnit,
+            "aliquotaIVA": oLineDetail.TaxCode,
+            "descrizione": oLineDetail.SupplierInvoiceItemText
+        });
+
+        aNewPoIntegrationInfoBodyRecords.push({
+            "ID": bodyPOIntegrationInfo_ID,
+            "header_Id": header_Id_InvoiceIntegrationInfo,
+            "refDocumentCategory": oLineDetail.RefDocumentCategory,
+            "to_SelectedPurchaseOrders_PurchaseOrder": oLineDetail.To_SelectedPurchaseOrders_PurchaseOrder,
+            "to_SelectedPurchaseOrders_PurchaseOrderItem": oLineDetail.To_SelectedPurchaseOrders_PurchaseOrderItem,
+            "to_SelectedDeliveryNotes_InboundDeliveryNote": oLineDetail.To_SelectedDeliveryNotes_InboundDeliveryNote,
+            "to_SelectedServiceEntrySheets_ServiceEntrySheet": oLineDetail.To_SelectedServiceEntrySheets_ServiceEntrySheet,
+            "to_SelectedServiceEntrySheets_ServiceEntrySheetItem": oLineDetail.To_SelectedServiceEntrySheets_ServiceEntrySheetItem,
+            "purchaseOrder": oLineDetail.PurchaseOrder,
+            "purchaseOrderItem": oLineDetail.PurchaseOrderItem,
+            "plant": oLineDetail.Plant,
+            "isSubsequentDebitCredit": oLineDetail.IsSubsequentDebitCredit,
+            "quantityInPurchaseOrderUnit": oLineDetail.QuantityInPurchaseOrderPriceUnit,
+            "qtyInPurchaseOrderPriceUnit": oLineDetail.QtyInPurchaseOrderPriceUnit,
+            "isNotCashDiscountLiable": oLineDetail.IsNotCashDiscountLiable,
+            "serviceEntrySheet": oLineDetail.ServiceEntrySheet,
+            "serviceEntrySheetItem": oLineDetail.ServiceEntrySheetItem,
+            "isFinallyInvoiced": oLineDetail.IsFinallyInvoiced,
+            "taxDeterminationDate": oLineDetail.TaxDeterminationDate,
+            "costCenter": oLineDetail.CostCenter,
+            "controllingArea": oLineDetail.ControllingArea,
+            "businessArea": oLineDetail.BusinessArea,
+            "profitCenter": oLineDetail.ProfitCenter,
+            "functionalArea": oLineDetail.FunctionalArea,
+            "wBSElement": oLineDetail.WBSElement,
+            "salesOrder": oLineDetail.SalesOrder,
+            "salesOrderItem": oLineDetail.SalesOrderItem,
+            "commitmentItem": oLineDetail.CommitmentItem,
+            "internalOrder": oLineDetail.InternalOrder,
+            "fundsCenter": oLineDetail.FundsCenter,
+            "fund": oLineDetail.Fund,
+            "grantID": oLineDetail.GrantID,
+            "profitabilitySegment": oLineDetail.profitabilitySegment
+        });
+    }
+
+    if (aNewLineDetailRecords.length > 0) {
+        const lineQuery = INSERT.into('DettaglioLinee')
+            .entries(aNewLineDetailRecords);
+
+        const poQuery = INSERT.into('POIntegrationInfoBody')
+            .entries(aNewPoIntegrationInfoBodyRecords);
+
+        await executeQuery(tx, lineQuery);
+        await executeQuery(tx, poQuery);
+    }
+}
+
+async function deleteGLAccountLineDetails(aGlAccountLineDetails_Ids, aBodyGLAccountIntegrationInfo_Ids, tx) {
+    if (aGlAccountLineDetails_Ids.length > 0) {
+        const lineQuery = DELETE.from('DettaglioLinee')
+            .where({ ID: { in: aGlAccountLineDetails_Ids } });
+        const glAccountQuery = DELETE.from('GLAccountIntegrationInfoBody')
+            .where({ ID: { in: aBodyGLAccountIntegrationInfo_Ids } });
+
+        await executeQuery(tx, lineQuery);
+        await executeQuery(tx, glAccountQuery);
+    }
+}
+
+async function updateGLAccountLineDetails(glRecords, tx) {
+    for (const oLineDetail of glRecords) {
+        if (oLineDetail.lineDetail_ID) {
+            const lineQuery = UPDATE('DettaglioLinee')
+                .set({
+                    "descrizione": oLineDetail.SupplierInvoiceItemText,
+                    "unitaMisura": oLineDetail.QuantityUnit,
+                    "quantita": oLineDetail.Quantity
+                })
+                .where(`ID = '${oLineDetail.lineDetail_ID}'`);
+
+            const glQuery = UPDATE('GLAccountIntegrationInfoBody')
+                .set({
+                    "companyCode": oLineDetail.CompanyCode,
+                    "glAccount": oLineDetail.GLAccount,
+                    "debitCreditCode": oLineDetail.DebitCreditCode,
+                    "supplierInvoiceItemAmount": oLineDetail.SupplierInvoiceItemAmount,
+                    "taxCode": oLineDetail.TaxCode,
+                    "assignmentReference": oLineDetail.AssignmentReference,
+                    "costCenter": oLineDetail.CostCenter,
+                    "businessArea": oLineDetail.BusinessArea,
+                    "partnerBusinessArea": oLineDetail.PartnerBusinessArea,
+                    "profitCenter": oLineDetail.ProfitCenter,
+                    "functionalArea": oLineDetail.FunctionalArea,
+                    "salesOrder": oLineDetail.SalesOrder,
+                    "salesOrderItem": oLineDetail.SalesOrderItem,
+                    "costCtrActivityType": oLineDetail.CostCtrActivityType,
+                    "wBSElement": oLineDetail.WBSElement,
+                    "personnelNumber": oLineDetail.PersonnelNumber,
+                    "isNotCashDiscountLiable": oLineDetail.IsNotCashDiscountLiable,
+                    "internalOrder": oLineDetail.InternalOrder,
+                    "commitmentItem": oLineDetail.CommitmentItem,
+                    "fund": oLineDetail.Fund,
+                    "grantID": oLineDetail.GrantID,
+                    "financialTransactionType": oLineDetail.FinancialTransactionType,
+                    "earmarkedFundsDocument": oLineDetail.EarmarkedFundsDocument,
+                    "earmarkedFundsDocumentItem": oLineDetail.EarmarkedFundsDocumentItem,
+                    "budgetPeriod": oLineDetail.BudgetPeriod
+                })
+                .where(`ID = '${oLineDetail.bodyGLAccountIntegrationInfo_Id}'`);
+
+            await executeQuery(tx, lineQuery);
+            await executeQuery(tx, glQuery);
+        }
+    }
+}
+
+async function insertGLAccountLineDetails(aNewGlAccountLineDetails, header_Id_InvoiceIntegrationInfo, tx) {
+    var aNewLineDetailRecords = [];
+    var aNewGlAccountIntegrationInfoBodyRecords = [];
+    for (const oLineDetail of aNewGlAccountLineDetails) {
+        const lineDetail_ID = uuidv4();
+        const bodyGLAccountIntegrationInfo_ID = uuidv4();
+        aNewLineDetailRecords.push({
+            "ID": lineDetail_ID,
+            "body_Id": oLineDetail.bodyInvoiceItalianTrace_Id,
+            "bodyGLAccountIntegrationInfo_ID": bodyGLAccountIntegrationInfo_ID,
+            "descrizione": oLineDetail.SupplierInvoiceItemText,
+            "unitaMisura": oLineDetail.QuantityUnit,
+            "quantita": oLineDetail.Quantity
+        });
+
+        aNewGlAccountIntegrationInfoBodyRecords.push({
+            "ID": bodyGLAccountIntegrationInfo_ID,
+            "header_Id": header_Id_InvoiceIntegrationInfo,
+            "companyCode": oLineDetail.CompanyCode,
+            "glAccount": oLineDetail.GLAccount,
+            "debitCreditCode": oLineDetail.DebitCreditCode,
+            "supplierInvoiceItemAmount": oLineDetail.SupplierInvoiceItemAmount,
+            "taxCode": oLineDetail.TaxCode,
+            "assignmentReference": oLineDetail.AssignmentReference,
+            "costCenter": oLineDetail.CostCenter,
+            "businessArea": oLineDetail.BusinessArea,
+            "partnerBusinessArea": oLineDetail.PartnerBusinessArea,
+            "profitCenter": oLineDetail.ProfitCenter,
+            "functionalArea": oLineDetail.FunctionalArea,
+            "salesOrder": oLineDetail.SalesOrder,
+            "salesOrderItem": oLineDetail.SalesOrderItem,
+            "costCtrActivityType": oLineDetail.CostCtrActivityType,
+            "wBSElement": oLineDetail.WBSElement,
+            "personnelNumber": oLineDetail.PersonnelNumber,
+            "isNotCashDiscountLiable": oLineDetail.IsNotCashDiscountLiable,
+            "internalOrder": oLineDetail.InternalOrder,
+            "commitmentItem": oLineDetail.CommitmentItem,
+            "fund": oLineDetail.Fund,
+            "grantID": oLineDetail.GrantID,
+            "financialTransactionType": oLineDetail.FinancialTransactionType,
+            "earmarkedFundsDocument": oLineDetail.EarmarkedFundsDocument,
+            "earmarkedFundsDocumentItem": oLineDetail.EarmarkedFundsDocumentItem,
+            "budgetPeriod": oLineDetail.BudgetPeriod
+        });
+    }
+
+    if (aNewLineDetailRecords.length > 0) {
+        const lineQuery = INSERT.into('DettaglioLinee')
+        .entries(aNewLineDetailRecords);
+
+        const glQuery = INSERT.into('GLAccountIntegrationInfoBody')
+            .entries(aNewGlAccountIntegrationInfoBodyRecords);
+
+        await executeQuery(tx, lineQuery);
+        await executeQuery(tx, glQuery);
+    }
+}
+
+
+// Update DOC_PACK table
+async function updateDocPack(modifiedBy, modifiedAt, PackageId, tx) {
+    // Defining update dock_pack query
+    const updateDocPackQuery = UPDATE('DOC_PACK')
+        .set(`modifiedBy = '${modifiedBy}', modifiedAt = '${modifiedAt}'`)
+        .where(`PackageId = '${PackageId}'`);
+
+    await executeQuery(tx, updateDocPackQuery);
+}
+
+// Execute query and handle errors
+async function executeQuery(tx, query) {
+    const data = await tx.run(query);
+    if (!data) {
+        throw new Error('Query execution failed');
+    }
+    return data;
+}

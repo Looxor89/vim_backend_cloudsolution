@@ -30,21 +30,23 @@ context vim {
   //       PriorityCode    : String(2);
   // }
   entity DOC_PACK : managed {
-    key PackageId         : UUID;
-        Status            : String(10);
-        ReferenceDocument : String(10);
-        FiscalYear        : String(4);
-        LockedAt          : DateTime;
-        LockedBy          : String(255);
-        AssignedTo        : String(255);
-        Flag              : Boolean;
-        CompanyCode       : String(4);
-        CompanyCodeDesc   : String(40);
-        PriorityCode      : String(2);
-        InvoiceName       : String(255);
-        InvoiceXML        : LargeString;
-        Invoice           : Association to one FatturaElettronica
-                              on Invoice.navigation_to = $self;
+    key PackageId              : UUID;
+        Status                 : String(10);
+        ReferenceDocument      : String(10);
+        FiscalYear             : String(4);
+        LockedAt               : DateTime;
+        LockedBy               : String(255);
+        AssignedTo             : String(255);
+        Flag                   : Boolean;
+        CompanyCode            : String(4);
+        CompanyCodeDesc        : String(40);
+        PriorityCode           : String(2);
+        InvoiceName            : String(255);
+        InvoiceXML             : LargeString;
+        InvoiceItalianTrace    : Association to one FatturaElettronica
+                                   on InvoiceItalianTrace.navigation_to = $self;
+        InvoiceIntegrationInfo : Association to one InvoiceIntegrationInfo
+                                   on InvoiceIntegrationInfo.navigation_to = $self;
   }
 
   /**
@@ -96,6 +98,129 @@ context vim {
     key SeqNo     : Integer64;
         Subject   : String;
         Note      : LargeString;
+  }
+
+  entity InvoiceIntegrationInfo {
+    key ID                                                  : UUID;
+        navigation_to                                       : Association to one DOC_PACK;
+        transaction                                         : String(28);
+        companyCode                                         : String(4);
+        supplierPostingLineItemText                         : String(50);
+        taxIsCalculatedAutomatically                        : Boolean;
+        invoiceReceiptDate                                  : Date;
+        postingDate                                         : Date;
+        invoicingParty                                      : String(10);
+        dueCalculationBaseDate                              : Date;
+        manualCashDiscount                                  : Decimal(14, 3);
+        paymentTerms                                        : String(4);
+        cashDiscount1Days                                   : Integer;
+        cashDiscount1Percent                                : Decimal(5, 3);
+        cashDiscount2Days                                   : Integer;
+        cashDiscount2Percent                                : Decimal(4, 3);
+        fixedCashDiscount                                   : String(1);
+        netPaymentDays                                      : Integer;
+        bPBankAccountInternalID                             : String(4);
+        invoiceReference                                    : String(10);
+        invoiceReferenceFiscalYear                          : String(4);
+        houseBank                                           : String(5);
+        houseBankAccount                                    : String(5);
+        paymentBlockingReason                               : String(1);
+        paymentReason                                       : String(4);
+        unplannedDeliveryCost                               : Decimal(14, 3);
+        documentHeaderText                                  : String(25);
+        // supplyingCountry              : String;
+        assignmentReference                                 : String(18);
+        isEUTriangularDeal                                  : Boolean;
+        taxDeterminationDate                                : Date;
+        taxReportingDate                                    : Date;
+        taxFulfillmentDate                                  : Date;
+        withholdingTaxType                                  : String(2);
+        // documentCurrency              : String;
+        withholdingTaxCode                                  : String(2);
+        withholdingTaxBaseAmount                            : Decimal(16, 3);
+        whldgTaxBaseIsEnteredManually                       : Boolean;
+        refDocumentCategory                                 : String(28);
+        to_SelectedPurchaseOrders_PurchaseOrder             : String(10);
+        to_SelectedPurchaseOrders_PurchaseOrderItem         : String(5);
+        to_SelectedDeliveryNotes_InboundDeliveryNote        : String(16);
+        to_SelectedServiceEntrySheets_ServiceEntrySheet     : String(10);
+        to_SelectedServiceEntrySheets_ServiceEntrySheetItem : String(5);
+        bodyPOIntegrationInfo                               : Association to many POIntegrationInfoBody
+                                                                on bodyPOIntegrationInfo.header_Id = $self.ID;
+        bodyGLAccountIntegrationInfo                        : Association to many GLAccountIntegrationInfoBody
+                                                                on bodyGLAccountIntegrationInfo.header_Id = $self.ID;
+  }
+
+  entity POIntegrationInfoBody {
+    key ID                          : UUID;
+        header_Id                   : UUID;
+        // supplierInvoiceItem         : String;
+        purchaseOrder               : String(10);
+        purchaseOrderItem           : String(5);
+        plant                       : String(4);
+        isSubsequentDebitCredit     : String(1);
+        // documentCurrency            : String;
+        // purchaseOrderPriceUnit      : String;
+        quantityInPurchaseOrderUnit : Decimal(13, 3);
+        qtyInPurchaseOrderPriceUnit : Decimal(13, 3);
+        isNotCashDiscountLiable     : Boolean;
+        serviceEntrySheet           : String(10);
+        serviceEntrySheetItem       : String(10);
+        isFinallyInvoiced           : Boolean;
+        taxDeterminationDate        : Date;
+        costCenter                  : String(10);
+        controllingArea             : String(4);
+        businessArea                : String(4);
+        profitCenter                : String(10);
+        functionalArea              : String(16);
+        wBSElement                  : String(24);
+        salesOrder                  : String(10);
+        salesOrderItem              : String(6);
+        internalOrder               : String(12);
+        commitmentItem              : String(24);
+        fundsCenter                 : String(16);
+        fund                        : String(10);
+        grantID                     : String(20);
+        profitabilitySegment        : String(10);
+        budgetPeriod                : String(10);
+        dettaglioLinee              : Association to one DettaglioLinee
+                                        on dettaglioLinee.bodyPOIntegrationInfo = $self;
+  }
+
+  entity GLAccountIntegrationInfoBody {
+    key ID                         : UUID;
+        header_Id                  : UUID;
+        // supplierInvoiceItem        : String;
+        companyCode                : String(4);
+        glAccount                  : String(10);
+        debitCreditCode            : String(1);
+        // documentCurrency           : String;
+        supplierInvoiceItemAmount  : Decimal(14, 3);
+        taxCode                    : String(2);
+        assignmentReference        : String(18);
+        costCenter                 : String(10);
+        businessArea               : String(4);
+        partnerBusinessArea        : String(4);
+        profitCenter               : String(10);
+        functionalArea             : String(16);
+        salesOrder                 : String(10);
+        salesOrderItem             : String(6);
+        costCtrActivityType        : String(6);
+        wBSElement                 : String(24);
+        personnelNumber            : String(8);
+        isNotCashDiscountLiable    : Boolean;
+        internalOrder              : String(12);
+        commitmentItem             : String(24);
+        fund                       : String(10);
+        grantID                    : String(20);
+        // quantityUnit               : String;
+        // quantity                   : String;
+        financialTransactionType   : String(3);
+        earmarkedFundsDocument     : String(10);
+        earmarkedFundsDocumentItem : String(3);
+        budgetPeriod               : String(10);
+        dettaglioLinee             : Association to one DettaglioLinee
+                                       on dettaglioLinee.bodyGLAccountIntegrationInfo = $self;
   }
 
   // Main entity FatturaElettronica
@@ -300,27 +425,29 @@ context vim {
   }
 
   entity DettaglioLinee {
-    key ID                         : UUID;
-        body_Id                    : UUID;
-        numeroLinea                : Integer;
-        tipoCessazionePrestazione  : String(2);
-        codiceArticolo             : Association to many CodiceArticolo
-                                       on codiceArticolo.dettaglioLinee_Id = $self.ID;
-        descrizione                : String(500);
-        quantita                   : Decimal(21, 4);
-        unitaMisura                : String(10);
-        dataInizioPeriodo          : Date;
-        dataFinePeriodo            : Date;
-        prezzoUnitario             : Decimal(21, 4);
-        scontoMaggiorazione        : Association to many ScontoMaggiorazione
-                                       on scontoMaggiorazione.dettaglioLinee_Id = $self.ID;
-        prezzoTotale               : Decimal(21, 4);
-        aliquotaIVA                : Decimal(6, 4);
-        ritenuta                   : String(2);
-        natura                     : String(4);
-        riferimentoAmministrazione : String(20);
-        altriDatiGestionali        : Association to many AltriDatiGestionali
-                                       on altriDatiGestionali.dettaglioLinee_Id = $self.ID;
+    key ID                           : UUID;
+        body_Id                      : UUID;
+        bodyPOIntegrationInfo        : Association to one POIntegrationInfoBody;
+        bodyGLAccountIntegrationInfo : Association to one GLAccountIntegrationInfoBody;
+        numeroLinea                  : Integer;
+        tipoCessazionePrestazione    : String(2);
+        codiceArticolo               : Association to many CodiceArticolo
+                                         on codiceArticolo.dettaglioLinee_Id = $self.ID;
+        descrizione                  : String(500);
+        quantita                     : Decimal(21, 4);
+        unitaMisura                  : String(10);
+        dataInizioPeriodo            : Date;
+        dataFinePeriodo              : Date;
+        prezzoUnitario               : Decimal(21, 4);
+        scontoMaggiorazione          : Association to many ScontoMaggiorazione
+                                         on scontoMaggiorazione.dettaglioLinee_Id = $self.ID;
+        prezzoTotale                 : Decimal(21, 4);
+        aliquotaIVA                  : Decimal(6, 4);
+        ritenuta                     : String(2);
+        natura                       : String(4);
+        riferimentoAmministrazione   : String(20);
+        altriDatiGestionali          : Association to many AltriDatiGestionali
+                                         on altriDatiGestionali.dettaglioLinee_Id = $self.ID;
   }
 
   entity CodiceArticolo {
@@ -414,38 +541,37 @@ context vim {
 @cds.persistence.exists
 @cds.persistence.calcview
 entity V_DOC_EXTENDED {
-  key PACKAGEID              : String(36)  @title: 'PACKAGEID: PACKAGEID';
-      MODUSER_LASTNAME       : String(50)  @title: 'MODUSER_LASTNAME: MODUSER_LASTNAME';
-      MODUSER_FIRSTNAME      : String(50)  @title: 'MODUSER_FIRSTNAME: MODUSER_FIRSTNAME';
-      LASTCHANGEDBYNAME      : String(101) @title: 'LASTCHANGEDBYNAME: LASTCHANGEDBYNAME';
-      ASSIGNUSER_LASTNAME    : String(50)  @title: 'ASSIGNUSER_LASTNAME: LASTNAME';
-      LOCKUSER_LASTNAME      : String(50)  @title: 'LOCKUSER_LASTNAME: LASTNAME';
-      ASSIGNUSER_FIRSTNAME   : String(50)  @title: 'ASSIGNUSER_FIRSTNAME: FIRSTNAME';
-      ASSIGNEDTONAME         : String(101) @title: 'ASSIGNEDTONAME: AssignedToName';
-      LOCKUSER_FIRSTNAME     : String(50)  @title: 'LOCKUSER_FIRSTNAME: FIRSTNAME';
-      ACTIONUSER_FIRSTNAME   : String(50)  @title: 'ACTIONUSER_FIRSTNAME: FIRSTNAME';
-      ACTIONUSER_LASTNAME    : String(50)  @title: 'ACTIONUSER_LASTNAME: LASTNAME';
-      LOCKEDBYNAME           : String(101) @title: 'LOCKEDBYNAME: LockedByName';
-      ACTIONBYNAME           : String(101) @title: 'ACTIONBYNAME: ActionByName';
-      DOC_STATUS             : String(10)  @title: 'DOC_STATUS: STATUS';
-      CREATEDAT              : Timestamp   @title: 'CREATEDAT: CREATEDAT';
-      CREATEDBY              : String(255) @title: 'CREATEDBY: CREATEDBY';
-      LASTCHANGEDON          : Timestamp   @title: 'LASTCHANGEDON: MODIFIEDAT';
-      ACTION                 : String(10)  @title: 'ACTION: ACTION';
-      COMPANYCODE            : String(4)   @title: 'COMPANYCODE: COMPANYCODE';
-      COMPANYCODEDESC        : String(40)  @title: 'COMPANYCODEDESC: COMPANYCODEDESC';
-      PRIORITYCODE           : String(2)   @title: 'PRIORITYCODE: PRIORITYCODE';
-      LASTCHANGEDBY          : String(255) @title: 'LASTCHANGEDBY: MODIFIEDBY';
-      LOCKEDAT               : String      @title: 'LOCKEDAT: LOCKEDAT';
-      LOCKEDBY               : String(255) @title: 'LOCKEDBY: LOCKEDBY';
-      ASSIGNEDTO             : String(255) @title: 'ASSIGNEDTO: ASSIGNEDTO';
-      ACTIONBY               : String(255) @title: 'ACTIONBY: ACTIONBY';
-      REFERENCEDOCUMENT      : String(10)  @title: 'REFERENCEDOCUMENT: REFERENCEDOCUMENT';
-      FISCALYEAR             : String(4)   @title: 'FISCALYEAR: FISCALYEAR';
-      INVOICENUMBER          : String(20)  @title: 'INVOICENUMBER: DATIGENERALI_DATIGENERALIDOCUMENTO_NUMERO';
-      ID_OCCUR               : String(36)  @title: 'ID_OCCUR: ID_OCCUR';
-      DOCCATEGORY            : String(13)  @title: 'DOCCATEGORY: DOCCATEGORY';
-      IMPORTOTOTALEDOCUMENTO : Decimal(15) @title: 'IMPORTOTOTALEDOCUMENTO: DATIGENERALI_DATIGENERALIDOCUMENTO_IMPORTOTOTALEDOCUMENTO';
+  key PACKAGEID              : String(36)   @title: 'PACKAGEID: PACKAGEID';
+      MODUSER_LASTNAME       : String(50)   @title: 'MODUSER_LASTNAME: MODUSER_LASTNAME';
+      MODUSER_FIRSTNAME      : String(50)   @title: 'MODUSER_FIRSTNAME: MODUSER_FIRSTNAME';
+      LASTCHANGEDBYNAME      : String(101)  @title: 'LASTCHANGEDBYNAME: LASTCHANGEDBYNAME';
+      ASSIGNUSER_LASTNAME    : String(50)   @title: 'ASSIGNUSER_LASTNAME: LASTNAME';
+      LOCKUSER_LASTNAME      : String(50)   @title: 'LOCKUSER_LASTNAME: LASTNAME';
+      ASSIGNUSER_FIRSTNAME   : String(50)   @title: 'ASSIGNUSER_FIRSTNAME: FIRSTNAME';
+      ASSIGNEDTONAME         : String(101)  @title: 'ASSIGNEDTONAME: AssignedToName';
+      LOCKUSER_FIRSTNAME     : String(50)   @title: 'LOCKUSER_FIRSTNAME: FIRSTNAME';
+      ACTIONUSER_FIRSTNAME   : String(50)   @title: 'ACTIONUSER_FIRSTNAME: FIRSTNAME';
+      ACTIONUSER_LASTNAME    : String(50)   @title: 'ACTIONUSER_LASTNAME: LASTNAME';
+      LOCKEDBYNAME           : String(101)  @title: 'LOCKEDBYNAME: LockedByName';
+      ACTIONBYNAME           : String(101)  @title: 'ACTIONBYNAME: ActionByName';
+      DOC_STATUS             : String(10)   @title: 'DOC_STATUS: STATUS';
+      CREATEDAT              : Timestamp    @title: 'CREATEDAT: CREATEDAT';
+      CREATEDBY              : String(255)  @title: 'CREATEDBY: CREATEDBY';
+      LASTCHANGEDON          : Timestamp    @title: 'LASTCHANGEDON: MODIFIEDAT';
+      ACTION                 : String(10)   @title: 'ACTION: ACTION';
+      COMPANYCODE            : String(5000) @title: 'COMPANYCODE: COMPANYCODE';
+      PRIORITYCODE           : String(2)    @title: 'PRIORITYCODE: PRIORITYCODE';
+      LASTCHANGEDBY          : String(255)  @title: 'LASTCHANGEDBY: MODIFIEDBY';
+      LOCKEDAT               : String       @title: 'LOCKEDAT: LOCKEDAT';
+      LOCKEDBY               : String(255)  @title: 'LOCKEDBY: LOCKEDBY';
+      ASSIGNEDTO             : String(255)  @title: 'ASSIGNEDTO: ASSIGNEDTO';
+      ACTIONBY               : String(255)  @title: 'ACTIONBY: ACTIONBY';
+      REFERENCEDOCUMENT      : String(10)   @title: 'REFERENCEDOCUMENT: REFERENCEDOCUMENT';
+      FISCALYEAR             : String(4)    @title: 'FISCALYEAR: FISCALYEAR';
+      INVOICENUMBER          : String(20)   @title: 'INVOICENUMBER: DATIGENERALI_DATIGENERALIDOCUMENTO_NUMERO';
+      ID_OCCUR               : String(36)   @title: 'ID_OCCUR: ID_OCCUR';
+      DOCCATEGORY            : String(13)   @title: 'DOCCATEGORY: DOCCATEGORY';
+      IMPORTOTOTALEDOCUMENTO : Decimal(15)  @title: 'IMPORTOTOTALEDOCUMENTO: DATIGENERALI_DATIGENERALIDOCUMENTO_IMPORTOTOTALEDOCUMENTO';
 }
 
 
