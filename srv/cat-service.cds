@@ -13,6 +13,7 @@ service CatalogService {
     // entity DOC_ATTACHMENTS           as projection on V_DOC_ATTACHMENTS;
     // Integration data for invoice
     entity InvoiceIntegrationInfo       as projection on vim.InvoiceIntegrationInfo;
+    entity SupplierInvoiceWhldgTax      as projection on vim.SupplierInvoiceWhldgTax;
     entity POIntegrationInfoBody        as projection on vim.POIntegrationInfoBody;
     entity GLAccountIntegrationInfoBody as projection on vim.GLAccountIntegrationInfoBody;
     // Italian invoice definition entities
@@ -50,8 +51,7 @@ service CatalogService {
     action   reject(payload : rejectPayload)                        returns array of String;
     action   save(payload : savePayload)                            returns array of String;
     action   massiveSubmit(payload : array of massiveSubmitPayload) returns array of String;
-    action   submitGLAccount(payload : submitPayload)               returns array of String;
-    action   submitPO(payload : submitPayload)                      returns array of String;
+    action   submit(payload : submitPayload)                        returns array of String;
     action   addNotes(payload : addNotesPayload)                    returns array of String;
     action   addDoc(payload : array of addDocPayload)               returns array of String;
     action   addAttachment(payload : addAttachmentPayload)          returns array of String;
@@ -82,10 +82,15 @@ service CatalogService {
     };
 
     type savePayload {
-        PackageId                   : String;
-        Invoice                     : LargeString;
-        RemovedPoLineDetails        : array of RemovedPoLineDetails;
-        RemovedGlAccountLineDetails : array of RemovedGlAccountLineDetails;
+        PackageId                             : String;
+        Invoice                               : LargeString;
+        RemovedSupplierInvoiceWhldgTaxRecords : array of RemovedSupplierInvoiceWhldgTaxRecords;
+        RemovedPoLineDetails                  : array of RemovedPoLineDetails;
+        RemovedGlAccountLineDetails           : array of RemovedGlAccountLineDetails;
+    };
+
+    type RemovedSupplierInvoiceWhldgTaxRecords {
+        supplierInvoiceWhldgTax_Id : String;
     };
 
     type RemovedPoLineDetails {

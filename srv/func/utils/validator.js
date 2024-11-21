@@ -197,11 +197,17 @@ const schema = {
         TaxDeterminationDate: Joi.date().allow(null),
         TaxReportingDate: Joi.date().allow(null),
         TaxFulfillmentDate: Joi.date().allow(null),
-        WithholdingTaxType: Joi.string().max(2).allow(null),
-        DocumentCurrency: Joi.string().max(5).allow(null),
-        WithholdingTaxCode: Joi.string().max(2).allow(null),
-        WithholdingTaxBaseAmount: Joi.number().precision(16).allow(null),
-        WhldgTaxBaseIsEnteredManually: Joi.boolean().allow(null),
+        To_SupplierInvoiceWhldgTax: Joi.array().items(
+            Joi.object().keys({
+                supplierInvoiceWhldgTax_Id: Joi.string().max(36).allow(null),
+                header_Id_InvoiceIntegrationInfo: Joi.string().max(36).allow(null),
+                WithholdingTaxType: Joi.string().max(2).allow(null),
+                DocumentCurrency: Joi.string().max(5).allow(null),
+                WithholdingTaxCode: Joi.string().max(2).allow(null),
+                WithholdingTaxBaseAmount: Joi.number().precision(16).allow(null),
+                WhldgTaxBaseIsEnteredManually: Joi.boolean().allow(null),
+            })
+        ),
         allegati: Joi.array().items(Joi.object().keys({
             ID: Joi.string().max(36),
             body_Id: Joi.string().max(36),

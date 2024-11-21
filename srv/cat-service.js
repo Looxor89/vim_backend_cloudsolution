@@ -214,31 +214,19 @@ module.exports = function (srv) {
     });
 
     /**
-     * Function for handling submit GL Account requests based on role scopes.
+     * Function for handling submit requests based on role scopes.
      * 
      * This function listens for the 'submit' event, which is used to submit an invoice.
      * The logic is encapsulated in the './func/submit' file.
      * 
      * @param {object} srv - Service object that manages request listeners and interactions with the data model.
      */
-    srv.on('submitGLAccount', '*', async request => {
-        await performSubmitRequest(srv, request, './func/submitGLAccount');
+    srv.on('submit', '*', async request => {
+        await performSubmitRequest(srv, request, './func/submit');
     });
 
     /**
-     * Function for handling submit GL Account requests based on role scopes.
-     * 
-     * This function listens for the 'submit' event, which is used to submit an invoice.
-     * The logic is encapsulated in the './func/submit' file.
-     * 
-     * @param {object} srv - Service object that manages request listeners and interactions with the data model.
-     */
-    srv.on('submitPO', '*', async request => {
-        await performSubmitRequest(srv, request, './func/submitPO');
-    });
-
-    /**
-     * Function for handling submit GL Account requests based on role scopes.
+     * Function for handling submit requests based on role scopes.
      * 
      * This function listens for the 'submit' event, which is used to submit an invoice.
      * The logic is encapsulated in the './func/submit' file.

@@ -46,7 +46,12 @@ async function fetchHeaderData(tx, packageId) {
         SELECT('*').from('InvoiceIntegrationInfo').where({ navigation_to_PackageId: packageId })
     ))[0];
 
-    return { headerFatturaElettronica, headerInvoiceIntegrationInfo };
+    
+    const dataSupplierInvoiceWhldgTax= (await tx.run(
+        SELECT('*').from('SupplierInvoiceWhldgTax').where({ header_Id: headerInvoiceIntegrationInfo.ID })
+    ));
+
+    return { headerFatturaElettronica, headerInvoiceIntegrationInfo, dataSupplierInvoiceWhldgTax };
 }
 
 // Fetch body data and related records based on header ID
@@ -100,7 +105,7 @@ async function fetchPaymentData(tx, bodyId) {
 
 // Create the result object containing all invoice details
 function createResultObject(headerData, bodyData, paymentData) {
-    const { headerFatturaElettronica, headerInvoiceIntegrationInfo } = headerData;
+    const { headerFatturaElettronica, headerInvoiceIntegrationInfo, dataSupplierInvoiceWhldgTax } = headerData;
     const { bodyFatturaElettronica, dataDatiRitenuta, dataDatiOrdineAcquisto, dataDettaglioLinee, dataDatiRiepilogo, dataDatiPagamento, dataAllegati, dataPOIntegrationInfoBody, dataGLAccountIntegrationInfoBody } = bodyData;
     const { dataDettaglioPagamento } = paymentData;
 
@@ -112,6 +117,18 @@ function createResultObject(headerData, bodyData, paymentData) {
     const aPORecords = dataDettaglioLinee
         .filter(line => line.bodyPOIntegrationInfo_ID)
         .map((line, index) => createLineItemForPO(index + 1, line, bodyFatturaElettronica));
+
+    const aDataSupplierInvoiceWhldgTax = dataSupplierInvoiceWhldgTax.map((oItem, index) => {
+        return {
+            "supplierInvoiceWhldgTax_Id": oItem.ID,
+            "header_Id_InvoiceIntegrationInfo": oItem.header_Id,
+            "WithholdingTaxType": oItem.withholdingTaxType ? oItem.withholdingTaxType : null,
+            "DocumentCurrency": bodyFatturaElettronica.datiGenerali_DatiGeneraliDocumento_Divisa ? bodyFatturaElettronica.datiGenerali_DatiGeneraliDocumento_Divisa : null,
+            "WithholdingTaxCode": oItem.withholdingTaxCode ? oItem.withholdingTaxCode : null,
+            "WithholdingTaxBaseAmount": oItem.withholdingTaxBaseAmount ? oItem.withholdingTaxBaseAmount : null,
+            "WhldgTaxBaseIsEnteredManually": oItem.whldgTaxBaseIsEnteredManually ? oItem.whldgTaxBaseIsEnteredManually : null
+        }
+    });
 
     // Assemble final result object with all relevant data fields
     return {
@@ -157,11 +174,7 @@ function createResultObject(headerData, bodyData, paymentData) {
         "TaxDeterminationDate": bodyFatturaElettronica.datiGenerali_DatiGeneraliDocumento_Data ? bodyFatturaElettronica.datiGenerali_DatiGeneraliDocumento_Data : null,
         "TaxReportingDate": headerInvoiceIntegrationInfo.taxReportingDate ? headerInvoiceIntegrationInfo.taxReportingDate : null,
         "TaxFulfillmentDate": headerInvoiceIntegrationInfo.taxFulfillmentDate ? headerInvoiceIntegrationInfo.taxFulfillmentDate : null,
-        "WithholdingTaxType": headerInvoiceIntegrationInfo.withholdingTaxType ? headerInvoiceIntegrationInfo.withholdingTaxType : null,
-        "DocumentCurrency": bodyFatturaElettronica.datiGenerali_DatiGeneraliDocumento_Divisa ? bodyFatturaElettronica.datiGenerali_DatiGeneraliDocumento_Divisa : null,
-        "WithholdingTaxCode": headerInvoiceIntegrationInfo.withholdingTaxCode ? headerInvoiceIntegrationInfo.withholdingTaxCode : null,
-        "WithholdingTaxBaseAmount": headerInvoiceIntegrationInfo.withholdingTaxBaseAmount ? headerInvoiceIntegrationInfo.withholdingTaxBaseAmount : null,
-        "WhldgTaxBaseIsEnteredManually": headerInvoiceIntegrationInfo.whldgTaxBaseIsEnteredManually ? headerInvoiceIntegrationInfo.whldgTaxBaseIsEnteredManually : null,
+        "To_SupplierInvoiceWhldgTax": aDataSupplierInvoiceWhldgTax,
         "Allegati": dataAllegati,
         "GLAccountRecords": aGLAccountRecords,
         "RefDocumentCategory": headerInvoiceIntegrationInfo.refDocumentCategory ? headerInvoiceIntegrationInfo.refDocumentCategory : null,

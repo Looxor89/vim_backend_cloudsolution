@@ -7,6 +7,7 @@ const { v4: uuidv4 } = require('uuid');
 module.exports = async (request, tx) => {
     const { PackageId,
         Invoice,
+        RemovedSupplierInvoiceWhldgTaxRecords,
         RemovedPoLineDetails,
         RemovedGlAccountLineDetails } = request.data.payload;
     const modifiedBy = request.req.authInfo.getLogonName();
@@ -26,6 +27,7 @@ module.exports = async (request, tx) => {
         return { status: 422, message: valid.message }
     }
 
+    const aNewSupplierInvoiceWhldgTaxRecords = jsonInvoice.To_SupplierInvoiceWhldgTax.filter(oItem => oItem.supplierInvoiceWhldgTax_Id  === null);
     const aNewPoLineDetails = jsonInvoice.PORecords.filter(oLineDetail => oLineDetail.lineDetail_ID  === null);
     const aNewGlAccountLineDetails = jsonInvoice.GLAccountRecords.filter(oLineDetail => oLineDetail.lineDetail_ID  === null);
 
@@ -36,7 +38,9 @@ module.exports = async (request, tx) => {
         await updatePaymentDetails(jsonInvoice, tx);
         await updateLineDetails(jsonInvoice, tx);
         await updateDocPack(modifiedBy, modifiedAt, PackageId, tx);
+        await insertSupplierInvoiceWhldgTaxRecords(jsonInvoice, aNewSupplierInvoiceWhldgTaxRecords, tx);
         await insertLineDetails(jsonInvoice, aNewPoLineDetails, aNewGlAccountLineDetails, tx);
+        await deleteSupplierInvoiceWhldgTaxRecords(RemovedSupplierInvoiceWhldgTaxRecords, tx);
         await deleteLineDetails(RemovedPoLineDetails, RemovedGlAccountLineDetails, tx);
 
         return { status: 201, message: 'Data stored in database' }
@@ -102,10 +106,6 @@ async function updateHeaders(jsonInvoice, tx) {
             "isEUTriangularDeal": jsonInvoice.IsEUTriangularDeal,
             "taxReportingDate": jsonInvoice.TaxReportingDate,
             "taxFulfillmentDate": jsonInvoice.TaxFulfillmentDate,
-            "withholdingTaxType": jsonInvoice.WithholdingTaxType,
-            "withholdingTaxCode": jsonInvoice.WithholdingTaxCode,
-            "withholdingTaxBaseAmount": jsonInvoice.WithholdingTaxBaseAmount,
-            "whldgTaxBaseIsEnteredManually": jsonInvoice.WhldgTaxBaseIsEnteredManually,
             "refDocumentCategory": jsonInvoice.RefDocumentCategory,
             "to_SelectedPurchaseOrders_PurchaseOrder": jsonInvoice.To_SelectedPurchaseOrders_PurchaseOrder,
             "to_SelectedPurchaseOrders_PurchaseOrderItem": jsonInvoice.To_SelectedPurchaseOrders_PurchaseOrderItem,
@@ -117,6 +117,22 @@ async function updateHeaders(jsonInvoice, tx) {
 
     await executeQuery(tx, fatturaQuery);
     await executeQuery(tx, invoiceQuery);
+
+    for (const oSupplierInvoiceWhldgTax of jsonInvoice.To_SupplierInvoiceWhldgTax) {
+        if (oSupplierInvoiceWhldgTax.supplierInvoiceWhldgTax_Id) {
+            const lineSupplierInvoiceWhldgTaxQuery = UPDATE('SupplierInvoiceWhldgTax')
+                .set({
+                    "ID": oSupplierInvoiceWhldgTax.supplierInvoiceWhldgTax_Id,
+                    "header_Id": oSupplierInvoiceWhldgTax.header_Id_InvoiceIntegrationInfo,
+                    "withholdingTaxType": oSupplierInvoiceWhldgTax.WithholdingTaxType,
+                    "withholdingTaxCode": oSupplierInvoiceWhldgTax.WithholdingTaxCode,
+                    "withholdingTaxBaseAmount": oSupplierInvoiceWhldgTax.WithholdingTaxBaseAmount,
+                    "whldgTaxBaseIsEnteredManually": oSupplierInvoiceWhldgTax.WhldgTaxBaseIsEnteredManually
+                })
+                .where(`ID = '${oSupplierInvoiceWhldgTax.supplierInvoiceWhldgTax_Id}'`);
+            await executeQuery(tx, lineSupplierInvoiceWhldgTaxQuery);
+        }
+    }
 }
 
 // Update invoice body details
@@ -159,10 +175,41 @@ async function updateLineDetails(invoice, tx) {
     await updateGLAccountLineDetails(invoice.GLAccountRecords, tx);
 }
 
+// Insert records into SupplierInvoiceWhldgTax if any
+async function insertSupplierInvoiceWhldgTaxRecords(invoice, aNewSupplierInvoiceWhldgTaxRecords, tx) {
+    var aNewRecords = [];
+    aNewRecords = aNewSupplierInvoiceWhldgTaxRecords.map(record => ({
+        ID: uuidv4(),
+        header_Id: record.header_Id_InvoiceIntegrationInfo,
+        withholdingTaxType: record.WithholdingTaxType,
+        withholdingTaxCode: record.WithholdingTaxCode,
+        withholdingTaxBaseAmount: record.WithholdingTaxBaseAmount,
+        whldgTaxBaseIsEnteredManually: record.WhldgTaxBaseIsEnteredManually
+    }));
+    
+    if (aNewRecords.length > 0) {
+        const lineQuery = INSERT.into('SupplierInvoiceWhldgTax')
+            .entries(aNewRecords);
+
+        await executeQuery(tx, lineQuery);
+    }
+}
+
 // Insert line details for PO and GL Account records if any
 async function insertLineDetails(invoice, aNewPoLineDetails, aNewGlAccountLineDetails, tx) {
     await insertPOLineDetails(aNewPoLineDetails, invoice.header_Id_InvoiceIntegrationInfo, tx);
     await insertGLAccountLineDetails(aNewGlAccountLineDetails, invoice.header_Id_InvoiceIntegrationInfo, tx);
+}
+
+// Delete records for SupplierInvoiceWhldgTax if any
+async function deleteSupplierInvoiceWhldgTaxRecords(RemovedSupplierInvoiceWhldgTaxRecords, tx) {
+    let aRemovedSupplierInvoiceWhldgTaxRecords_Ids = RemovedSupplierInvoiceWhldgTaxRecords.map(record => record.supplierInvoiceWhldgTax_Id);
+    if (aRemovedSupplierInvoiceWhldgTaxRecords_Ids.length > 0) {
+        var lineQuery = DELETE.from('SupplierInvoiceWhldgTax')
+            .where({ ID: { in: aRemovedSupplierInvoiceWhldgTaxRecords_Ids } });
+    
+        await executeQuery(tx, lineQuery);
+    }
 }
 
 // Delete line details for PO and GL Account records if any

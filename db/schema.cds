@@ -134,11 +134,8 @@ context vim {
         taxDeterminationDate                                : Date;
         taxReportingDate                                    : Date;
         taxFulfillmentDate                                  : Date;
-        withholdingTaxType                                  : String(2);
-        // documentCurrency              : String;
-        withholdingTaxCode                                  : String(2);
-        withholdingTaxBaseAmount                            : Decimal(16, 3);
-        whldgTaxBaseIsEnteredManually                       : Boolean;
+        to_SupplierInvoiceWhldgTax                          : Association to many SupplierInvoiceWhldgTax
+                                                                on to_SupplierInvoiceWhldgTax.header_Id = $self.ID;
         refDocumentCategory                                 : String(28);
         to_SelectedPurchaseOrders_PurchaseOrder             : String(10);
         to_SelectedPurchaseOrders_PurchaseOrderItem         : String(5);
@@ -149,6 +146,16 @@ context vim {
                                                                 on bodyPOIntegrationInfo.header_Id = $self.ID;
         bodyGLAccountIntegrationInfo                        : Association to many GLAccountIntegrationInfoBody
                                                                 on bodyGLAccountIntegrationInfo.header_Id = $self.ID;
+  }
+
+  entity SupplierInvoiceWhldgTax {
+    key ID                            : UUID;
+        header_Id                     : UUID;
+        withholdingTaxType            : String(2);
+        // documentCurrency              : String;
+        withholdingTaxCode            : String(2);
+        withholdingTaxBaseAmount      : Decimal(16, 3);
+        whldgTaxBaseIsEnteredManually : Boolean;
   }
 
   entity POIntegrationInfoBody {
