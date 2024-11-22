@@ -126,6 +126,8 @@ context vim {
         houseBankAccount                                    : String(5);
         paymentBlockingReason                               : String(1);
         paymentReason                                       : String(4);
+        paymentMethod                                       : String(1);
+        accountingDocumentType                              : String(2);
         unplannedDeliveryCost                               : Decimal(14, 3);
         documentHeaderText                                  : String(25);
         // supplyingCountry              : String;
@@ -168,7 +170,7 @@ context vim {
         isSubsequentDebitCredit     : String(1);
         // documentCurrency            : String;
         // purchaseOrderPriceUnit      : String;
-        quantityInPurchaseOrderUnit : Decimal(13, 3);
+        purchaseOrderQuantityUnit   : String(3);
         qtyInPurchaseOrderPriceUnit : Decimal(13, 3);
         isNotCashDiscountLiable     : Boolean;
         serviceEntrySheet           : String(10);
@@ -180,6 +182,7 @@ context vim {
         businessArea                : String(4);
         profitCenter                : String(10);
         functionalArea              : String(16);
+        taxCode                     : String(2);
         wBSElement                  : String(24);
         salesOrder                  : String(10);
         salesOrderItem              : String(6);

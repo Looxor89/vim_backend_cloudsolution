@@ -1,3 +1,4 @@
+const { buildPayloadForSubmitAttachment } = require('./utils/payloadBuilder');
 const { checkReadScope } = require('./utils/scopes');
 const { v4: uuidv4 } = require('uuid');
 const schema = require('./utils/validator');
@@ -64,26 +65,13 @@ module.exports = async (request, tx) => {
             let oResult = await serviceRequestS4_HANA.get(process.env['Path_API_GLACCOUNTLINEITEM'] + `?$select=AccountingDocument&$format=json&$filter=ReferenceDocument eq '${ReferenceDocument}'&$top=1`),
                 sAccountingDocument = oResult[0].AccountingDocument,
                 LinkedSapObjectKey = CompanyCode + sAccountingDocument.padStart(10, "0") + FiscalYear;
-
-            let oBody = {
-                "DocumentInfoRecordDocType": AttachmentExtension,
-                "Content": Attachment,
-                "Content-Disposition": "form-data",
-                "name": "myFileUpload[]",
-                "filename": AttachmentName,
-                "Content-Type": AttachmentType
-            },
-                oHeaders = {
-                    'slug': AttachmentName,
-                    'BusinessObjectTypeName': 'BKPF',
-                    'LinkedSAPObjectKey': LinkedSapObjectKey
-                };
+            let oPayload = buildPayloadForSubmitAttachment(AttachmentExtension, Attachment, AttachmentName, AttachmentType, LinkedSapObjectKey);
 
             // Perform POST request
             await serviceRequestS4_HANA.post(
                 process.env['Path_API_CV_ATTACHMENT_SRV'],
-                oBody,
-                oHeaders
+                oPayload.Body,
+                oPayload.Headers
             );
 
 

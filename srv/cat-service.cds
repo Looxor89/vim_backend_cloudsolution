@@ -106,6 +106,9 @@ service CatalogService {
     type submitPayload {
         PackageId : String;
         Invoice   : LargeString;
+        RemovedSupplierInvoiceWhldgTaxRecords : array of RemovedSupplierInvoiceWhldgTaxRecords;
+        RemovedPoLineDetails                  : array of RemovedPoLineDetails;
+        RemovedGlAccountLineDetails           : array of RemovedGlAccountLineDetails;
     };
 
     type massiveSubmitPayload {

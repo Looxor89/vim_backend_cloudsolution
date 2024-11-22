@@ -27,9 +27,9 @@ module.exports = async (request, tx) => {
         return { status: 422, message: valid.message }
     }
 
-    const aNewSupplierInvoiceWhldgTaxRecords = jsonInvoice.To_SupplierInvoiceWhldgTax.filter(oItem => oItem.supplierInvoiceWhldgTax_Id  === null);
-    const aNewPoLineDetails = jsonInvoice.PORecords.filter(oLineDetail => oLineDetail.lineDetail_ID  === null);
-    const aNewGlAccountLineDetails = jsonInvoice.GLAccountRecords.filter(oLineDetail => oLineDetail.lineDetail_ID  === null);
+    const aNewSupplierInvoiceWhldgTaxRecords = jsonInvoice.To_SupplierInvoiceWhldgTax.filter(oItem => oItem.supplierInvoiceWhldgTax_Id === null);
+    const aNewPoLineDetails = jsonInvoice.PORecords.filter(oLineDetail => oLineDetail.lineDetail_ID === null);
+    const aNewGlAccountLineDetails = jsonInvoice.GLAccountRecords.filter(oLineDetail => oLineDetail.lineDetail_ID === null);
 
     try {
         await handleAttachments(jsonInvoice.Allegati, tx);
@@ -88,9 +88,12 @@ async function updateHeaders(jsonInvoice, tx) {
             "dueCalculationBaseDate": jsonInvoice.DueCalculationBaseDate,
             "manualCashDiscount": jsonInvoice.ManualCashDiscount,
             "paymentTerms": jsonInvoice.PaymentTerms,
+            "paymentMethod": jsonInvoice.PaymentMethod,
+            "accountingDocumentType": jsonInvoice.AccountingDocumentType,
             "cashDiscount1Days": jsonInvoice.CashDiscount1Days,
             "cashDiscount1Percent": jsonInvoice.CashDiscount1Percent,
             "cashDiscount2Days": jsonInvoice.CashDiscount2Days,
+            "cashDiscount2Percent": jsonInvoice.CashDiscount2Percent,
             "fixedCashDiscount": jsonInvoice.FixedCashDiscount,
             "netPaymentDays": jsonInvoice.NetPaymentDays,
             "bPBankAccountInternalID": jsonInvoice.BPBankAccountInternalID,
@@ -147,7 +150,7 @@ async function updateBodies(invoice, tx) {
             datiGenerali_DatiGeneraliDocumento_Divisa: invoice.Currency,
             datiGenerali_DatiGeneraliDocumento_Numero: invoice.SupplierInvoiceIDByInvcgParty,
             datiGenerali_DatiGeneraliDocumento_ImportoTotaleDocumento: invoice.InvoiceGrossAmount,
-            datiGenerali_DatiGeneraliDocumento_TipoDocumento: invoice.AccountingDocumentType
+            // datiGenerali_DatiGeneraliDocumento_TipoDocumento: invoice.AccountingDocumentType
         })
         .where({ ID: bodyId });
 
@@ -162,10 +165,10 @@ async function updatePaymentDetails(invoice, tx) {
     const paymentData = await executeQuery(tx, SELECT('ID').from('DatiPagamento').where({ body_Id: bodyId }));
 
     for (const oPaymentData of paymentData) {
-        const query = UPDATE('DettaglioPagamento')
-            .set({ "modalitaPagamento": invoice.PaymentMethod })
-            .where(`datiPagamento_Id = '${oPaymentData.ID}'`);
-        await executeQuery(tx, query);
+        // const query = UPDATE('DettaglioPagamento')
+        //     .set({ "modalitaPagamento": invoice.PaymentMethod })
+        //     .where(`datiPagamento_Id = '${oPaymentData.ID}'`);
+        // await executeQuery(tx, query);
     }
 }
 
@@ -186,7 +189,7 @@ async function insertSupplierInvoiceWhldgTaxRecords(invoice, aNewSupplierInvoice
         withholdingTaxBaseAmount: record.WithholdingTaxBaseAmount,
         whldgTaxBaseIsEnteredManually: record.WhldgTaxBaseIsEnteredManually
     }));
-    
+
     if (aNewRecords.length > 0) {
         const lineQuery = INSERT.into('SupplierInvoiceWhldgTax')
             .entries(aNewRecords);
@@ -207,7 +210,7 @@ async function deleteSupplierInvoiceWhldgTaxRecords(RemovedSupplierInvoiceWhldgT
     if (aRemovedSupplierInvoiceWhldgTaxRecords_Ids.length > 0) {
         var lineQuery = DELETE.from('SupplierInvoiceWhldgTax')
             .where({ ID: { in: aRemovedSupplierInvoiceWhldgTaxRecords_Ids } });
-    
+
         await executeQuery(tx, lineQuery);
     }
 }
@@ -229,7 +232,7 @@ async function deletePOLineDetails(aPoLineDetails_Ids, aBodyPOIntegrationInfo_Id
             .where({ ID: { in: aPoLineDetails_Ids } });
         var poQuery = DELETE.from('POIntegrationInfoBody')
             .where({ ID: { in: aBodyPOIntegrationInfo_Ids } });
-    
+
         await executeQuery(tx, lineQuery);
         await executeQuery(tx, poQuery);
     }
@@ -241,9 +244,8 @@ async function updatePOLineDetails(poRecords, tx) {
             const lineQuery = UPDATE('DettaglioLinee')
                 .set({
                     "prezzoTotale": oLineDetail.SupplierInvoiceItemAmount,
-                    "quantita": oLineDetail.PurchaseOrderQuantityUnit,
+                    "quantita": oLineDetail.QuantityInPurchaseOrderUnit,
                     "prezzoUnitario": oLineDetail.PurchaseOrderPriceUnit,
-                    "aliquotaIVA": oLineDetail.TaxCode,
                     "descrizione": oLineDetail.SupplierInvoiceItemText
                 })
                 .where(`ID = '${oLineDetail.lineDetail_ID}'`);
@@ -254,7 +256,7 @@ async function updatePOLineDetails(poRecords, tx) {
                     "purchaseOrderItem": oLineDetail.PurchaseOrderItem,
                     "plant": oLineDetail.Plant,
                     "isSubsequentDebitCredit": oLineDetail.IsSubsequentDebitCredit,
-                    "quantityInPurchaseOrderUnit": oLineDetail.QuantityInPurchaseOrderPriceUnit,
+                    "purchaseOrderQuantityUnit": oLineDetail.PurchaseOrderQuantityUnit,
                     "qtyInPurchaseOrderPriceUnit": oLineDetail.QtyInPurchaseOrderPriceUnit,
                     "isNotCashDiscountLiable": oLineDetail.IsNotCashDiscountLiable,
                     "serviceEntrySheet": oLineDetail.ServiceEntrySheet,
@@ -264,6 +266,7 @@ async function updatePOLineDetails(poRecords, tx) {
                     "costCenter": oLineDetail.CostCenter,
                     "controllingArea": oLineDetail.ControllingArea,
                     "businessArea": oLineDetail.BusinessArea,
+                    "taxCode": oLineDetail.TaxCode,
                     "profitCenter": oLineDetail.ProfitCenter,
                     "functionalArea": oLineDetail.FunctionalArea,
                     "wBSElement": oLineDetail.WBSElement,
@@ -274,7 +277,8 @@ async function updatePOLineDetails(poRecords, tx) {
                     "fundsCenter": oLineDetail.FundsCenter,
                     "fund": oLineDetail.Fund,
                     "grantID": oLineDetail.GrantID,
-                    "profitabilitySegment": oLineDetail.profitabilitySegment
+                    "profitabilitySegment": oLineDetail.ProfitabilitySegment,
+                    "budgetPeriod": oLineDetail.BudgetPeriod
                 })
                 .where(`ID = '${oLineDetail.bodyPOIntegrationInfo_Id}'`);
 
@@ -295,26 +299,19 @@ async function insertPOLineDetails(aNewPoLineDetails, header_Id_InvoiceIntegrati
             "body_Id": oLineDetail.bodyInvoiceItalianTrace_Id,
             "bodyPOIntegrationInfo_ID": bodyPOIntegrationInfo_ID,
             "prezzoTotale": oLineDetail.SupplierInvoiceItemAmount,
-            "quantita": oLineDetail.PurchaseOrderQuantityUnit,
+            "quantita": oLineDetail.QuantityInPurchaseOrderUnit,
             "prezzoUnitario": oLineDetail.PurchaseOrderPriceUnit,
-            "aliquotaIVA": oLineDetail.TaxCode,
             "descrizione": oLineDetail.SupplierInvoiceItemText
         });
 
         aNewPoIntegrationInfoBodyRecords.push({
             "ID": bodyPOIntegrationInfo_ID,
             "header_Id": header_Id_InvoiceIntegrationInfo,
-            "refDocumentCategory": oLineDetail.RefDocumentCategory,
-            "to_SelectedPurchaseOrders_PurchaseOrder": oLineDetail.To_SelectedPurchaseOrders_PurchaseOrder,
-            "to_SelectedPurchaseOrders_PurchaseOrderItem": oLineDetail.To_SelectedPurchaseOrders_PurchaseOrderItem,
-            "to_SelectedDeliveryNotes_InboundDeliveryNote": oLineDetail.To_SelectedDeliveryNotes_InboundDeliveryNote,
-            "to_SelectedServiceEntrySheets_ServiceEntrySheet": oLineDetail.To_SelectedServiceEntrySheets_ServiceEntrySheet,
-            "to_SelectedServiceEntrySheets_ServiceEntrySheetItem": oLineDetail.To_SelectedServiceEntrySheets_ServiceEntrySheetItem,
             "purchaseOrder": oLineDetail.PurchaseOrder,
             "purchaseOrderItem": oLineDetail.PurchaseOrderItem,
             "plant": oLineDetail.Plant,
             "isSubsequentDebitCredit": oLineDetail.IsSubsequentDebitCredit,
-            "quantityInPurchaseOrderUnit": oLineDetail.QuantityInPurchaseOrderPriceUnit,
+            "quantityInPurchaseOrderUnit": oLineDetail.QuantityInPurchaseOrderUnit,
             "qtyInPurchaseOrderPriceUnit": oLineDetail.QtyInPurchaseOrderPriceUnit,
             "isNotCashDiscountLiable": oLineDetail.IsNotCashDiscountLiable,
             "serviceEntrySheet": oLineDetail.ServiceEntrySheet,
@@ -325,6 +322,7 @@ async function insertPOLineDetails(aNewPoLineDetails, header_Id_InvoiceIntegrati
             "controllingArea": oLineDetail.ControllingArea,
             "businessArea": oLineDetail.BusinessArea,
             "profitCenter": oLineDetail.ProfitCenter,
+            "taxCode": oLineDetail.TaxCode,
             "functionalArea": oLineDetail.FunctionalArea,
             "wBSElement": oLineDetail.WBSElement,
             "salesOrder": oLineDetail.SalesOrder,
@@ -334,7 +332,8 @@ async function insertPOLineDetails(aNewPoLineDetails, header_Id_InvoiceIntegrati
             "fundsCenter": oLineDetail.FundsCenter,
             "fund": oLineDetail.Fund,
             "grantID": oLineDetail.GrantID,
-            "profitabilitySegment": oLineDetail.profitabilitySegment
+            "profitabilitySegment": oLineDetail.ProfitabilitySegment,
+            "budgetPeriod": oLineDetail.BudgetPeriod
         });
     }
 
@@ -457,7 +456,7 @@ async function insertGLAccountLineDetails(aNewGlAccountLineDetails, header_Id_In
 
     if (aNewLineDetailRecords.length > 0) {
         const lineQuery = INSERT.into('DettaglioLinee')
-        .entries(aNewLineDetailRecords);
+            .entries(aNewLineDetailRecords);
 
         const glQuery = INSERT.into('GLAccountIntegrationInfoBody')
             .entries(aNewGlAccountIntegrationInfoBodyRecords);

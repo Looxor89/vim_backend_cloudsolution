@@ -1,5 +1,7 @@
 "use strict";
 
+const { tx } = require('@sap/cds');
+
 /**
  * Perform a request by executing the logic defined in an external file specified by `path`.
  * 
@@ -80,7 +82,12 @@ async function performSubmitRequest(srv, request, path) {
     } catch (error) {
         // Log the error and reject the request with a meaningful message.
         console.error('Error during submit request:', error);
-        return request.reject(error);  // Pass the error object to provide more context.
+        // await tx.rollback(error);
+        return request.error({
+            code: error.status || 500,
+            message: error.message || 'An unexpected error occurred'
+        });
+        // return request.reject(error);  // Pass the error object to provide more context.
     }
 }
 

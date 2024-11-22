@@ -1,4 +1,4 @@
-const { glAccountBuildPayload, poAccountBuildPayload } = require('./utils/payloadBuilder');
+const { buildPayloadForSubmitInvoice, buildPayloadForSubmitAttachment } = require('./utils/payloadBuilder');
 const { checkSubmitScope } = require('./utils/scopes');
 const cds = require('@sap/cds');
 const schema = require('./utils/validator');
@@ -53,7 +53,7 @@ module.exports = async (request, tx) => {
         // Function to handle GL Account invoice submissions
         async function performSubmitRequestForGLAccount(jsonInvoice) {
             try {
-                let oPayload = glAccountBuildPayload(jsonInvoice);
+                let oPayload = glAccountbuildPayloadForSubmitInvoice(jsonInvoice);
 
                 const oResult = await serviceRequestS4_HANA.post(process.env['Path_API_SUPPLIER_INVOICE'], oPayload);
 
@@ -85,7 +85,7 @@ module.exports = async (request, tx) => {
         async function performSubmitRequestForPO(jsonInvoice) {
             try {
 
-                let oPayload = poAccountBuildPayload(jsonInvoice);
+                let oPayload = poAccountbuildPayloadForSubmitInvoice(jsonInvoice);
 
                 let oResult = await serviceRequestS4_HANA.post(process.env['Path_API_SUPPLIER_INVOICE'], oPayload),
                     sReferenceDocument = oResult.SupplierInvoice,

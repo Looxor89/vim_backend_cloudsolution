@@ -167,7 +167,7 @@ const schema = {
         PostingDate: Joi.date().allow(null),
         InvoicingParty: Joi.string().max(10).allow(null),
         Currency: Joi.string().max(5).allow(null),
-        SupplierInvoiceIDByInvcgParty: Joi.string().max(2).allow(null),
+        SupplierInvoiceIDByInvcgParty: Joi.string().max(16).allow(null),
         InvoiceGrossAmount: Joi.number().precision(14).allow(null),
         SupplierPostingLineItemText: Joi.string().max(50).allow(null),
         TaxIsCalculatedAutomatically: Joi.boolean().allow(null),
@@ -208,7 +208,7 @@ const schema = {
                 WhldgTaxBaseIsEnteredManually: Joi.boolean().allow(null),
             })
         ),
-        allegati: Joi.array().items(Joi.object().keys({
+        Allegati: Joi.array().items(Joi.object().keys({
             ID: Joi.string().max(36),
             body_Id: Joi.string().max(36),
             nomeAttachment: Joi.string().max(60).allow(null),
@@ -220,6 +220,7 @@ const schema = {
         GLAccountRecords: Joi.array().items(
             Joi.object().keys({
                 lineDetail_ID: Joi.string().max(36).allow(null),
+                headerGLAccountIntegrationInfo_Id: Joi.string().max(36).allow(null),
                 bodyInvoiceItalianTrace_Id: Joi.string().max(36).required(),
                 bodyGLAccountIntegrationInfo_Id: Joi.string().max(36).allow(null),
                 SupplierInvoiceItem: Joi.string().max(4).allow(null),
@@ -263,6 +264,7 @@ const schema = {
         PORecords: Joi.array().items(
             Joi.object().keys({
                 lineDetail_ID: Joi.string().max(36).allow(null),
+                headerPOIntegrationInfo_Id: Joi.string().max(36).allow(null),
                 bodyInvoiceItalianTrace_Id: Joi.string().max(36).required(),
                 bodyPOIntegrationInfo_Id: Joi.string().max(36).allow(null),
                 SupplierInvoiceItem: Joi.string().max(6).allow(null),
