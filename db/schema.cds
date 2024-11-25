@@ -101,53 +101,74 @@ context vim {
   }
 
   entity InvoiceIntegrationInfo {
-    key ID                                                  : UUID;
-        navigation_to                                       : Association to one DOC_PACK;
-        transaction                                         : String(28);
-        companyCode                                         : String(4);
-        supplierPostingLineItemText                         : String(50);
-        taxIsCalculatedAutomatically                        : Boolean;
-        invoiceReceiptDate                                  : Date;
-        postingDate                                         : Date;
-        invoicingParty                                      : String(10);
-        dueCalculationBaseDate                              : Date;
-        manualCashDiscount                                  : Decimal(14, 3);
-        paymentTerms                                        : String(4);
-        cashDiscount1Days                                   : Integer;
-        cashDiscount1Percent                                : Decimal(5, 3);
-        cashDiscount2Days                                   : Integer;
-        cashDiscount2Percent                                : Decimal(4, 3);
-        fixedCashDiscount                                   : String(1);
-        netPaymentDays                                      : Integer;
-        bPBankAccountInternalID                             : String(4);
-        invoiceReference                                    : String(10);
-        invoiceReferenceFiscalYear                          : String(4);
-        houseBank                                           : String(5);
-        houseBankAccount                                    : String(5);
-        paymentBlockingReason                               : String(1);
-        paymentReason                                       : String(4);
-        paymentMethod                                       : String(1);
-        accountingDocumentType                              : String(2);
-        unplannedDeliveryCost                               : Decimal(14, 3);
-        documentHeaderText                                  : String(25);
+    key ID                                              : UUID;
+        navigation_to                                   : Association to one DOC_PACK;
+        transaction                                     : String(28);
+        companyCode                                     : String(4);
+        supplierPostingLineItemText                     : String(50);
+        taxIsCalculatedAutomatically                    : Boolean;
+        invoiceReceiptDate                              : Date;
+        postingDate                                     : Date;
+        invoicingParty                                  : String(10);
+        dueCalculationBaseDate                          : Date;
+        manualCashDiscount                              : Decimal(14, 3);
+        paymentTerms                                    : String(4);
+        cashDiscount1Days                               : Integer;
+        cashDiscount1Percent                            : Decimal(5, 3);
+        cashDiscount2Days                               : Integer;
+        cashDiscount2Percent                            : Decimal(4, 3);
+        fixedCashDiscount                               : String(1);
+        netPaymentDays                                  : Integer;
+        bPBankAccountInternalID                         : String(4);
+        invoiceReference                                : String(10);
+        invoiceReferenceFiscalYear                      : String(4);
+        houseBank                                       : String(5);
+        houseBankAccount                                : String(5);
+        paymentBlockingReason                           : String(1);
+        paymentReason                                   : String(4);
+        paymentMethod                                   : String(1);
+        accountingDocumentType                          : String(2);
+        unplannedDeliveryCost                           : Decimal(14, 3);
+        documentHeaderText                              : String(25);
         // supplyingCountry              : String;
-        assignmentReference                                 : String(18);
-        isEUTriangularDeal                                  : Boolean;
-        taxDeterminationDate                                : Date;
-        taxReportingDate                                    : Date;
-        taxFulfillmentDate                                  : Date;
-        to_SupplierInvoiceWhldgTax                          : Association to many SupplierInvoiceWhldgTax
-                                                                on to_SupplierInvoiceWhldgTax.header_Id = $self.ID;
-        refDocumentCategory                                 : String(28);
-        to_SelectedPurchaseOrders_PurchaseOrder             : String(10);
-        to_SelectedPurchaseOrders_PurchaseOrderItem         : String(5);
-        to_SelectedDeliveryNotes_InboundDeliveryNote        : String(16);
-        to_SelectedServiceEntrySheets_ServiceEntrySheet     : String(10);
-        to_SelectedServiceEntrySheets_ServiceEntrySheetItem : String(5);
-        bodyPOIntegrationInfo                               : Association to many POIntegrationInfoBody
-                                                                on bodyPOIntegrationInfo.header_Id = $self.ID;
-        bodyGLAccountIntegrationInfo                        : Association to many GLAccountIntegrationInfoBody
-                                                                on bodyGLAccountIntegrationInfo.header_Id = $self.ID;
+        assignmentReference                             : String(18);
+        isEUTriangularDeal                              : Boolean;
+        taxDeterminationDate                            : Date;
+        taxReportingDate                                : Date;
+        taxFulfillmentDate                              : Date;
+        to_SupplierInvoiceWhldgTax                      : Association to many SupplierInvoiceWhldgTax
+                                                            on to_SupplierInvoiceWhldgTax.header_Id = $self.ID;
+        refDocumentCategory                             : String(28);
+        to_SelectedPurchaseOrders_PurchaseOrder         : Association to many SelectedPurchaseOrders
+                                                            on to_SelectedPurchaseOrders_PurchaseOrder.header_Id = $self.ID;
+        to_SelectedDeliveryNotes_InboundDeliveryNote    : Association to many SelectedDeliveryNotes
+                                                            on to_SelectedDeliveryNotes_InboundDeliveryNote.header_Id = $self.ID;
+        to_SelectedServiceEntrySheets_ServiceEntrySheet : Association to many SelectedServiceEntrySheets
+                                                            on to_SelectedServiceEntrySheets_ServiceEntrySheet.header_Id = $self.ID;
+        bodyPOIntegrationInfo                           : Association to many POIntegrationInfoBody
+                                                            on bodyPOIntegrationInfo.header_Id = $self.ID;
+        bodyGLAccountIntegrationInfo                    : Association to many GLAccountIntegrationInfoBody
+                                                            on bodyGLAccountIntegrationInfo.header_Id = $self.ID;
+  }
+
+  entity SelectedPurchaseOrders {
+    key ID                : UUID;
+        header_Id         : UUID;
+        purchaseOrder     : String(10);
+        purchaseOrderItem : String(5);
+  }
+
+  entity SelectedDeliveryNotes {
+    key ID                  : UUID;
+        header_Id           : UUID;
+        inboundDeliveryNote : String(16);
+  }
+
+  entity SelectedServiceEntrySheets {
+    key ID                    : UUID;
+        header_Id             : UUID;
+        serviceEntrySheet     : String(10);
+        serviceEntrySheetItem : String(5);
   }
 
   entity SupplierInvoiceWhldgTax {
@@ -548,8 +569,7 @@ context vim {
    * View which, for each invoice, contains all info about its elaboration like user who has performed
    * an action, who has been assigned to a task and other info strictly related to invoice
    */
-@cds.persistence.exists
-@cds.persistence.calcview
+@cds.persistence.exists  @cds.persistence.calcview
 entity V_DOC_EXTENDED {
   key PACKAGEID              : String(36)   @title: 'PACKAGEID: PACKAGEID';
       MODUSER_LASTNAME       : String(50)   @title: 'MODUSER_LASTNAME: MODUSER_LASTNAME';
@@ -568,7 +588,7 @@ entity V_DOC_EXTENDED {
       CREATEDAT              : Timestamp    @title: 'CREATEDAT: CREATEDAT';
       CREATEDBY              : String(255)  @title: 'CREATEDBY: CREATEDBY';
       LASTCHANGEDON          : Timestamp    @title: 'LASTCHANGEDON: MODIFIEDAT';
-      ACTION                 : String(10)   @title: 'ACTION: ACTION';
+      action                 : String(10)   @title: 'ACTION: ACTION';
       COMPANYCODE            : String(5000) @title: 'COMPANYCODE: COMPANYCODE';
       PRIORITYCODE           : String(2)    @title: 'PRIORITYCODE: PRIORITYCODE';
       LASTCHANGEDBY          : String(255)  @title: 'LASTCHANGEDBY: MODIFIEDBY';

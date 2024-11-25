@@ -46,12 +46,23 @@ async function fetchHeaderData(tx, packageId) {
         SELECT('*').from('InvoiceIntegrationInfo').where({ navigation_to_PackageId: packageId })
     ))[0];
 
-    
-    const dataSupplierInvoiceWhldgTax= (await tx.run(
+    const dataSelectedPurchaseOrders = (await tx.run(
+        SELECT('*').from('SelectedPurchaseOrders').where({ header_Id: headerInvoiceIntegrationInfo.ID })
+    ));
+
+    const dataSelectedDeliveryNotes = (await tx.run(
+        SELECT('*').from('SelectedDeliveryNotes').where({ header_Id: headerInvoiceIntegrationInfo.ID })
+    ));
+
+    const dataSelectedServiceEntrySheets = (await tx.run(
+        SELECT('*').from('SelectedServiceEntrySheets').where({ header_Id: headerInvoiceIntegrationInfo.ID })
+    ));
+
+    const dataSupplierInvoiceWhldgTax = (await tx.run(
         SELECT('*').from('SupplierInvoiceWhldgTax').where({ header_Id: headerInvoiceIntegrationInfo.ID })
     ));
 
-    return { headerFatturaElettronica, headerInvoiceIntegrationInfo, dataSupplierInvoiceWhldgTax };
+    return { headerFatturaElettronica, headerInvoiceIntegrationInfo, dataSelectedPurchaseOrders, dataSelectedDeliveryNotes, dataSelectedServiceEntrySheets, dataSupplierInvoiceWhldgTax };
 }
 
 // Fetch body data and related records based on header ID
@@ -112,7 +123,7 @@ async function fetchPaymentData(tx, bodyId) {
  * @param {Array} dataPOIntegrationInfoBody - Array of integration info objects.
  * @returns {Array} - Array of line details with merged integration data.
  */
-function mergePOLineDetailsWithIntegrationInfoBody (dataDettaglioLinee, dataPOIntegrationInfoBody) {
+function mergePOLineDetailsWithIntegrationInfoBody(dataDettaglioLinee, dataPOIntegrationInfoBody) {
     // Filter out lines that do not have a `bodyPOIntegrationInfo_ID` property.
     let aDataDettaglioLineeForPOInvoices = dataDettaglioLinee.filter(line => line.bodyPOIntegrationInfo_ID);
     // Map over the filtered line details to enrich each one with data from `dataPOIntegrationInfoBody`.
@@ -120,11 +131,11 @@ function mergePOLineDetailsWithIntegrationInfoBody (dataDettaglioLinee, dataPOIn
         // Spread all properties of the current line into the result object.
         ...line,
         // Find the matching integration info object based on `bodyPOIntegrationInfo_ID`.
-        ...(dataPOIntegrationInfoBody.find(info => info.ID === line.bodyPOIntegrationInfo_ID) && 
-        
-        // Merge properties from the matching integration object into the line object,
-        // excluding the `ID` property to avoid conflicts.
-        Object.fromEntries(Object.entries(dataPOIntegrationInfoBody.find(info => info.ID === line.bodyPOIntegrationInfo_ID)).filter(([key]) => key !== 'ID'))) || {} // Fallback to an empty object if no matching integration object is found.
+        ...(dataPOIntegrationInfoBody.find(info => info.ID === line.bodyPOIntegrationInfo_ID) &&
+
+            // Merge properties from the matching integration object into the line object,
+            // excluding the `ID` property to avoid conflicts.
+            Object.fromEntries(Object.entries(dataPOIntegrationInfoBody.find(info => info.ID === line.bodyPOIntegrationInfo_ID)).filter(([key]) => key !== 'ID'))) || {} // Fallback to an empty object if no matching integration object is found.
     }));
 }
 
@@ -137,7 +148,7 @@ function mergePOLineDetailsWithIntegrationInfoBody (dataDettaglioLinee, dataPOIn
  * @param {Array} dataGLAccountIntegrationInfoBody - Array of integration info objects.
  * @returns {Array} - Array of line details with merged integration data.
  */
-function mergeGLAccountLineDetailsWithIntegrationInfoBody (dataDettaglioLinee, dataGLAccountIntegrationInfoBody) {
+function mergeGLAccountLineDetailsWithIntegrationInfoBody(dataDettaglioLinee, dataGLAccountIntegrationInfoBody) {
     // Filter out lines that do not have a `bodyGLAccountIntegrationInfo_ID` property.
     let aDataDettaglioLineeForGLAccount = dataDettaglioLinee.filter(line => line.bodyGLAccountIntegrationInfo_ID);
     // Map over the filtered line details to enrich each one with data from `dataGLAccountIntegrationInfoBody`.
@@ -145,17 +156,17 @@ function mergeGLAccountLineDetailsWithIntegrationInfoBody (dataDettaglioLinee, d
         // Spread all properties of the current line into the result object.
         ...line,
         // Find the matching integration info object based on `bodyGLAccountIntegrationInfo_ID`.
-        ...(dataGLAccountIntegrationInfoBody.find(info => info.ID === line.bodyGLAccountIntegrationInfo_ID) && 
-        
-        // Merge properties from the matching integration object into the line object,
-        // excluding the `ID` property to avoid conflicts.
-        Object.fromEntries(Object.entries(dataGLAccountIntegrationInfoBody.find(info => info.ID === line.bodyGLAccountIntegrationInfo_ID)).filter(([key]) => key !== 'ID'))) || {} // Fallback to an empty object if no matching integration object is found.
+        ...(dataGLAccountIntegrationInfoBody.find(info => info.ID === line.bodyGLAccountIntegrationInfo_ID) &&
+
+            // Merge properties from the matching integration object into the line object,
+            // excluding the `ID` property to avoid conflicts.
+            Object.fromEntries(Object.entries(dataGLAccountIntegrationInfoBody.find(info => info.ID === line.bodyGLAccountIntegrationInfo_ID)).filter(([key]) => key !== 'ID'))) || {} // Fallback to an empty object if no matching integration object is found.
     }));
 }
 
 // Create the result object containing all invoice details
 function createResultObject(headerData, bodyData, paymentData) {
-    const { headerFatturaElettronica, headerInvoiceIntegrationInfo, dataSupplierInvoiceWhldgTax } = headerData;
+    const { headerFatturaElettronica, headerInvoiceIntegrationInfo, dataSelectedPurchaseOrders, dataSelectedDeliveryNotes, dataSelectedServiceEntrySheets, dataSupplierInvoiceWhldgTax } = headerData;
     const { bodyFatturaElettronica, dataDatiRitenuta, dataDatiOrdineAcquisto, dataDettaglioLinee, dataDatiRiepilogo, dataDatiPagamento, dataAllegati, dataPOIntegrationInfoBody, dataGLAccountIntegrationInfoBody } = bodyData;
     const { dataDettaglioPagamento } = paymentData;
     const aLineDetailsMergedWithPOIntegrations = mergePOLineDetailsWithIntegrationInfoBody(dataDettaglioLinee, dataPOIntegrationInfoBody);
@@ -175,6 +186,32 @@ function createResultObject(headerData, bodyData, paymentData) {
             "WithholdingTaxCode": oItem.withholdingTaxCode ? oItem.withholdingTaxCode : null,
             "WithholdingTaxBaseAmount": oItem.withholdingTaxBaseAmount ? oItem.withholdingTaxBaseAmount : null,
             "WhldgTaxBaseIsEnteredManually": oItem.whldgTaxBaseIsEnteredManually ? oItem.whldgTaxBaseIsEnteredManually : null
+        }
+    });
+
+    const aDataSelectedPurchaseOrders = dataSelectedPurchaseOrders.map((oItem, index) => {
+        return {
+            "selectedPurchaseOrders_Id": oItem.ID,
+            "header_Id_InvoiceIntegrationInfo": oItem.header_Id,
+            "PurchaseOrder": oItem.purchaseOrder ? oItem.purchaseOrder : null,
+            "PurchaseOrderItem": oItem.purchaseOrderItem ? oItem.purchaseOrderItem : null
+        }
+    });
+
+    const aDataSelectedDeliveryNotes = dataSelectedDeliveryNotes.map((oItem, index) => {
+        return {
+            "selectedDeliveryNotes_Id": oItem.ID,
+            "header_Id_InvoiceIntegrationInfo": oItem.header_Id,
+            "InboundDeliveryNote": oItem.inboundDeliveryNote ? oItem.inboundDeliveryNote : null
+        }
+    });
+
+    const aDataSelectedServiceEntrySheets = dataSelectedServiceEntrySheets.map((oItem, index) => {
+        return {
+            "selectedServiceEntrySheets_Id": oItem.ID,
+            "header_Id_InvoiceIntegrationInfo": oItem.header_Id,
+            "serviceEntrySheet": oItem.serviceEntrySheet ? oItem.serviceEntrySheet : null,
+            "serviceEntrySheetItem": oItem.serviceEntrySheetItem ? oItem.serviceEntrySheetItem : null
         }
     });
 
@@ -223,11 +260,9 @@ function createResultObject(headerData, bodyData, paymentData) {
         "Allegati": dataAllegati,
         "GLAccountRecords": aGLAccountRecords,
         "RefDocumentCategory": headerInvoiceIntegrationInfo.refDocumentCategory ? headerInvoiceIntegrationInfo.refDocumentCategory : null,
-        "To_SelectedPurchaseOrders_PurchaseOrder": headerInvoiceIntegrationInfo.to_SelectedPurchaseOrders_PurchaseOrder ?  headerInvoiceIntegrationInfo.to_SelectedPurchaseOrders_PurchaseOrder : null,
-        "To_SelectedPurchaseOrders_PurchaseOrderItem": headerInvoiceIntegrationInfo.to_SelectedPurchaseOrders_PurchaseOrderItem ?  headerInvoiceIntegrationInfo.to_SelectedPurchaseOrders_PurchaseOrderItem : null,
-        "To_SelectedDeliveryNotes_InboundDeliveryNote": headerInvoiceIntegrationInfo.to_SelectedDeliveryNotes_InboundDeliveryNote ? headerInvoiceIntegrationInfo.to_SelectedDeliveryNotes_InboundDeliveryNote : null,
-        "To_SelectedServiceEntrySheets_ServiceEntrySheet": headerInvoiceIntegrationInfo.to_SelectedServiceEntrySheets_ServiceEntrySheet ? headerInvoiceIntegrationInfo.to_SelectedServiceEntrySheets_ServiceEntrySheet : null,
-        "To_SelectedServiceEntrySheets_ServiceEntrySheetItem": headerInvoiceIntegrationInfo.to_SelectedServiceEntrySheets_ServiceEntrySheetItem ? headerInvoiceIntegrationInfo.to_SelectedServiceEntrySheets_ServiceEntrySheetItem : null,
+        "To_SelectedPurchaseOrders": aDataSelectedPurchaseOrders,
+        "To_SelectedDeliveryNotes": aDataSelectedDeliveryNotes,
+        "To_SelectedServiceEntrySheets": aDataSelectedServiceEntrySheets,
         "PORecords": aPORecords
     };
 }
@@ -259,7 +294,7 @@ function createLineItemForGLAccount(index, oLineDetail, bodyFatturaElettronica) 
         "WBSElement": oLineDetail.wBSElement ? oLineDetail.wBSElement : null,
         "PersonnelNumber": oLineDetail.personnelNumber ? oLineDetail.personnelNumber : null,
         "IsNotCashDiscountLiable": oLineDetail.isNotCashDiscountLiable ? oLineDetail.isNotCashDiscountLiable : null,
-        "InternalOrder": oLineDetail.internalOrder ?  oLineDetail.internalOrder : null,
+        "InternalOrder": oLineDetail.internalOrder ? oLineDetail.internalOrder : null,
         "CommitmentItem": oLineDetail.commitmentItem ? oLineDetail.commitmentItem : null,
         "Fund": oLineDetail.fund ? oLineDetail.fund : null,
         "GrantID": oLineDetail.grantID ? oLineDetail.grantID : null,
@@ -297,7 +332,7 @@ function createLineItemForPO(index, oLineDetail, bodyFatturaElettronica) {
         "ServiceEntrySheetItem": oLineDetail.serviceEntrySheetItem ? oLineDetail.serviceEntrySheetItem : null,
         "IsFinallyInvoiced": oLineDetail.isFinallyInvoiced ? oLineDetail.isFinallyInvoiced : null,
         "TaxDeterminationDate": oLineDetail.taxDeterminationDate ? oLineDetail.taxDeterminationDate : null,
-        "CostCenter":  oLineDetail.costCenter ? oLineDetail.costCenter : null,
+        "CostCenter": oLineDetail.costCenter ? oLineDetail.costCenter : null,
         "ControllingArea": oLineDetail.controllingArea ? oLineDetail.controllingArea : null,
         "BusinessArea": oLineDetail.businessArea ? oLineDetail.businessArea : null,
         "ProfitCenter": oLineDetail.profitCenter ? oLineDetail.profitCenter : null,
@@ -305,7 +340,7 @@ function createLineItemForPO(index, oLineDetail, bodyFatturaElettronica) {
         "WBSElement": oLineDetail.wBSElement ? oLineDetail.wBSElement : null,
         "SalesOrder": oLineDetail.salesOrder ? oLineDetail.salesOrder : null,
         "SalesOrderItem": oLineDetail.salesOrderItem ? oLineDetail.salesOrderItem : null,
-        "InternalOrder": oLineDetail.internalOrder ?  oLineDetail.internalOrder : null,
+        "InternalOrder": oLineDetail.internalOrder ? oLineDetail.internalOrder : null,
         "CommitmentItem": oLineDetail.commitmentItem ? oLineDetail.commitmentItem : null,
         "FundsCenter": oLineDetail.fundsCenter ? oLineDetail.fundsCenter : null,
         "Fund": oLineDetail.fund ? oLineDetail.fund : null,

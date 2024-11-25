@@ -166,7 +166,7 @@
     <filter>&quot;SEQNO&quot;=&quot;MAX_SEQNO&quot;</filter>
     <joinAttribute name="JOIN$PACKAGEID$PACKAGEID"/>
   </calculationView>
-  <calculationView xsi:type="Calculation:NonEquiJoinView" id="Invoice_Header" cardinality="C1_1" joinType="leftOuter">
+  <calculationView xsi:type="Calculation:NonEquiJoinView" id="Invoice_Header" cardinality="C1_1" joinType="inner">
     <viewAttributes>
       <viewAttribute id="CREATEDAT"/>
       <viewAttribute id="CREATEDBY"/>

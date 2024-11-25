@@ -13,6 +13,9 @@ service CatalogService {
     // entity DOC_ATTACHMENTS           as projection on V_DOC_ATTACHMENTS;
     // Integration data for invoice
     entity InvoiceIntegrationInfo       as projection on vim.InvoiceIntegrationInfo;
+    entity SelectedPurchaseOrders       as projection on vim.SelectedPurchaseOrders;
+    entity SelectedDeliveryNotes        as projection on vim.SelectedDeliveryNotes;
+    entity SelectedServiceEntrySheets   as projection on vim.SelectedServiceEntrySheets;
     entity SupplierInvoiceWhldgTax      as projection on vim.SupplierInvoiceWhldgTax;
     entity POIntegrationInfoBody        as projection on vim.POIntegrationInfoBody;
     entity GLAccountIntegrationInfoBody as projection on vim.GLAccountIntegrationInfoBody;
@@ -82,11 +85,26 @@ service CatalogService {
     };
 
     type savePayload {
-        PackageId                             : String;
-        Invoice                               : LargeString;
-        RemovedSupplierInvoiceWhldgTaxRecords : array of RemovedSupplierInvoiceWhldgTaxRecords;
-        RemovedPoLineDetails                  : array of RemovedPoLineDetails;
-        RemovedGlAccountLineDetails           : array of RemovedGlAccountLineDetails;
+        PackageId                                : String;
+        Invoice                                  : LargeString;
+        RemovedSelectedPurchaseOrdersRecords     : array of RemovedSelectedPurchaseOrdersRecords;
+        RemovedSelectedDeliveryNotesRecords      : array of RemovedSelectedDeliveryNotesRecords;
+        RemovedSelectedServiceEntrySheetsRecords : array of RemovedSelectedServiceEntrySheetsRecords;
+        RemovedSupplierInvoiceWhldgTaxRecords    : array of RemovedSupplierInvoiceWhldgTaxRecords;
+        RemovedPoLineDetails                     : array of RemovedPoLineDetails;
+        RemovedGlAccountLineDetails              : array of RemovedGlAccountLineDetails;
+    };
+
+    type RemovedSelectedPurchaseOrdersRecords {
+        selectedPurchaseOrders_Id : String;
+    };
+
+    type RemovedSelectedDeliveryNotesRecords {
+        selectedDeliveryNotes_Id : String;
+    };
+
+    type RemovedSelectedServiceEntrySheetsRecords {
+        selectedServiceEntrySheets_Id : String;
     };
 
     type RemovedSupplierInvoiceWhldgTaxRecords {
@@ -104,11 +122,14 @@ service CatalogService {
     };
 
     type submitPayload {
-        PackageId : String;
-        Invoice   : LargeString;
-        RemovedSupplierInvoiceWhldgTaxRecords : array of RemovedSupplierInvoiceWhldgTaxRecords;
-        RemovedPoLineDetails                  : array of RemovedPoLineDetails;
-        RemovedGlAccountLineDetails           : array of RemovedGlAccountLineDetails;
+        PackageId                                : String;
+        Invoice                                  : LargeString;
+        RemovedSelectedPurchaseOrdersRecords     : array of RemovedSelectedPurchaseOrdersRecords;
+        RemovedSelectedDeliveryNotesRecords      : array of RemovedSelectedDeliveryNotesRecords;
+        RemovedSelectedServiceEntrySheetsRecords : array of RemovedSelectedServiceEntrySheetsRecords;
+        RemovedSupplierInvoiceWhldgTaxRecords    : array of RemovedSupplierInvoiceWhldgTaxRecords;
+        RemovedPoLineDetails                     : array of RemovedPoLineDetails;
+        RemovedGlAccountLineDetails              : array of RemovedGlAccountLineDetails;
     };
 
     type massiveSubmitPayload {

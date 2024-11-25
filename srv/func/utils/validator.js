@@ -197,6 +197,30 @@ const schema = {
         TaxDeterminationDate: Joi.date().allow(null),
         TaxReportingDate: Joi.date().allow(null),
         TaxFulfillmentDate: Joi.date().allow(null),
+        RefDocumentCategory: Joi.string().max(28).allow(null),
+        To_SelectedPurchaseOrders: Joi.array().items(
+            Joi.object().keys({
+                selectedPurchaseOrders_Id: Joi.string().max(36).allow(null),
+                header_Id_InvoiceIntegrationInfo: Joi.string().max(36).allow(null),
+                PurchaseOrder: Joi.string().max(10).allow(null),
+                PurchaseOrderItem: Joi.string().max(5).allow(null),
+            })
+        ),
+        To_SelectedDeliveryNotes: Joi.array().items(
+            Joi.object().keys({
+                selectedDeliveryNotes_Id: Joi.string().max(36).allow(null),
+                header_Id_InvoiceIntegrationInfo: Joi.string().max(36).allow(null),
+                InboundDeliveryNote: Joi.string().max(16).allow(null)
+            })
+        ),
+        To_SelectedServiceEntrySheets: Joi.array().items(
+            Joi.object().keys({
+                selectedServiceEntrySheets_Id: Joi.string().max(36).allow(null),
+                header_Id_InvoiceIntegrationInfo: Joi.string().max(36).allow(null),
+                ServiceEntrySheet: Joi.string().max(10).allow(null),
+                ServiceEntrySheetItem: Joi.string().max(5).allow(null)
+            })
+        ),
         To_SupplierInvoiceWhldgTax: Joi.array().items(
             Joi.object().keys({
                 supplierInvoiceWhldgTax_Id: Joi.string().max(36).allow(null),
@@ -255,12 +279,6 @@ const schema = {
                 BudgetPeriod: Joi.string().max(10).allow(null),
             })
         ),
-        To_SelectedPurchaseOrders_PurchaseOrder: Joi.string().max(10).allow(null),
-        To_SelectedPurchaseOrders_PurchaseOrderItem: Joi.string().max(5).allow(null),
-        To_SelectedDeliveryNotes_InboundDeliveryNote: Joi.string().max(16).allow(null),
-        To_SelectedServiceEntrySheets_ServiceEntrySheet: Joi.string().max(10).allow(null),
-        To_SelectedServiceEntrySheets_ServiceEntrySheetItem: Joi.string().max(5).allow(null),
-        RefDocumentCategory: Joi.string().max(28).allow(null),
         PORecords: Joi.array().items(
             Joi.object().keys({
                 lineDetail_ID: Joi.string().max(36).allow(null),

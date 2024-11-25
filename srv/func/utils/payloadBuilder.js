@@ -33,9 +33,9 @@ function buildPayloadForSubmitInvoice(jsonInvoice) {
             aTo_SelectedServiceEntrySheets = [];
     }
 
-    let aTo_SuplrInvcItemPurOrdRef = jsonInvoice.PORecords.map(oTo_SuplrInvcItemPurOrdRef => {
+    let aTo_SuplrInvcItemPurOrdRef = jsonInvoice.PORecords.map((oTo_SuplrInvcItemPurOrdRef, index) => {
         return {
-            SupplierInvoiceItem: oTo_SuplrInvcItemPurOrdRef.SupplierInvoiceItem,
+            SupplierInvoiceItem: String(index+1).padStart(4, '0'),
             PurchaseOrder: oTo_SuplrInvcItemPurOrdRef.PurchaseOrder,
             PurchaseOrderItem: oTo_SuplrInvcItemPurOrdRef.PurchaseOrderItem,
             Plant: oTo_SuplrInvcItemPurOrdRef.Plant,
@@ -74,9 +74,9 @@ function buildPayloadForSubmitInvoice(jsonInvoice) {
             ]}
         }
     });
-    let aTo_SupplierInvoiceItemGLAcct = jsonInvoice.GLAccountRecords.map(oTo_SupplierInvoiceItemGLAcct => {
+    let aTo_SupplierInvoiceItemGLAcct = jsonInvoice.GLAccountRecords.map((oTo_SupplierInvoiceItemGLAcct, index) => {
         return {
-            SupplierInvoiceItem: oTo_SupplierInvoiceItemGLAcct.SupplierInvoiceItem,
+            SupplierInvoiceItem: String(index+1).padStart(4, '0'),
             CompanyCode: oTo_SupplierInvoiceItemGLAcct.CompanyCode,
             GLAccount: oTo_SupplierInvoiceItemGLAcct.GLAccount,
             DebitCreditCode: oTo_SupplierInvoiceItemGLAcct.DebitCreditCode,
