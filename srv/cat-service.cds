@@ -48,6 +48,7 @@ service CatalogService {
     function list()                                                 returns array of String;
     function currency()                                             returns array of String;
     function getMetadata()                                          returns array of String;
+    function getAttachment()                                        returns array of String;
     action   assign(payload : assignPayload)                        returns array of String;
     action   forward(payload : forwardPayload)                      returns array of String;
     action   unlock(payload : unlockPayload)                        returns array of String;

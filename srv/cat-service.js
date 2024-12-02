@@ -251,6 +251,18 @@ module.exports = function (srv) {
     });
 
     /**
+     * Function for handling get attachment requests based on role scopes.
+     * 
+     * This function listens for the 'attachment' event, which is used to submit an invoice.
+     * The logic is encapsulated in the './func/submit' file.
+     * 
+     * @param {object} srv - Service object that manages request listeners and interactions with the data model.
+     */
+    srv.on('getAttachment', '*', async request => {
+        await performRequest(srv, request, './func/getAttachment');
+    });
+
+    /**
      * Function for handling lockStatus requests based on role scopes.
      * 
      * This function listens for the 'lockStatus' event, which is used to get lock status of an invoice.
