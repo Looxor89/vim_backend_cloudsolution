@@ -32,10 +32,12 @@ async function performRequest(srv, request, path) {
         // If no errors, return the successful result to the client.
         return request.reply(result);
 
-    } catch (error) {
-        // Log the error and reject the request with the caught error for context.
-        console.error('Error during request processing:', error);
-        return request.reject(error);  // Pass the error object for better client feedback.
+    } catch (error) { console.log(error);
+        await tx.rollback(error);
+        return request.error({
+            code: error.status || 500,
+            message: error.message || 'An unexpected error occurred'
+        });
     }
 }
 
@@ -83,6 +85,10 @@ async function performSubmitRequest(srv, request, path) {
         // Log the error and reject the request with a meaningful message.
         console.error('Error during submit request:', error);
         // await tx.rollback(error);
+        await srv.transaction(async tx => {
+            return require('./func/logErrorHandler')(request, tx, error.message); 
+        });
+
         return request.error({
             code: error.status || 500,
             message: error.message || 'An unexpected error occurred'
@@ -185,15 +191,15 @@ module.exports = function (srv) {
     });
 
     /**
-     * Function for handling reject requests based on role scopes.
+     * Function for handling delete requests based on role scopes.
      * 
-     * This function listens for the 'reject' event, which is used to reject an invoice.
-     * The logic is encapsulated in the './func/reject' file.
+     * This function listens for the 'delete' event, which is used to delete an invoice.
+     * The logic is encapsulated in the './func/delete' file.
      * 
      * @param {object} srv - Service object that manages request listeners and interactions with the data model.
      */
-    srv.on('reject', '*', async request => {
-        await performRequest(srv, request, './func/reject');
+    srv.on('delete', '*', async request => {
+        await performRequest(srv, request, './func/delete');
     });
 
     /**

@@ -123,7 +123,7 @@ const schema = {
      * Assign action validator
      */
     action_assign: Joi.object().min(1).keys({
-        PackageId: Joi.string().max(36).required(),
+        PackagesId: Joi.array().items(Joi.string().max(36).required()),
         AssignedTo: Joi.string().email().allow(null)
     }),
     /**
@@ -143,9 +143,8 @@ const schema = {
     /**
      * Reject action validator
      */
-    action_reject: Joi.object().min(1).keys({
-        PackageId: Joi.string().max(36).required(),
-        sMode: Joi.string().max(6).allow(null)
+    action_delete: Joi.object().min(1).keys({
+        PackagesId: Joi.array().items(Joi.string().max(36).required())
     }),
     /**
      * Lock action validator

@@ -9,27 +9,12 @@ const mimeTypes = require('../resources/mimeTypes.json');
 module.exports = async (request, tx) => {
     // Extract payload data from the incoming request.
     const { PackageId,
-        Invoice,
-        RemovedPoLineDetails,
-        RemovedGlAccountLineDetails } = request.data.payload,
+        Invoice
+    } = request.data.payload,
         modifiedBy = request.req.authInfo.getLogonName(),
         modifiedAt = new Date();
     let data,
     jsonInvoice = JSON.parse(Invoice);
-
-    try {
-        jsonInvoice = JSON.parse(Invoice);
-    } catch (err) {
-        console.error('Failed to parse invoice JSON:', err);
-        // return { status: 422, message: 'Invalid Invoice JSON' }
-        throw new Error('Invalid Invoice JSON');
-    }
-    // Validate incoming payload
-    const valid = validateInvoice(jsonInvoice);
-    if (!valid.status) {
-        // return { status: 422, message: valid.message }
-        throw new Error(`Validation failed: ${valid.message}`);
-    }
 
     const serviceS4_HANA = await cds.connect.to(process.env['Destination_OData_S4HANA']);
     const serviceRequestS4_HANA = serviceS4_HANA.tx(request);
@@ -62,8 +47,8 @@ module.exports = async (request, tx) => {
     });
 
     // Defining update dock_pack query
-    updateDocPackQuery = UPDATE('DOC_PACK')
-        .set(`ModifiedBy = '${modifiedBy}', ModifiedAt = '${modifiedAt}', Status = 'POSTED', ReferenceDocument = '${sReferenceDocument}', FiscalYear = '${sFiscalYear}', CompanyCode = '${sCompanyCode}'`)
+    let updateDocPackQuery = UPDATE('DOC_PACK')
+        .set(`modifiedBy = '${modifiedBy}', modifiedAt = '${modifiedAt}', Status = 'POSTED', ReferenceDocument = '${sReferenceDocument}', FiscalYear = '${sFiscalYear}', CompanyCode = '${sCompanyCode}'`)
         .where(`PackageId = '${PackageId}'`);
     // Execute the query and retrieve the data from the database.
     data = await tx.run(updateDocPackQuery);
@@ -73,6 +58,11 @@ module.exports = async (request, tx) => {
         throw new Error('Update failed');
     }
 
+    let deleteQuery = DELETE.from('ERROR_LOG')
+                            .where(`PackageId = '${PackageId}'`);
+
+    await executeQuery(tx, deleteQuery);
+
     // Return the status code and message.
     return {
         status: 201,
@@ -80,11 +70,3 @@ module.exports = async (request, tx) => {
     };
 
 };
-
-// Helper function to validate the invoice
-function validateInvoice(invoice) {
-    const { error } = schema.action_save_submit.validate(invoice, { abortEarly: false });
-    let valid = error == null;
-    let details = error ? error.message : null;
-    return { status: valid, message: details };
-}

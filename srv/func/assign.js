@@ -9,78 +9,75 @@ module.exports = async (request, tx) => {
     let { error } = schema.action_assign.validate(request.data.payload, { abortEarly: false });
     let valid = error == null;
     //If payload is valid then do assign
-    if (valid) {
-        // Extract payload data from the incoming request.
-        let {
-            PackageId,
-            AssignedTo
-        } = request.data.payload,
-            updatedBy = request.req.authInfo.getLogonName(),
-            updatedAt = new Date(),
-            lockedAt = moment().utc().format('YYYY-MM-DD HH:mm:ss'),
-            data, query, updateDocPackQuery, insertDocWfQuery;
-
-        try {
-            // Defining update dock_pack query
-            updateDocPackQuery = UPDATE('DOC_PACK')
-                .set(`AssignedTo = '${AssignedTo}', Status = 'ASSIGN', ModifiedBy = '${updatedBy}', ModifiedAt = '${updatedAt}', LockedAt = '${lockedAt}'`)
-                .where(`PackageId = '${PackageId}'`);
-            // Execute the query and retrieve the data from the database.
-            data = await tx.run(updateDocPackQuery);
-
-            // Return the result with status code, number of affected rows as count, and message.
-            if (data == null || data == undefined) {
-                await tx.rollback();
-                return {
-                    status: 500,
-                    message: 'Update failed'
-                };
-            }
-
-            // Get SeqNo from DOC_WF
-            query = SELECT(`IFNULL(max(SeqNo), 0) +1 AS SeqNo`).from(`DOC_WF`).where(`PACKAGEID = '${PackageId}'`).groupBy('PACKAGEID');
-            data = await tx.run(query);
-            let seqNo = data[0].SeqNo;
-            let note = `${updatedBy} assigned to ${AssignedTo}`;
-            // Defining insert query for doc_wf table
-            insertDocWfQuery = INSERT.into('DOC_WF', { 'PackageId': PackageId, 'SeqNo': seqNo, 'Action': 'ASSIGN', 'ActionAt': updatedAt, 'ActionBy': updatedBy, 'Note': note });
-            // Execute the query and retrieve the data from the database.
-            data = await tx.run(insertDocWfQuery);
-
-            // Return the result with status code, number of affected rows as count, and message.
-            if (data == null || data == undefined) {
-                await tx.rollback();
-                return {
-                    status: 500,
-                    message: 'Insert failed'
-                };
-            }
-
-            // Return the status code and message.
-            return {
-                status: 201,
-                message: `${PackageId} successfully assigned to user:${AssignedTo}`
-            };
-
-        } catch (err) {
-            // Log any errors that occur during the query execution.
-            console.error(`Error during assign operation: ${err}`);
-            await tx.rollback(err);
-            // Return a 500 Internal Server Error response in case of an error.
-            return {
-                status: 500,
-                message: 'Internal server error'
-            };
-        }
-    } else {
+    if (!valid) {
         console.error(error);
         // If the payload does not correct, return a 422 Invalid POST Payload.
-        return {
+        throw new Error({
             code: '422',
             message: 'Error',
             target: 'Invalid POST Payload',
             status: 422
-        };
-
+        });
     }
+
+    // Extract payload data from the incoming request.
+    let {
+        PackagesId,
+        AssignedTo
+    } = request.data.payload,
+        updatedBy = request.req.authInfo.getLogonName(),
+        updatedAt = new Date(),
+        data, query, updateDocPackQuery, insertDocWfQuery = [];
+
+    let aMappedPackagesId = PackagesId.map((PackageId) => "PackageId = '"+PackageId+"'");
+    // Defining update dock_pack query
+    updateDocPackQuery = UPDATE('DOC_PACK')
+        .set(`AssignedTo = '${AssignedTo}', Status = 'ASSIGN', modifiedBy = '${updatedBy}', modifiedAt = '${updatedAt}'`)
+        .where(`${aMappedPackagesId.join(' OR ')}`);
+    // Execute the query and retrieve the data from the database.
+    data = await tx.run(updateDocPackQuery);
+
+    // Return the result with status code, number of affected rows as count, and message.
+    if (data == null || data == undefined) {
+        throw new Error({
+            status: 500,
+            message: 'Update failed'
+        });
+    }
+
+    // Defining insert query for doc_wf table
+    let aEntries = await Promise.all(PackagesId.map(async sPackageId => {
+        // Get SeqNo from DOC_WF
+        query = SELECT.one(['max(SEQNO) as SeqNo'])
+            .from('DOC_WF')
+            .where({ PACKAGEID: sPackageId });
+        data = await tx.run(query);
+        let seqNo = data?.SeqNo ? data.SeqNo + 1 : 1;
+        let note = `${updatedBy} assigned to ${AssignedTo}`;
+        return {
+                PackageId: sPackageId,
+                SeqNo: seqNo,
+                Action: 'ASSIGN',
+                ActionAt: updatedAt,
+                ActionBy: updatedBy,
+                Note: note
+            }
+        })
+    ); 
+    insertDocWfQuery = INSERT.into('DOC_WF').entries(aEntries);
+    // Execute the query and retrieve the data from the database.
+    data = await tx.run(insertDocWfQuery);
+
+    // Return the result with status code, number of affected rows as count, and message.
+    if (data == null || data == undefined) {
+        throw new Error({
+            status: 500,
+            message: 'Insert failed'
+        });
+    }
+    // Return the status code and message.
+    return {
+        status: 201,
+        message: `Invoice successfully assigned to user: ${AssignedTo}`
+    };
 };

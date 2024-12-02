@@ -12,6 +12,7 @@ service CatalogService {
     entity DOC_EXTENDED                 as projection on V_DOC_EXTENDED;
     // entity DOC_ATTACHMENTS           as projection on V_DOC_ATTACHMENTS;
     // Integration data for invoice
+    entity ERROR_LOG                    as projection on vim.ERROR_LOG;
     entity InvoiceIntegrationInfo       as projection on vim.InvoiceIntegrationInfo;
     entity SelectedPurchaseOrders       as projection on vim.SelectedPurchaseOrders;
     entity SelectedDeliveryNotes        as projection on vim.SelectedDeliveryNotes;
@@ -51,7 +52,7 @@ service CatalogService {
     action   forward(payload : forwardPayload)                      returns array of String;
     action   unlock(payload : unlockPayload)                        returns array of String;
     action   lock(payload : lockPayload)                            returns array of String;
-    action   reject(payload : rejectPayload)                        returns array of String;
+    action   delete(payload : deletePayload)                        returns array of String;
     action   save(payload : savePayload)                            returns array of String;
     action   massiveSubmit(payload : array of massiveSubmitPayload) returns array of String;
     action   submit(payload : submitPayload)                        returns array of String;
@@ -62,7 +63,7 @@ service CatalogService {
     action   setMainJob(payload : setMainJobPayload)                returns array of String;
 
     type assignPayload {
-        PackageId  : String;
+        PackagesId : array of String;
         AssignedTo : String;
     };
 
@@ -79,9 +80,8 @@ service CatalogService {
         PackageId : String;
     };
 
-    type rejectPayload {
-        PackageId : String;
-        sMode     : String;
+    type deletePayload {
+        PackagesId : array of String;
     };
 
     type savePayload {

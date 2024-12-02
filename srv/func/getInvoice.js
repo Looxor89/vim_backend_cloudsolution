@@ -32,7 +32,15 @@ module.exports = async (request, tx) => {
 };
 
 // Fetch header data for a specific package
+    // Get error log during last submit attempt (if any)
 async function fetchHeaderData(tx, packageId) {
+    const errorLog = (await tx.run(
+        SELECT('*').from('ERROR_LOG')
+        .where({ PackageId: packageId })
+        .orderBy('CreatedAt desc') // Order by CreatedAt in descending order
+        .limit(1)                  // Limit the result to the last inserted record
+    ));
+
     // Query header invoice data by PackageId
     const headerFatturaElettronica = (await tx.run(
         SELECT('*').from('FatturaElettronica').where({ navigation_to_PackageId: packageId })
@@ -62,7 +70,7 @@ async function fetchHeaderData(tx, packageId) {
         SELECT('*').from('SupplierInvoiceWhldgTax').where({ header_Id: headerInvoiceIntegrationInfo.ID })
     ));
 
-    return { headerFatturaElettronica, headerInvoiceIntegrationInfo, dataSelectedPurchaseOrders, dataSelectedDeliveryNotes, dataSelectedServiceEntrySheets, dataSupplierInvoiceWhldgTax };
+    return { errorLog, headerFatturaElettronica, headerInvoiceIntegrationInfo, dataSelectedPurchaseOrders, dataSelectedDeliveryNotes, dataSelectedServiceEntrySheets, dataSupplierInvoiceWhldgTax };
 }
 
 // Fetch body data and related records based on header ID
@@ -166,7 +174,7 @@ function mergeGLAccountLineDetailsWithIntegrationInfoBody(dataDettaglioLinee, da
 
 // Create the result object containing all invoice details
 function createResultObject(headerData, bodyData, paymentData) {
-    const { headerFatturaElettronica, headerInvoiceIntegrationInfo, dataSelectedPurchaseOrders, dataSelectedDeliveryNotes, dataSelectedServiceEntrySheets, dataSupplierInvoiceWhldgTax } = headerData;
+    const { errorLog, headerFatturaElettronica, headerInvoiceIntegrationInfo, dataSelectedPurchaseOrders, dataSelectedDeliveryNotes, dataSelectedServiceEntrySheets, dataSupplierInvoiceWhldgTax } = headerData;
     const { bodyFatturaElettronica, dataDatiRitenuta, dataDatiOrdineAcquisto, dataDettaglioLinee, dataDatiRiepilogo, dataDatiPagamento, dataAllegati, dataPOIntegrationInfoBody, dataGLAccountIntegrationInfoBody } = bodyData;
     const { dataDettaglioPagamento } = paymentData;
     const aLineDetailsMergedWithPOIntegrations = mergePOLineDetailsWithIntegrationInfoBody(dataDettaglioLinee, dataPOIntegrationInfoBody);
@@ -263,7 +271,8 @@ function createResultObject(headerData, bodyData, paymentData) {
         "To_SelectedPurchaseOrders": aDataSelectedPurchaseOrders,
         "To_SelectedDeliveryNotes": aDataSelectedDeliveryNotes,
         "To_SelectedServiceEntrySheets": aDataSelectedServiceEntrySheets,
-        "PORecords": aPORecords
+        "PORecords": aPORecords,
+        "ErrorLog": errorLog
     };
 }
 

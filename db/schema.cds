@@ -43,10 +43,19 @@ context vim {
         PriorityCode           : String(2);
         InvoiceName            : String(255);
         InvoiceXML             : LargeString;
+        errorLog               : Association to many ERROR_LOG
+                                   on errorLog.PackageId = $self.PackageId;
         InvoiceItalianTrace    : Association to one FatturaElettronica
                                    on InvoiceItalianTrace.navigation_to = $self;
         InvoiceIntegrationInfo : Association to one InvoiceIntegrationInfo
                                    on InvoiceIntegrationInfo.navigation_to = $self;
+  }
+
+  entity ERROR_LOG : managed {
+    key ID               : UUID;
+        PackageId        : UUID;
+        ErrorMessage     : String;
+        SubmittedInvoice : LargeString;
   }
 
   /**
