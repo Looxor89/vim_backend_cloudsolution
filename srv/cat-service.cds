@@ -87,13 +87,180 @@ service CatalogService {
 
     type savePayload {
         PackageId                                : String;
-        Invoice                                  : LargeString;
+        Invoice                                  : InvoiceRecord;
         RemovedSelectedPurchaseOrdersRecords     : array of RemovedSelectedPurchaseOrdersRecords;
         RemovedSelectedDeliveryNotesRecords      : array of RemovedSelectedDeliveryNotesRecords;
         RemovedSelectedServiceEntrySheetsRecords : array of RemovedSelectedServiceEntrySheetsRecords;
         RemovedSupplierInvoiceWhldgTaxRecords    : array of RemovedSupplierInvoiceWhldgTaxRecords;
         RemovedPoLineDetails                     : array of RemovedPoLineDetails;
         RemovedGlAccountLineDetails              : array of RemovedGlAccountLineDetails;
+    };
+
+    type InvoiceRecord {
+        header_Id_ItalianInvoiceTrace    : String;
+        header_Id_InvoiceIntegrationInfo : String;
+        Transaction                      : String;
+        CompanyCode                      : String;
+        DocumentDate                     : Date;
+        InvoiceReceiptDate               : Date;
+        PostingDate                      : Date;
+        InvoicingParty                   : String;
+        Currency                         : String;
+        SupplierInvoiceIDByInvcgParty    : String;
+        InvoiceGrossAmount               : Decimal;
+        SupplierPostingLineItemText      : String;
+        TaxIsCalculatedAutomatically     : Boolean;
+        DueCalculationBaseDate           : Date;
+        ManualCashDiscount               : Decimal;
+        PaymentTerms                     : String;
+        CashDiscount1Days                : Decimal;
+        CashDiscount1Percent             : Decimal;
+        CashDiscount2Days                : Decimal;
+        CashDiscount2Percent             : Decimal;
+        FixedCashDiscount                : String;
+        NetPaymentDays                   : Decimal;
+        BPBankAccountInternalID          : String;
+        PaymentMethod                    : String;
+        InvoiceReference                 : String;
+        InvoiceReferenceFiscalYear       : String;
+        HouseBank                        : String;
+        HouseBankAccount                 : String;
+        PaymentBlockingReason            : String;
+        PaymentReason                    : String;
+        UnplannedDeliveryCost            : Decimal;
+        DocumentHeaderText               : String;
+        AccountingDocumentType           : String;
+        SupplyingCountry                 : String;
+        AssignmentReference              : String;
+        IsEUTriangularDeal               : Boolean;
+        TaxDeterminationDate             : Date;
+        TaxReportingDate                 : Date;
+        TaxFulfillmentDate               : Date;
+        RefDocumentCategory              : String;
+        Allegati                         : array of Attachment;
+        GLAccountRecords                 : array of GLAccountRecord;
+        PORecords                        : array of PORecord;
+        To_SelectedDeliveryNotes         : array of SelectedDeliveryNote;
+        To_SelectedPurchaseOrders        : array of SelectedPurchaseOrder;
+        To_SelectedServiceEntrySheets    : array of SelectedServiceEntrySheet;
+        To_SupplierInvoiceWhldgTax       : array of SuppInvoiceWhldgTax;
+    };
+
+    type PORecord {
+        lineDetail_ID               : String;
+        headerPOIntegrationInfo_Id  : String;
+        bodyInvoiceItalianTrace_Id  : String;
+        bodyPOIntegrationInfo_Id    : String;
+        SupplierInvoiceItem         : String;
+        PurchaseOrder               : String;
+        PurchaseOrderItem           : String;
+        Plant                       : String;
+        IsSubsequentDebitCredit     : String;
+        TaxCode                     : String;
+        DocumentCurrency            : String;
+        SupplierInvoiceItemAmount   : Decimal;
+        PurchaseOrderQuantityUnit   : String;
+        QuantityInPurchaseOrderUnit : Decimal;
+        QtyInPurchaseOrderPriceUnit : Decimal;
+        PurchaseOrderPriceUnit      : String;
+        SupplierInvoiceItemText     : String;
+        IsNotCashDiscountLiable     : Boolean;
+        ServiceEntrySheet           : String;
+        ServiceEntrySheetItem       : String;
+        IsFinallyInvoiced           : Boolean;
+        TaxDeterminationDate        : Date;
+        CostCenter                  : String;
+        ControllingArea             : String;
+        BusinessArea                : String;
+        ProfitCenter                : String;
+        FunctionalArea              : String;
+        WBSElement                  : String;
+        SalesOrder                  : String;
+        SalesOrderItem              : String;
+        InternalOrder               : String;
+        CommitmentItem              : String;
+        FundsCenter                 : String;
+        Fund                        : String;
+        GrantID                     : String;
+        ProfitabilitySegment        : String;
+        BudgetPeriod                : String;
+    };
+
+    type GLAccountRecord {
+        lineDetail_ID                     : String;
+        headerGLAccountIntegrationInfo_Id : String;
+        bodyInvoiceItalianTrace_Id        : String;
+        bodyGLAccountIntegrationInfo_Id   : String;
+        SupplierInvoiceItem               : String;
+        CompanyCode                       : String;
+        GLAccount                         : String;
+        DebitCreditCode                   : String;
+        DocumentCurrency                  : String;
+        SupplierInvoiceItemAmount         : Decimal;
+        TaxCode                           : String;
+        AssignmentReference               : String;
+        SupplierInvoiceItemText           : String;
+        CostCenter                        : String;
+        BusinessArea                      : String;
+        PartnerBusinessArea               : String;
+        ProfitCenter                      : String;
+        FunctionalArea                    : String;
+        SalesOrder                        : String;
+        SalesOrderItem                    : String;
+        CostCtrActivityType               : String;
+        WBSElement                        : String;
+        PersonnelNumber                   : String;
+        IsNotCashDiscountLiable           : Boolean;
+        InternalOrder                     : String;
+        CommitmentItem                    : String;
+        Fund                              : String;
+        GrantID                           : String;
+        QuantityUnit                      : String;
+        Quantity                          : Decimal;
+        FinancialTransactionType          : String;
+        EarmarkedFundsDocument            : String;
+        EarmarkedFundsDocumentItem        : String;
+        BudgetPeriod                      : String;
+    }
+
+    type Attachment {
+        ID                    : String;
+        body_Id               : String;
+        nomeAttachment        : String;
+        algoritmoCompressione : String;
+        formatoAttachment     : String;
+        descrizioneAttachment : String;
+        attachment            : LargeString;
+    };
+
+    type SelectedPurchaseOrder {
+        selectedPurchaseOrders_Id        : String;
+        header_Id_InvoiceIntegrationInfo : String;
+        PurchaseOrder                    : String;
+        PurchaseOrderItem                : String;
+    };
+
+    type SelectedDeliveryNote {
+        selectedDeliveryNotes_Id         : String;
+        header_Id_InvoiceIntegrationInfo : String;
+        InboundDeliveryNote              : String;
+    };
+
+    type SelectedServiceEntrySheet {
+        selectedServiceEntrySheets_Id    : String;
+        header_Id_InvoiceIntegrationInfo : String;
+        serviceEntrySheet                : String;
+        serviceEntrySheetItem            : String;
+    };
+
+    type SuppInvoiceWhldgTax {
+        supplierInvoiceWhldgTax_Id       : String;
+        header_Id_InvoiceIntegrationInfo : String;
+        WithholdingTaxType               : String;
+        DocumentCurrency                 : String;
+        WithholdingTaxCode               : String;
+        WithholdingTaxBaseAmount         : Decimal;
+        WhldgTaxBaseIsEnteredManually    : Boolean;
     };
 
     type RemovedSelectedPurchaseOrdersRecords {
@@ -124,7 +291,7 @@ service CatalogService {
 
     type submitPayload {
         PackageId                                : String;
-        Invoice                                  : LargeString;
+        Invoice                                  : InvoiceRecord;
         RemovedSelectedPurchaseOrdersRecords     : array of RemovedSelectedPurchaseOrdersRecords;
         RemovedSelectedDeliveryNotesRecords      : array of RemovedSelectedDeliveryNotesRecords;
         RemovedSelectedServiceEntrySheetsRecords : array of RemovedSelectedServiceEntrySheetsRecords;

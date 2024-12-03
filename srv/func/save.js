@@ -16,39 +16,30 @@ module.exports = async (request, tx) => {
     const modifiedBy = request.req.authInfo.getLogonName();
     const modifiedAt = new Date();
 
-    let jsonInvoice;
-
-    try {
-        jsonInvoice = JSON.parse(Invoice);
-    } catch (err) {
-        console.error('Failed to parse invoice JSON:', err);
-        return { status: 422, message: 'Invalid Invoice JSON' }
-    }
-
-    const valid = validateInvoice(jsonInvoice);
+    const valid = validateInvoice(Invoice);
     if (!valid.status) {
         return { status: 422, message: valid.message }
     }
 
-    const aNewSelectedPurchaseOrders = jsonInvoice.To_SelectedPurchaseOrders.filter(oItem => oItem.selectedPurchaseOrders_Id === null);
-    const aNewSelectedDeliveryNotes = jsonInvoice.To_SelectedDeliveryNotes.filter(oItem => oItem.selectedDeliveryNotes_Id === null);
-    const aNewSelectedServiceEntrySheets = jsonInvoice.To_SelectedServiceEntrySheets.filter(oItem => oItem.selectedServiceEntrySheets_Id === null);
-    const aNewSupplierInvoiceWhldgTaxRecords = jsonInvoice.To_SupplierInvoiceWhldgTax.filter(oItem => oItem.supplierInvoiceWhldgTax_Id === null);
-    const aNewPoLineDetails = jsonInvoice.PORecords.filter(oLineDetail => oLineDetail.lineDetail_ID === null);
-    const aNewGlAccountLineDetails = jsonInvoice.GLAccountRecords.filter(oLineDetail => oLineDetail.lineDetail_ID === null);
+    const aNewSelectedPurchaseOrders = Invoice.To_SelectedPurchaseOrders.filter(oItem => oItem.selectedPurchaseOrders_Id === null);
+    const aNewSelectedDeliveryNotes = Invoice.To_SelectedDeliveryNotes.filter(oItem => oItem.selectedDeliveryNotes_Id === null);
+    const aNewSelectedServiceEntrySheets = Invoice.To_SelectedServiceEntrySheets.filter(oItem => oItem.selectedServiceEntrySheets_Id === null);
+    const aNewSupplierInvoiceWhldgTaxRecords = Invoice.To_SupplierInvoiceWhldgTax.filter(oItem => oItem.supplierInvoiceWhldgTax_Id === null);
+    const aNewPoLineDetails = Invoice.PORecords.filter(oLineDetail => oLineDetail.lineDetail_ID === null);
+    const aNewGlAccountLineDetails = Invoice.GLAccountRecords.filter(oLineDetail => oLineDetail.lineDetail_ID === null);
 
     try {
-        await handleAttachments(jsonInvoice.Allegati, tx);
-        await updateHeaders(jsonInvoice, tx);
-        await updateBodies(jsonInvoice, tx);
-        await updatePaymentDetails(jsonInvoice, tx);
-        await updateLineDetails(jsonInvoice, tx);
+        await handleAttachments(Invoice.Allegati, tx);
+        await updateHeaders(Invoice, tx);
+        await updateBodies(Invoice, tx);
+        await updatePaymentDetails(Invoice, tx);
+        await updateLineDetails(Invoice, tx);
         await updateDocPack(modifiedBy, modifiedAt, PackageId, tx);
-        await insertSelectedPurchaseOrders(jsonInvoice, aNewSelectedPurchaseOrders, tx);
-        await insertSelectedDeliveryNotes(jsonInvoice, aNewSelectedDeliveryNotes, tx);
-        await insertSelectedServiceEntrySheets(jsonInvoice, aNewSelectedServiceEntrySheets, tx);
-        await insertSupplierInvoiceWhldgTaxRecords(jsonInvoice, aNewSupplierInvoiceWhldgTaxRecords, tx);
-        await insertLineDetails(jsonInvoice, aNewPoLineDetails, aNewGlAccountLineDetails, tx);
+        await insertSelectedPurchaseOrders(Invoice, aNewSelectedPurchaseOrders, tx);
+        await insertSelectedDeliveryNotes(Invoice, aNewSelectedDeliveryNotes, tx);
+        await insertSelectedServiceEntrySheets(Invoice, aNewSelectedServiceEntrySheets, tx);
+        await insertSupplierInvoiceWhldgTaxRecords(Invoice, aNewSupplierInvoiceWhldgTaxRecords, tx);
+        await insertLineDetails(Invoice, aNewPoLineDetails, aNewGlAccountLineDetails, tx);
         await deleteSelectedPurchaseOrdersRecords(RemovedSelectedPurchaseOrdersRecords, tx);
         await deleteSelectedDeliveryNotesRecords(RemovedSelectedDeliveryNotesRecords, tx);
         await deleteSelectedServiceEntrySheetsRecords(RemovedSelectedServiceEntrySheetsRecords, tx);
@@ -83,52 +74,52 @@ async function handleAttachments(attachments, tx) {
 }
 
 // Update main records
-async function updateHeaders(jsonInvoice, tx) {
+async function updateHeaders(Invoice, tx) {
     const fatturaQuery = UPDATE('FatturaElettronica')
-        .set({ "datiTrasmissione_IdPaese": jsonInvoice.SupplyingCountry })
-        .where(`ID = '${jsonInvoice.header_Id_ItalianInvoiceTrace}'`);
+        .set({ "datiTrasmissione_IdPaese": Invoice.SupplyingCountry })
+        .where(`ID = '${Invoice.header_Id_ItalianInvoiceTrace}'`);
 
     const invoiceQuery = UPDATE('InvoiceIntegrationInfo')
         .set({
-            "transaction": jsonInvoice.Transaction,
-            "companyCode": jsonInvoice.CompanyCode,
-            "invoiceReceiptDate": jsonInvoice.InvoiceReceiptDate,
-            "postingDate": jsonInvoice.PostingDate,
-            "invoicingParty": jsonInvoice.InvoicingParty,
-            "supplierPostingLineItemText": jsonInvoice.SupplierPostingLineItemText,
-            "taxIsCalculatedAutomatically": jsonInvoice.TaxIsCalculatedAutomatically,
-            "dueCalculationBaseDate": jsonInvoice.DueCalculationBaseDate,
-            "manualCashDiscount": jsonInvoice.ManualCashDiscount,
-            "paymentTerms": jsonInvoice.PaymentTerms,
-            "paymentMethod": jsonInvoice.PaymentMethod,
-            "accountingDocumentType": jsonInvoice.AccountingDocumentType,
-            "cashDiscount1Days": jsonInvoice.CashDiscount1Days,
-            "cashDiscount1Percent": jsonInvoice.CashDiscount1Percent,
-            "cashDiscount2Days": jsonInvoice.CashDiscount2Days,
-            "cashDiscount2Percent": jsonInvoice.CashDiscount2Percent,
-            "fixedCashDiscount": jsonInvoice.FixedCashDiscount,
-            "netPaymentDays": jsonInvoice.NetPaymentDays,
-            "bPBankAccountInternalID": jsonInvoice.BPBankAccountInternalID,
-            "invoiceReference": jsonInvoice.InvoiceReference,
-            "invoiceReferenceFiscalYear": jsonInvoice.InvoiceReferenceFiscalYear,
-            "houseBank": jsonInvoice.HouseBank,
-            "houseBankAccount": jsonInvoice.HouseBankAccount,
-            "paymentBlockingReason": jsonInvoice.PaymentBlockingReason,
-            "paymentReason": jsonInvoice.PaymentReason,
-            "unplannedDeliveryCost": jsonInvoice.UnplannedDeliveryCost,
-            "documentHeaderText": jsonInvoice.DocumentHeaderText,
-            "assignmentReference": jsonInvoice.AssignmentReference,
-            "isEUTriangularDeal": jsonInvoice.IsEUTriangularDeal,
-            "taxReportingDate": jsonInvoice.TaxReportingDate,
-            "taxFulfillmentDate": jsonInvoice.TaxFulfillmentDate,
-            "refDocumentCategory": jsonInvoice.RefDocumentCategory
+            "transaction": Invoice.Transaction,
+            "companyCode": Invoice.CompanyCode,
+            "invoiceReceiptDate": Invoice.InvoiceReceiptDate,
+            "postingDate": Invoice.PostingDate,
+            "invoicingParty": Invoice.InvoicingParty,
+            "supplierPostingLineItemText": Invoice.SupplierPostingLineItemText,
+            "taxIsCalculatedAutomatically": Invoice.TaxIsCalculatedAutomatically,
+            "dueCalculationBaseDate": Invoice.DueCalculationBaseDate,
+            "manualCashDiscount": Invoice.ManualCashDiscount,
+            "paymentTerms": Invoice.PaymentTerms,
+            "paymentMethod": Invoice.PaymentMethod,
+            "accountingDocumentType": Invoice.AccountingDocumentType,
+            "cashDiscount1Days": Invoice.CashDiscount1Days,
+            "cashDiscount1Percent": Invoice.CashDiscount1Percent,
+            "cashDiscount2Days": Invoice.CashDiscount2Days,
+            "cashDiscount2Percent": Invoice.CashDiscount2Percent,
+            "fixedCashDiscount": Invoice.FixedCashDiscount,
+            "netPaymentDays": Invoice.NetPaymentDays,
+            "bPBankAccountInternalID": Invoice.BPBankAccountInternalID,
+            "invoiceReference": Invoice.InvoiceReference,
+            "invoiceReferenceFiscalYear": Invoice.InvoiceReferenceFiscalYear,
+            "houseBank": Invoice.HouseBank,
+            "houseBankAccount": Invoice.HouseBankAccount,
+            "paymentBlockingReason": Invoice.PaymentBlockingReason,
+            "paymentReason": Invoice.PaymentReason,
+            "unplannedDeliveryCost": Invoice.UnplannedDeliveryCost,
+            "documentHeaderText": Invoice.DocumentHeaderText,
+            "assignmentReference": Invoice.AssignmentReference,
+            "isEUTriangularDeal": Invoice.IsEUTriangularDeal,
+            "taxReportingDate": Invoice.TaxReportingDate,
+            "taxFulfillmentDate": Invoice.TaxFulfillmentDate,
+            "refDocumentCategory": Invoice.RefDocumentCategory
         })
-        .where(`ID = '${jsonInvoice.header_Id_InvoiceIntegrationInfo}'`);
+        .where(`ID = '${Invoice.header_Id_InvoiceIntegrationInfo}'`);
 
     await executeQuery(tx, fatturaQuery);
     await executeQuery(tx, invoiceQuery);
 
-    for (const oSelectedPurchaseOrders of jsonInvoice.To_SelectedPurchaseOrders) {
+    for (const oSelectedPurchaseOrders of Invoice.To_SelectedPurchaseOrders) {
         if (oSelectedPurchaseOrders.selectedPurchaseOrders_Id) {
             const lineSelectedPurchaseOrdersQuery = UPDATE('SelectedPurchaseOrders')
                 .set({
@@ -141,7 +132,7 @@ async function updateHeaders(jsonInvoice, tx) {
         }
     }
 
-    for (const oSelectedDeliveryNotes of jsonInvoice.To_SelectedDeliveryNotes) {
+    for (const oSelectedDeliveryNotes of Invoice.To_SelectedDeliveryNotes) {
         if (oSelectedDeliveryNotes.selectedDeliveryNotes_Id) {
             const lineSelectedDeliveryNotesQuery = UPDATE('SelectedDeliveryNotes')
                 .set({
@@ -153,7 +144,7 @@ async function updateHeaders(jsonInvoice, tx) {
         }
     }
 
-    for (const oSelectedServiceEntrySheets of jsonInvoice.To_SelectedServiceEntrySheets) {
+    for (const oSelectedServiceEntrySheets of Invoice.To_SelectedServiceEntrySheets) {
         if (oSelectedServiceEntrySheets.selectedServiceEntrySheets_Id) {
             const lineSelectedServiceEntrySheetsQuery = UPDATE('SelectedServiceEntrySheets')
                 .set({
@@ -166,7 +157,7 @@ async function updateHeaders(jsonInvoice, tx) {
         }
     }
 
-    for (const oSupplierInvoiceWhldgTax of jsonInvoice.To_SupplierInvoiceWhldgTax) {
+    for (const oSupplierInvoiceWhldgTax of Invoice.To_SupplierInvoiceWhldgTax) {
         if (oSupplierInvoiceWhldgTax.supplierInvoiceWhldgTax_Id) {
             const lineSupplierInvoiceWhldgTaxQuery = UPDATE('SupplierInvoiceWhldgTax')
                 .set({
