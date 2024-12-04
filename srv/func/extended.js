@@ -91,13 +91,27 @@ module.exports = async (request, tx) => {
 
         // Execute the query and retrieve the data from the database.
         data = await tx.run(query);
-
         console.log('data IN DOC_PACK', data.length);
-
+        // Retrieve from S4/HANA Company Codes associated to each VAT
+        let aResultCompanyCodeRequest = [];
+        let aVAT = [];
+        data = data.filter(item => item.VAT !== null && item.VAT !== '' );
+        aVAT = data.map(item => "'"+item.VAT+"'");
+        let sVatFilters = aVAT.join(' or VATRegistration eq ');
+        if (sVatFilters && sVatFilters !== '') {
+            const serviceS4_HANA = await cds.connect.to(process.env['Destination_OData_S4HANA']);
+            const serviceRequestS4_HANA = serviceS4_HANA.tx(request);
+            aResultCompanyCodeRequest = await serviceRequestS4_HANA.get(process.env['Path_API_COMPANYDATA']+"&$filter=VATRegistration eq "+sVatFilters+"&$select=VATRegistration,CompanyCode");
+        }
         // Transcode values
         let aData = data.map(item => {
             //     item.DOX_STATUS = transcoder.doxStatus[item.STATUS] ? transcoder.doxStatus[item.STATUS] : null;
             //     item.DOCUMENTTYPE = transcoder.documentType[item.DOCUMENTTYPE] ? transcoder.documentType[item.DOCUMENTTYPE] : null;
+            aResultCompanyCodeRequest.forEach(element => {
+                if ( item.VAT === element.VATRegistration ) {
+                    item.COMPANYCODE = element.CompanyCode
+                }
+            });
             item.DOCCATEGORY = transcoder.docCategory[item.DOCCATEGORY];
             return item;
         });

@@ -26,10 +26,12 @@
   "devDependencies": {
     "@cap-js/cds-types": "^0.6",
     "@cap-js/sqlite": "^1",
-    "@sap/cds-dk": "^8"
+    "@sap/cds-dk": "^8",
+    "@sap/hdi-deploy": "^5.3.2"
   },
   "scripts": {
-    "start": "cds-serve"
+    "start": "cds-serve",
+    "deploy": "node node_modules/@sap/hdi-deploy/deploy.js --auto-undeploy"
   },
   "cds": {
     "requires": {

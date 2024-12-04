@@ -65,11 +65,12 @@
       <viewAttribute id="LOCKEDAT"/>
       <viewAttribute id="LOCKEDBY"/>
       <viewAttribute id="ASSIGNEDTO"/>
-      <viewAttribute id="FLAG"/>
-      <viewAttribute id="PRIORITYCODE"/>
       <viewAttribute id="REFERENCEDOCUMENT"/>
       <viewAttribute id="FISCALYEAR"/>
       <viewAttribute id="ID_FATTURAELETTRONICA"/>
+    
+      <viewAttribute id="CESSIONARIOCOMMITTENTE_DATIANAGRAFICI_IDFISCALEIVA_IDPAESE"/>
+      <viewAttribute id="CESSIONARIOCOMMITTENTE_DATIANAGRAFICI_IDFISCALEIVA_IDCODICE"/>
     </viewAttributes>
     <calculatedViewAttributes/>
     <input node="VIM_DOC_PACK">
@@ -82,13 +83,14 @@
       <mapping xsi:type="Calculation:AttributeMapping" target="LOCKEDAT" source="LOCKEDAT"/>
       <mapping xsi:type="Calculation:AttributeMapping" target="LOCKEDBY" source="LOCKEDBY"/>
       <mapping xsi:type="Calculation:AttributeMapping" target="ASSIGNEDTO" source="ASSIGNEDTO"/>
-      <mapping xsi:type="Calculation:AttributeMapping" target="FLAG" source="FLAG"/>
-      <mapping xsi:type="Calculation:AttributeMapping" target="PRIORITYCODE" source="PRIORITYCODE"/>
       <mapping xsi:type="Calculation:AttributeMapping" target="REFERENCEDOCUMENT" source="REFERENCEDOCUMENT"/>
       <mapping xsi:type="Calculation:AttributeMapping" target="FISCALYEAR" source="FISCALYEAR"/>
     </input>
     <input node="VIM_FATTURAELETTRONICA">
       <mapping xsi:type="Calculation:AttributeMapping" target="ID_FATTURAELETTRONICA" source="ID"/>
+    
+      <mapping xsi:type="Calculation:AttributeMapping" target="CESSIONARIOCOMMITTENTE_DATIANAGRAFICI_IDFISCALEIVA_IDPAESE" source="CESSIONARIOCOMMITTENTE_DATIANAGRAFICI_IDFISCALEIVA_IDPAESE"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="CESSIONARIOCOMMITTENTE_DATIANAGRAFICI_IDFISCALEIVA_IDCODICE" source="CESSIONARIOCOMMITTENTE_DATIANAGRAFICI_IDFISCALEIVA_IDCODICE"/>
     </input>
     <joinAttribute leftColumn="PACKAGEID" rightColumn="NAVIGATION_TO_PACKAGEID" operator="EQ"/>
   </calculationView>
@@ -177,12 +179,13 @@
       <viewAttribute id="LOCKEDAT"/>
       <viewAttribute id="LOCKEDBY"/>
       <viewAttribute id="ASSIGNEDTO"/>
-      <viewAttribute id="FLAG"/>
       <viewAttribute id="COMPANYCODE"/>
-      <viewAttribute id="PRIORITYCODE"/>
       <viewAttribute id="REFERENCEDOCUMENT"/>
       <viewAttribute id="FISCALYEAR"/>
       <viewAttribute id="ID_FATTURAELETTRONICA"/>
+    
+      <viewAttribute id="CESSIONARIOCOMMITTENTE_DATIANAGRAFICI_IDFISCALEIVA_IDCODICE"/>
+      <viewAttribute id="CESSIONARIOCOMMITTENTE_DATIANAGRAFICI_IDFISCALEIVA_IDPAESE"/>
     </viewAttributes>
     <calculatedViewAttributes/>
     <input node="Invoice_Header_ItalianTrace">
@@ -195,10 +198,11 @@
       <mapping xsi:type="Calculation:AttributeMapping" target="LOCKEDAT" source="LOCKEDAT"/>
       <mapping xsi:type="Calculation:AttributeMapping" target="LOCKEDBY" source="LOCKEDBY"/>
       <mapping xsi:type="Calculation:AttributeMapping" target="ASSIGNEDTO" source="ASSIGNEDTO"/>
-      <mapping xsi:type="Calculation:AttributeMapping" target="FLAG" source="FLAG"/>
-      <mapping xsi:type="Calculation:AttributeMapping" target="PRIORITYCODE" source="PRIORITYCODE"/>
       <mapping xsi:type="Calculation:AttributeMapping" target="REFERENCEDOCUMENT" source="REFERENCEDOCUMENT"/>
       <mapping xsi:type="Calculation:AttributeMapping" target="ID_FATTURAELETTRONICA" source="ID_FATTURAELETTRONICA"/>
+    
+      <mapping xsi:type="Calculation:AttributeMapping" target="CESSIONARIOCOMMITTENTE_DATIANAGRAFICI_IDFISCALEIVA_IDCODICE" source="CESSIONARIOCOMMITTENTE_DATIANAGRAFICI_IDFISCALEIVA_IDCODICE"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="CESSIONARIOCOMMITTENTE_DATIANAGRAFICI_IDFISCALEIVA_IDPAESE" source="CESSIONARIOCOMMITTENTE_DATIANAGRAFICI_IDFISCALEIVA_IDPAESE"/>
     </input>
     <input node="Invoice_Header_IntegrationInfo">
       <mapping xsi:type="Calculation:AttributeMapping" target="COMPANYCODE" source="COMPANYCODE"/>
@@ -222,11 +226,12 @@
       <viewAttribute id="LOCKEDAT"/>
       <viewAttribute id="LOCKEDBY"/>
       <viewAttribute id="ASSIGNEDTO"/>
-      <viewAttribute id="FLAG"/>
       <viewAttribute id="COMPANYCODE"/>
-      <viewAttribute id="PRIORITYCODE"/>
       <viewAttribute id="REFERENCEDOCUMENT"/>
       <viewAttribute id="FISCALYEAR"/>
+    
+      <viewAttribute id="CESSIONARIOCOMMITTENTE_DATIANAGRAFICI_IDFISCALEIVA_IDPAESE"/>
+      <viewAttribute id="CESSIONARIOCOMMITTENTE_DATIANAGRAFICI_IDFISCALEIVA_IDCODICE"/>
     </viewAttributes>
     <calculatedViewAttributes/>
     <input node="Invoice_Header">
@@ -239,11 +244,12 @@
       <mapping xsi:type="Calculation:AttributeMapping" target="LOCKEDAT" source="LOCKEDAT"/>
       <mapping xsi:type="Calculation:AttributeMapping" target="LOCKEDBY" source="LOCKEDBY"/>
       <mapping xsi:type="Calculation:AttributeMapping" target="ASSIGNEDTO" source="ASSIGNEDTO"/>
-      <mapping xsi:type="Calculation:AttributeMapping" target="FLAG" source="FLAG"/>
       <mapping xsi:type="Calculation:AttributeMapping" target="COMPANYCODE" source="COMPANYCODE"/>
-      <mapping xsi:type="Calculation:AttributeMapping" target="PRIORITYCODE" source="PRIORITYCODE"/>
       <mapping xsi:type="Calculation:AttributeMapping" target="REFERENCEDOCUMENT" source="REFERENCEDOCUMENT"/>
       <mapping xsi:type="Calculation:AttributeMapping" target="FISCALYEAR" source="FISCALYEAR"/>
+    
+      <mapping xsi:type="Calculation:AttributeMapping" target="CESSIONARIOCOMMITTENTE_DATIANAGRAFICI_IDFISCALEIVA_IDPAESE" source="CESSIONARIOCOMMITTENTE_DATIANAGRAFICI_IDFISCALEIVA_IDPAESE"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="CESSIONARIOCOMMITTENTE_DATIANAGRAFICI_IDFISCALEIVA_IDCODICE" source="CESSIONARIOCOMMITTENTE_DATIANAGRAFICI_IDFISCALEIVA_IDCODICE"/>
     </input>
     <input node="Invoice_Body">
       <mapping xsi:type="Calculation:AttributeMapping" target="DATIGENERALI_DATIGENERALIDOCUMENTO_TIPODOCUMENTO" source="DATIGENERALI_DATIGENERALIDOCUMENTO_TIPODOCUMENTO"/>
@@ -264,7 +270,6 @@
       <viewAttribute id="PACK_LOCKEDAT"/>
       <viewAttribute id="PACK_LOCKEDBY"/>
       <viewAttribute id="PACK_ASSIGNEDTO"/>
-      <viewAttribute id="PRIORITYCODE"/>
       <viewAttribute id="REFERENCEDOCUMENT"/>
       <viewAttribute id="FISCALYEAR"/>
       <viewAttribute id="DATIGENERALI_DATIGENERALIDOCUMENTO_TIPODOCUMENTO"/>
@@ -276,6 +281,9 @@
       <viewAttribute id="LATEST_ACTIONAT"/>
     
       <viewAttribute id="COMPANYCODE"/>
+    
+      <viewAttribute id="CESSIONARIOCOMMITTENTE_DATIANAGRAFICI_IDFISCALEIVA_IDCODICE"/>
+      <viewAttribute id="CESSIONARIOCOMMITTENTE_DATIANAGRAFICI_IDFISCALEIVA_IDPAESE"/>
     </viewAttributes>
     <calculatedViewAttributes/>
     <input node="Invoice">
@@ -288,7 +296,6 @@
       <mapping xsi:type="Calculation:AttributeMapping" target="PACK_LOCKEDAT" source="LOCKEDAT"/>
       <mapping xsi:type="Calculation:AttributeMapping" target="PACK_LOCKEDBY" source="LOCKEDBY"/>
       <mapping xsi:type="Calculation:AttributeMapping" target="PACK_ASSIGNEDTO" source="ASSIGNEDTO"/>
-      <mapping xsi:type="Calculation:AttributeMapping" target="PRIORITYCODE" source="PRIORITYCODE"/>
       <mapping xsi:type="Calculation:AttributeMapping" target="REFERENCEDOCUMENT" source="REFERENCEDOCUMENT"/>
       <mapping xsi:type="Calculation:AttributeMapping" target="FISCALYEAR" source="FISCALYEAR"/>
       <mapping xsi:type="Calculation:AttributeMapping" target="DATIGENERALI_DATIGENERALIDOCUMENTO_TIPODOCUMENTO" source="DATIGENERALI_DATIGENERALIDOCUMENTO_TIPODOCUMENTO"/>
@@ -297,6 +304,9 @@
       <mapping xsi:type="Calculation:AttributeMapping" target="ID_OCCUR" source="ID_OCCUR"/>
     
       <mapping xsi:type="Calculation:AttributeMapping" target="COMPANYCODE" source="COMPANYCODE"/>
+    
+      <mapping xsi:type="Calculation:AttributeMapping" target="CESSIONARIOCOMMITTENTE_DATIANAGRAFICI_IDFISCALEIVA_IDCODICE" source="CESSIONARIOCOMMITTENTE_DATIANAGRAFICI_IDFISCALEIVA_IDCODICE"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="CESSIONARIOCOMMITTENTE_DATIANAGRAFICI_IDFISCALEIVA_IDPAESE" source="CESSIONARIOCOMMITTENTE_DATIANAGRAFICI_IDFISCALEIVA_IDPAESE"/>
     </input>
     <input node="Latest_Action">
       <mapping xsi:type="Calculation:AttributeMapping" target="LATEST_ACTION" source="ACTION"/>
@@ -315,8 +325,7 @@
       <viewAttribute id="STATUS"/>
       <viewAttribute id="PACK_LOCKEDAT"/>
       <viewAttribute id="PACK_LOCKEDBY"/>
-      <viewAttribute id="PACK_ASSIGNEDTO"/>
-      <viewAttribute id="PRIORITYCODE"/>
+      <viewAttribute id="PACK_ASSIGNEDTO"/>y
       <viewAttribute id="REFERENCEDOCUMENT"/>
       <viewAttribute id="FISCALYEAR"/>
       <viewAttribute id="DATIGENERALI_DATIGENERALIDOCUMENTO_TIPODOCUMENTO"/>
@@ -335,6 +344,9 @@
       <viewAttribute id="MODUSER_CUSTOMPARAM2"/>
     
       <viewAttribute id="COMPANYCODE"/>
+    
+      <viewAttribute id="CESSIONARIOCOMMITTENTE_DATIANAGRAFICI_IDFISCALEIVA_IDPAESE"/>
+      <viewAttribute id="CESSIONARIOCOMMITTENTE_DATIANAGRAFICI_IDFISCALEIVA_IDCODICE"/>
     </viewAttributes>
     <calculatedViewAttributes/>
     <input node="Invoice_with_LatestAction">
@@ -347,7 +359,6 @@
       <mapping xsi:type="Calculation:AttributeMapping" target="PACK_LOCKEDAT" source="PACK_LOCKEDAT"/>
       <mapping xsi:type="Calculation:AttributeMapping" target="PACK_LOCKEDBY" source="PACK_LOCKEDBY"/>
       <mapping xsi:type="Calculation:AttributeMapping" target="PACK_ASSIGNEDTO" source="PACK_ASSIGNEDTO"/>
-      <mapping xsi:type="Calculation:AttributeMapping" target="PRIORITYCODE" source="PRIORITYCODE"/>
       <mapping xsi:type="Calculation:AttributeMapping" target="REFERENCEDOCUMENT" source="REFERENCEDOCUMENT"/>
       <mapping xsi:type="Calculation:AttributeMapping" target="FISCALYEAR" source="FISCALYEAR"/>
       <mapping xsi:type="Calculation:AttributeMapping" target="DATIGENERALI_DATIGENERALIDOCUMENTO_TIPODOCUMENTO" source="DATIGENERALI_DATIGENERALIDOCUMENTO_TIPODOCUMENTO"/>
@@ -359,6 +370,9 @@
       <mapping xsi:type="Calculation:AttributeMapping" target="LATEST_ACTIONAT" source="LATEST_ACTIONAT"/>
     
       <mapping xsi:type="Calculation:AttributeMapping" target="COMPANYCODE" source="COMPANYCODE"/>
+    
+      <mapping xsi:type="Calculation:AttributeMapping" target="CESSIONARIOCOMMITTENTE_DATIANAGRAFICI_IDFISCALEIVA_IDPAESE" source="CESSIONARIOCOMMITTENTE_DATIANAGRAFICI_IDFISCALEIVA_IDPAESE"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="CESSIONARIOCOMMITTENTE_DATIANAGRAFICI_IDFISCALEIVA_IDCODICE" source="CESSIONARIOCOMMITTENTE_DATIANAGRAFICI_IDFISCALEIVA_IDCODICE"/>
     </input>
     <input node="VIM_AP_USERS">
       <mapping xsi:type="Calculation:AttributeMapping" target="MODUSER_EMAIL" source="EMAIL"/>
@@ -382,7 +396,6 @@
       <viewAttribute id="PACK_LOCKEDAT"/>
       <viewAttribute id="PACK_LOCKEDBY"/>
       <viewAttribute id="PACK_ASSIGNEDTO"/>
-      <viewAttribute id="PRIORITYCODE"/>
       <viewAttribute id="REFERENCEDOCUMENT"/>
       <viewAttribute id="FISCALYEAR"/>
       <viewAttribute id="DATIGENERALI_DATIGENERALIDOCUMENTO_TIPODOCUMENTO"/>
@@ -408,6 +421,9 @@
       <viewAttribute id="ASSIGN_CUSTOMPARAM2"/>
     
       <viewAttribute id="COMPANYCODE"/>
+    
+      <viewAttribute id="CESSIONARIOCOMMITTENTE_DATIANAGRAFICI_IDFISCALEIVA_IDCODICE"/>
+      <viewAttribute id="CESSIONARIOCOMMITTENTE_DATIANAGRAFICI_IDFISCALEIVA_IDPAESE"/>
     </viewAttributes>
     <calculatedViewAttributes/>
     <input node="Invoice_with_LatestAction_and_ModUser">
@@ -420,7 +436,6 @@
       <mapping xsi:type="Calculation:AttributeMapping" target="PACK_LOCKEDAT" source="PACK_LOCKEDAT"/>
       <mapping xsi:type="Calculation:AttributeMapping" target="PACK_LOCKEDBY" source="PACK_LOCKEDBY"/>
       <mapping xsi:type="Calculation:AttributeMapping" target="PACK_ASSIGNEDTO" source="PACK_ASSIGNEDTO"/>
-      <mapping xsi:type="Calculation:AttributeMapping" target="PRIORITYCODE" source="PRIORITYCODE"/>
       <mapping xsi:type="Calculation:AttributeMapping" target="REFERENCEDOCUMENT" source="REFERENCEDOCUMENT"/>
       <mapping xsi:type="Calculation:AttributeMapping" target="FISCALYEAR" source="FISCALYEAR"/>
       <mapping xsi:type="Calculation:AttributeMapping" target="DATIGENERALI_DATIGENERALIDOCUMENTO_TIPODOCUMENTO" source="DATIGENERALI_DATIGENERALIDOCUMENTO_TIPODOCUMENTO"/>
@@ -439,6 +454,9 @@
       <mapping xsi:type="Calculation:AttributeMapping" target="MODUSER_CUSTOMPARAM2" source="MODUSER_CUSTOMPARAM2"/>
     
       <mapping xsi:type="Calculation:AttributeMapping" target="COMPANYCODE" source="COMPANYCODE"/>
+    
+      <mapping xsi:type="Calculation:AttributeMapping" target="CESSIONARIOCOMMITTENTE_DATIANAGRAFICI_IDFISCALEIVA_IDCODICE" source="CESSIONARIOCOMMITTENTE_DATIANAGRAFICI_IDFISCALEIVA_IDCODICE"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="CESSIONARIOCOMMITTENTE_DATIANAGRAFICI_IDFISCALEIVA_IDPAESE" source="CESSIONARIOCOMMITTENTE_DATIANAGRAFICI_IDFISCALEIVA_IDPAESE"/>
     </input>
     <input node="Invoice_with_LatestAction_and_ModUser_and_AssignUser$$$$VIM_AP_USERS$$">
       <mapping xsi:type="Calculation:AttributeMapping" target="ASSIGN_EMAIL" source="EMAIL"/>
@@ -462,7 +480,6 @@
       <viewAttribute id="PACK_LOCKEDAT"/>
       <viewAttribute id="PACK_LOCKEDBY"/>
       <viewAttribute id="PACK_ASSIGNEDTO"/>
-      <viewAttribute id="PRIORITYCODE"/>
       <viewAttribute id="REFERENCEDOCUMENT"/>
       <viewAttribute id="FISCALYEAR"/>
       <viewAttribute id="DATIGENERALI_DATIGENERALIDOCUMENTO_TIPODOCUMENTO"/>
@@ -495,6 +512,9 @@
       <viewAttribute id="LOCKUSER_CUSTOMPARAM2"/>
     
       <viewAttribute id="COMPANYCODE"/>
+    
+      <viewAttribute id="CESSIONARIOCOMMITTENTE_DATIANAGRAFICI_IDFISCALEIVA_IDPAESE"/>
+      <viewAttribute id="CESSIONARIOCOMMITTENTE_DATIANAGRAFICI_IDFISCALEIVA_IDCODICE"/>
     </viewAttributes>
     <calculatedViewAttributes/>
     <input node="Invoice_with_LatestAction_and_ModUser_and_AssignUser">
@@ -507,7 +527,6 @@
       <mapping xsi:type="Calculation:AttributeMapping" target="PACK_LOCKEDAT" source="PACK_LOCKEDAT"/>
       <mapping xsi:type="Calculation:AttributeMapping" target="PACK_LOCKEDBY" source="PACK_LOCKEDBY"/>
       <mapping xsi:type="Calculation:AttributeMapping" target="PACK_ASSIGNEDTO" source="PACK_ASSIGNEDTO"/>
-      <mapping xsi:type="Calculation:AttributeMapping" target="PRIORITYCODE" source="PRIORITYCODE"/>
       <mapping xsi:type="Calculation:AttributeMapping" target="REFERENCEDOCUMENT" source="REFERENCEDOCUMENT"/>
       <mapping xsi:type="Calculation:AttributeMapping" target="FISCALYEAR" source="FISCALYEAR"/>
       <mapping xsi:type="Calculation:AttributeMapping" target="DATIGENERALI_DATIGENERALIDOCUMENTO_TIPODOCUMENTO" source="DATIGENERALI_DATIGENERALIDOCUMENTO_TIPODOCUMENTO"/>
@@ -533,6 +552,9 @@
       <mapping xsi:type="Calculation:AttributeMapping" target="ASSIGN_CUSTOMPARAM2" source="ASSIGN_CUSTOMPARAM2"/>
     
       <mapping xsi:type="Calculation:AttributeMapping" target="COMPANYCODE" source="COMPANYCODE"/>
+    
+      <mapping xsi:type="Calculation:AttributeMapping" target="CESSIONARIOCOMMITTENTE_DATIANAGRAFICI_IDFISCALEIVA_IDPAESE" source="CESSIONARIOCOMMITTENTE_DATIANAGRAFICI_IDFISCALEIVA_IDPAESE"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="CESSIONARIOCOMMITTENTE_DATIANAGRAFICI_IDFISCALEIVA_IDCODICE" source="CESSIONARIOCOMMITTENTE_DATIANAGRAFICI_IDFISCALEIVA_IDCODICE"/>
     </input>
     <input node="Invoice_with_LatestAction_and_ModUser_and_LockUser$$$$VIM_AP_USERS$$">
       <mapping xsi:type="Calculation:AttributeMapping" target="LOCKUSER_EMAIL" source="EMAIL"/>
@@ -556,7 +578,6 @@
       <viewAttribute id="PACK_LOCKEDAT"/>
       <viewAttribute id="PACK_LOCKEDBY"/>
       <viewAttribute id="PACK_ASSIGNEDTO"/>
-      <viewAttribute id="PRIORITYCODE"/>
       <viewAttribute id="REFERENCEDOCUMENT"/>
       <viewAttribute id="FISCALYEAR"/>
       <viewAttribute id="DATIGENERALI_DATIGENERALIDOCUMENTO_TIPODOCUMENTO"/>
@@ -596,6 +617,9 @@
       <viewAttribute id="ACTIONUSER_CUSTOMPARAM2"/>
     
       <viewAttribute id="COMPANYCODE"/>
+    
+      <viewAttribute id="CESSIONARIOCOMMITTENTE_DATIANAGRAFICI_IDFISCALEIVA_IDCODICE"/>
+      <viewAttribute id="CESSIONARIOCOMMITTENTE_DATIANAGRAFICI_IDFISCALEIVA_IDPAESE"/>
     </viewAttributes>
     <calculatedViewAttributes/>
     <input node="Invoice_with_LatestAction_and_ModUser_and_LockUser">
@@ -608,7 +632,6 @@
       <mapping xsi:type="Calculation:AttributeMapping" target="PACK_LOCKEDAT" source="PACK_LOCKEDAT"/>
       <mapping xsi:type="Calculation:AttributeMapping" target="PACK_LOCKEDBY" source="PACK_LOCKEDBY"/>
       <mapping xsi:type="Calculation:AttributeMapping" target="PACK_ASSIGNEDTO" source="PACK_ASSIGNEDTO"/>
-      <mapping xsi:type="Calculation:AttributeMapping" target="PRIORITYCODE" source="PRIORITYCODE"/>
       <mapping xsi:type="Calculation:AttributeMapping" target="REFERENCEDOCUMENT" source="REFERENCEDOCUMENT"/>
       <mapping xsi:type="Calculation:AttributeMapping" target="FISCALYEAR" source="FISCALYEAR"/>
       <mapping xsi:type="Calculation:AttributeMapping" target="DATIGENERALI_DATIGENERALIDOCUMENTO_TIPODOCUMENTO" source="DATIGENERALI_DATIGENERALIDOCUMENTO_TIPODOCUMENTO"/>
@@ -641,6 +664,9 @@
       <mapping xsi:type="Calculation:AttributeMapping" target="LOCKUSER_CUSTOMPARAM2" source="LOCKUSER_CUSTOMPARAM2"/>
     
       <mapping xsi:type="Calculation:AttributeMapping" target="COMPANYCODE" source="COMPANYCODE"/>
+    
+      <mapping xsi:type="Calculation:AttributeMapping" target="CESSIONARIOCOMMITTENTE_DATIANAGRAFICI_IDFISCALEIVA_IDCODICE" source="CESSIONARIOCOMMITTENTE_DATIANAGRAFICI_IDFISCALEIVA_IDCODICE"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="CESSIONARIOCOMMITTENTE_DATIANAGRAFICI_IDFISCALEIVA_IDPAESE" source="CESSIONARIOCOMMITTENTE_DATIANAGRAFICI_IDFISCALEIVA_IDPAESE"/>
     </input>
     <input node="Invoice_with_LatestAction_and_ModUser_and_LockUser_and_ActionPerformedUser$$$$VIM_AP_USERS$$">
       <mapping xsi:type="Calculation:AttributeMapping" target="ACTIONUSER_EMAIL" source="EMAIL"/>
@@ -693,104 +719,111 @@
       <descriptions defaultDescription="ASSIGNEDTO"/>
       <keyMapping columnObjectName="Invoice_with_LatestAction_and_ModUser_and_LockUser_and_ActionPerformedUser" columnName="PACK_ASSIGNEDTO"/>
     </attribute>
-    <attribute id="PRIORITYCODE" order="10" displayAttribute="false" attributeHierarchyActive="false">
-      <descriptions defaultDescription="PRIORITYCODE"/>
-      <keyMapping columnObjectName="Invoice_with_LatestAction_and_ModUser_and_LockUser_and_ActionPerformedUser" columnName="PRIORITYCODE"/>
-    </attribute>
-    <attribute id="REFERENCEDOCUMENT" order="11" displayAttribute="false" attributeHierarchyActive="false">
+    <attribute id="REFERENCEDOCUMENT" order="10" displayAttribute="false" attributeHierarchyActive="false">
       <descriptions defaultDescription="REFERENCEDOCUMENT"/>
       <keyMapping columnObjectName="Invoice_with_LatestAction_and_ModUser_and_LockUser_and_ActionPerformedUser" columnName="REFERENCEDOCUMENT"/>
     </attribute>
-    <attribute id="FISCALYEAR" order="12" displayAttribute="false" attributeHierarchyActive="false">
+    <attribute id="FISCALYEAR" order="11" displayAttribute="false" attributeHierarchyActive="false">
       <descriptions defaultDescription="FISCALYEAR"/>
       <keyMapping columnObjectName="Invoice_with_LatestAction_and_ModUser_and_LockUser_and_ActionPerformedUser" columnName="FISCALYEAR"/>
     </attribute>
-    <attribute id="INVOICENUMBER" order="13" displayAttribute="false" attributeHierarchyActive="false">
+    <attribute id="INVOICENUMBER" order="12" displayAttribute="false" attributeHierarchyActive="false">
       <descriptions defaultDescription="DATIGENERALI_DATIGENERALIDOCUMENTO_NUMERO"/>
       <keyMapping columnObjectName="Invoice_with_LatestAction_and_ModUser_and_LockUser_and_ActionPerformedUser" columnName="DATIGENERALI_DATIGENERALIDOCUMENTO_NUMERO"/>
     </attribute>
-    <attribute id="IMPORTOTOTALEDOCUMENTO" order="14" displayAttribute="false" attributeHierarchyActive="false">
+    <attribute id="IMPORTOTOTALEDOCUMENTO" order="13" displayAttribute="false" attributeHierarchyActive="false">
       <descriptions defaultDescription="DATIGENERALI_DATIGENERALIDOCUMENTO_IMPORTOTOTALEDOCUMENTO"/>
       <keyMapping columnObjectName="Invoice_with_LatestAction_and_ModUser_and_LockUser_and_ActionPerformedUser" columnName="DATIGENERALI_DATIGENERALIDOCUMENTO_IMPORTOTOTALEDOCUMENTO"/>
     </attribute>
-    <attribute id="ID_OCCUR" order="15" displayAttribute="false" attributeHierarchyActive="false">
+    <attribute id="ID_OCCUR" order="14" displayAttribute="false" attributeHierarchyActive="false">
       <descriptions defaultDescription="ID_OCCUR"/>
       <keyMapping columnObjectName="Invoice_with_LatestAction_and_ModUser_and_LockUser_and_ActionPerformedUser" columnName="ID_OCCUR"/>
     </attribute>
-    <attribute id="ACTION" order="16" displayAttribute="false" attributeHierarchyActive="false">
+    <attribute id="ACTION" order="15" displayAttribute="false" attributeHierarchyActive="false">
       <descriptions defaultDescription="ACTION"/>
       <keyMapping columnObjectName="Invoice_with_LatestAction_and_ModUser_and_LockUser_and_ActionPerformedUser" columnName="LATEST_ACTION"/>
     </attribute>
-    <attribute id="ACTIONBY" order="17" displayAttribute="false" attributeHierarchyActive="false">
+    <attribute id="ACTIONBY" order="16" displayAttribute="false" attributeHierarchyActive="false">
       <descriptions defaultDescription="ACTIONBY"/>
       <keyMapping columnObjectName="Invoice_with_LatestAction_and_ModUser_and_LockUser_and_ActionPerformedUser" columnName="LATEST_ACTIONBY"/>
     </attribute>
-    <attribute id="MODUSER_FIRSTNAME" order="18" displayAttribute="false" attributeHierarchyActive="false">
+    <attribute id="MODUSER_FIRSTNAME" order="17" displayAttribute="false" attributeHierarchyActive="false">
       <descriptions defaultDescription="FIRSTNAME"/>
       <keyMapping columnObjectName="Invoice_with_LatestAction_and_ModUser_and_LockUser_and_ActionPerformedUser" columnName="MODUSER_FIRSTNAME"/>
     </attribute>
-    <attribute id="MODUSER_LASTNAME" order="19" displayAttribute="false" attributeHierarchyActive="false">
+    <attribute id="MODUSER_LASTNAME" order="18" displayAttribute="false" attributeHierarchyActive="false">
       <descriptions defaultDescription="LASTNAME"/>
       <keyMapping columnObjectName="Invoice_with_LatestAction_and_ModUser_and_LockUser_and_ActionPerformedUser" columnName="MODUSER_LASTNAME"/>
     </attribute>
-    <attribute id="ASSIGNUSER_FIRSTNAME" order="20" displayAttribute="false" attributeHierarchyActive="false">
+    <attribute id="ASSIGNUSER_FIRSTNAME" order="19" displayAttribute="false" attributeHierarchyActive="false">
       <descriptions defaultDescription="FIRSTNAME"/>
       <keyMapping columnObjectName="Invoice_with_LatestAction_and_ModUser_and_LockUser_and_ActionPerformedUser" columnName="ASSIGN_FIRSTNAME"/>
     </attribute>
-    <attribute id="ASSIGNUSER_LASTNAME" order="21" displayAttribute="false" attributeHierarchyActive="false">
+    <attribute id="ASSIGNUSER_LASTNAME" order="20" displayAttribute="false" attributeHierarchyActive="false">
       <descriptions defaultDescription="LASTNAME"/>
       <keyMapping columnObjectName="Invoice_with_LatestAction_and_ModUser_and_LockUser_and_ActionPerformedUser" columnName="ASSIGN_LASTNAME"/>
     </attribute>
-    <attribute id="LOCKUSER_FIRSTNAME" order="22" displayAttribute="false" attributeHierarchyActive="false">
+    <attribute id="LOCKUSER_FIRSTNAME" order="21" displayAttribute="false" attributeHierarchyActive="false">
       <descriptions defaultDescription="FIRSTNAME"/>
       <keyMapping columnObjectName="Invoice_with_LatestAction_and_ModUser_and_LockUser_and_ActionPerformedUser" columnName="LOCKUSER_FIRSTNAME"/>
     </attribute>
-    <attribute id="LOCKUSER_LASTNAME" order="23" displayAttribute="false" attributeHierarchyActive="false">
+    <attribute id="LOCKUSER_LASTNAME" order="22" displayAttribute="false" attributeHierarchyActive="false">
       <descriptions defaultDescription="LASTNAME"/>
       <keyMapping columnObjectName="Invoice_with_LatestAction_and_ModUser_and_LockUser_and_ActionPerformedUser" columnName="LOCKUSER_LASTNAME"/>
     </attribute>
-    <attribute id="ACTIONUSER_FIRSTNAME" order="24" displayAttribute="false" attributeHierarchyActive="false">
+    <attribute id="ACTIONUSER_FIRSTNAME" order="23" displayAttribute="false" attributeHierarchyActive="false">
       <descriptions defaultDescription="FIRSTNAME"/>
       <keyMapping columnObjectName="Invoice_with_LatestAction_and_ModUser_and_LockUser_and_ActionPerformedUser" columnName="ACTIONUSER_FIRSTNAME"/>
     </attribute>
-    <attribute id="ACTIONUSER_LASTNAME" order="25" displayAttribute="false" attributeHierarchyActive="false">
+    <attribute id="ACTIONUSER_LASTNAME" order="24" displayAttribute="false" attributeHierarchyActive="false">
       <descriptions defaultDescription="LASTNAME"/>
       <keyMapping columnObjectName="Invoice_with_LatestAction_and_ModUser_and_LockUser_and_ActionPerformedUser" columnName="ACTIONUSER_LASTNAME"/>
     </attribute>
   
-    <attribute id="COMPANYCODE" order="26" displayAttribute="false" attributeHierarchyActive="false">
+    <attribute id="COMPANYCODE" order="25" displayAttribute="false" attributeHierarchyActive="false">
       <descriptions defaultDescription="COMPANYCODE"/>
   
       <keyMapping columnObjectName="Invoice_with_LatestAction_and_ModUser_and_LockUser_and_ActionPerformedUser" columnName="COMPANYCODE"/>
   
     </attribute>
+  
+    <attribute id="CESSIONARIOCOMMITTENTE_DATIANAGRAFICI_IDFISCALEIVA_IDPAESE" order="31" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="CESSIONARIOCOMMITTENTE_DATIANAGRAFICI_IDFISCALEIVA_IDPAESE"/>
+  
+      <keyMapping columnObjectName="Invoice_with_LatestAction_and_ModUser_and_LockUser_and_ActionPerformedUser" columnName="CESSIONARIOCOMMITTENTE_DATIANAGRAFICI_IDFISCALEIVA_IDPAESE"/>
+  
+    </attribute>
+    <attribute id="CESSIONARIOCOMMITTENTE_DATIANAGRAFICI_IDFISCALEIVA_IDCODICE" order="32" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="CESSIONARIOCOMMITTENTE_DATIANAGRAFICI_IDFISCALEIVA_IDCODICE"/>
+      <keyMapping columnObjectName="Invoice_with_LatestAction_and_ModUser_and_LockUser_and_ActionPerformedUser" columnName="CESSIONARIOCOMMITTENTE_DATIANAGRAFICI_IDFISCALEIVA_IDCODICE"/>
+    </attribute>
   </attributes>
   <calculatedAttributes>
-    <calculatedAttribute id="LASTCHANGEDBYNAME" order="27" semanticType="empty" displayAttribute="false" attributeHierarchyActive="false">
+    <calculatedAttribute id="LASTCHANGEDBYNAME" order="26" semanticType="empty" displayAttribute="false" attributeHierarchyActive="false">
       <descriptions defaultDescription="LASTCHANGEDBYNAME"/>
       <keyCalculation datatype="NVARCHAR" expressionLanguage="SQL" length="101">
         <formula>CONCAT(&quot;MODUSER_FIRSTNAME&quot;, CONCAT(' ', &quot;MODUSER_LASTNAME&quot;))</formula>
       </keyCalculation>
-    </calculatedAttribute>
-    <calculatedAttribute id="ASSIGNEDTONAME" order="28" semanticType="empty" displayAttribute="false" attributeHierarchyActive="false">
+      </calculatedAttribute>
+    <calculatedAttribute id="ASSIGNEDTONAME" order="27" semanticType="empty" displayAttribute="false" attributeHierarchyActive="false">
       <descriptions defaultDescription="AssignedToName"/>
       <keyCalculation datatype="NVARCHAR" expressionLanguage="SQL" length="13">
         <formula>CONCAT(&quot;ASSIGNUSER_FIRSTNAME&quot;, CONCAT(' ', &quot;ASSIGNUSER_LASTNAME&quot;))</formula>
       </keyCalculation>
-    </calculatedAttribute>
-    <calculatedAttribute id="LOCKEDBYNAME" order="29" semanticType="empty" displayAttribute="false" attributeHierarchyActive="false">
+      </calculatedAttribute>
+    <calculatedAttribute id="LOCKEDBYNAME" order="28" semanticType="empty" displayAttribute="false" attributeHierarchyActive="false">
       <descriptions defaultDescription="LockedByName"/>
       <keyCalculation datatype="NVARCHAR" expressionLanguage="SQL" length="101">
         <formula>CONCAT(&quot;LOCKUSER_FIRSTNAME&quot;, CONCAT(' ', &quot;LOCKUSER_LASTNAME&quot;))</formula>
       </keyCalculation>
-    </calculatedAttribute>
-    <calculatedAttribute id="ACTIONBYNAME" order="30" semanticType="empty" displayAttribute="false" attributeHierarchyActive="false">
+      </calculatedAttribute>
+    <calculatedAttribute id="ACTIONBYNAME" order="29" semanticType="empty" displayAttribute="false" attributeHierarchyActive="false">
       <descriptions defaultDescription="ActionByName"/>
       <keyCalculation datatype="NVARCHAR" expressionLanguage="SQL" length="101">
         <formula>CONCAT(&quot;ACTIONUSER_FIRSTNAME&quot;, CONCAT(' ', &quot;ACTIONUSER_LASTNAME&quot;))</formula>
       </keyCalculation>
-    </calculatedAttribute>
-    <calculatedAttribute id="DOCCATEGORY" order="31" semanticType="empty" displayAttribute="false" attributeHierarchyActive="false">
+      </calculatedAttribute>
+    <calculatedAttribute id="DOCCATEGORY" order="30" semanticType="empty" displayAttribute="false" attributeHierarchyActive="false">
       <keyCalculation datatype="NVARCHAR" expressionLanguage="SQL" length="13">
         <formula>CASE &quot;ID_OCCUR&quot; 
 	 WHEN null then CASE  
@@ -803,7 +836,14 @@
             END 
  END</formula>
       </keyCalculation>
-    </calculatedAttribute>
+      </calculatedAttribute>
+  
+    <calculatedAttribute id="VAT" order="33" semanticType="empty" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="VAT"/>
+      <keyCalculation datatype="NVARCHAR" expressionLanguage="SQL" length="30">
+        <formula>CONCAT(&quot;CESSIONARIOCOMMITTENTE_DATIANAGRAFICI_IDFISCALEIVA_IDPAESE&quot;, &quot;CESSIONARIOCOMMITTENTE_DATIANAGRAFICI_IDFISCALEIVA_IDCODICE&quot;)</formula>
+      </keyCalculation>
+      </calculatedAttribute>
   </calculatedAttributes>
   <baseMeasures/>
   <calculatedMeasures/>
