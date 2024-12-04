@@ -23,6 +23,7 @@ modules:
     build-parameters:
       builder: npm
     properties:
+      Path_API_COMPANYDATA: "/sap/opu/odata/sap/YY1_COMPANYDATA_CDS/YY1_COMPANYDATA?$format=json"
       Path_API_SUPPLIER_INVOICE: "/sap/opu/odata/sap/API_SUPPLIERINVOICE_PROCESS_SRV/A_SupplierInvoice"
       Path_API_GLACCOUNTLINEITEM: "/sap/opu/odata/sap/API_GLACCOUNTLINEITEM/GLAccountLineItem"
       Path_API_CV_ATTACHMENT_SRV: "/sap/opu/odata/sap/API_CV_ATTACHMENT_SRV/AttachmentContentSet"

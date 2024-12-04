@@ -22,8 +22,10 @@ module.exports = async (request, tx) => {
         const bodyData = await fetchBodyData(tx, headerData.headerFatturaElettronica.ID, headerData.headerInvoiceIntegrationInfo.ID);
         const paymentData = await fetchPaymentData(tx, bodyData.bodyFatturaElettronica.ID);
 
+        const serviceS4_HANA = await cds.connect.to(process.env['Destination_OData_S4HANA']);
+        const serviceRequestS4_HANA = serviceS4_HANA.tx(request);
         // Construct and return the final result object with all retrieved data
-        const result = createResultObject(headerData, bodyData, paymentData);
+        const result = await createResultObject(headerData, bodyData, paymentData, serviceRequestS4_HANA);
         return { status: 200, result: result, message: 'Executed' };
     } catch (err) {
         console.error(`Error during queries executions: ${err}`);
@@ -173,15 +175,18 @@ function mergeGLAccountLineDetailsWithIntegrationInfoBody(dataDettaglioLinee, da
 }
 
 // Create the result object containing all invoice details
-function createResultObject(headerData, bodyData, paymentData) {
+async function createResultObject(headerData, bodyData, paymentData, serviceRequestS4_HANA) {
     const { errorLog, headerFatturaElettronica, headerInvoiceIntegrationInfo, dataSelectedPurchaseOrders, dataSelectedDeliveryNotes, dataSelectedServiceEntrySheets, dataSupplierInvoiceWhldgTax } = headerData;
     const { bodyFatturaElettronica, dataDatiRitenuta, dataDatiOrdineAcquisto, dataDettaglioLinee, dataDatiRiepilogo, dataDatiPagamento, dataAllegati, dataPOIntegrationInfoBody, dataGLAccountIntegrationInfoBody } = bodyData;
     const { dataDettaglioPagamento } = paymentData;
     const aLineDetailsMergedWithPOIntegrations = mergePOLineDetailsWithIntegrationInfoBody(dataDettaglioLinee, dataPOIntegrationInfoBody);
     const aLineDetailsMergedWithGLAccountIntegrations = mergeGLAccountLineDetailsWithIntegrationInfoBody(dataDettaglioLinee, dataGLAccountIntegrationInfoBody);
 
+    const sVATRegistration = headerFatturaElettronica.cessionarioCommittente_DatiAnagrafici_IdFiscaleIVA_IdPaese+headerFatturaElettronica.cessionarioCommittente_DatiAnagrafici_IdFiscaleIVA_IdCodice;
+    const oResultCompanyCodeRequest = await serviceRequestS4_HANA.get(process.env['Path_API_COMPANYDATA']+"&$filter=VATRegistration eq '"+sVATRegistration+"'&$select=CompanyCode");
+    const sCompanyCode = oResultCompanyCodeRequest.length > 0 ? oResultCompanyCodeRequest[0].CompanyCode : null;
     // Generate arrays for GL Account and Purchase Order records
-    const aGLAccountRecords = aLineDetailsMergedWithGLAccountIntegrations.map((line, index) => createLineItemForGLAccount(index + 1, line, bodyFatturaElettronica));
+    const aGLAccountRecords = aLineDetailsMergedWithGLAccountIntegrations.map((line, index) => createLineItemForGLAccount(index + 1, line, bodyFatturaElettronica, sCompanyCode));
 
     const aPORecords = aLineDetailsMergedWithPOIntegrations.map((line, index) => createLineItemForPO(index + 1, line, bodyFatturaElettronica));
 
@@ -228,7 +233,7 @@ function createResultObject(headerData, bodyData, paymentData) {
         "header_Id_ItalianInvoiceTrace": headerFatturaElettronica.ID,
         "header_Id_InvoiceIntegrationInfo": headerInvoiceIntegrationInfo.ID,
         "Transaction": headerInvoiceIntegrationInfo.transaction ? headerInvoiceIntegrationInfo.transaction : null,
-        "CompanyCode": headerInvoiceIntegrationInfo.companyCode ? headerInvoiceIntegrationInfo.companyCode : null,
+        "CompanyCode": sCompanyCode,
         "DocumentDate": bodyFatturaElettronica.datiGenerali_DatiGeneraliDocumento_Data ? bodyFatturaElettronica.datiGenerali_DatiGeneraliDocumento_Data : null,
         "InvoiceReceiptDate": headerInvoiceIntegrationInfo.invoiceReceiptDate ? headerInvoiceIntegrationInfo.invoiceReceiptDate : null,
         "PostingDate": headerInvoiceIntegrationInfo.postingDate ? headerInvoiceIntegrationInfo.postingDate : null,
@@ -277,21 +282,21 @@ function createResultObject(headerData, bodyData, paymentData) {
 }
 
 // Create a line item object for GL Account records
-function createLineItemForGLAccount(index, oLineDetail, bodyFatturaElettronica) {
+function createLineItemForGLAccount(index, oLineDetail, bodyFatturaElettronica, sCompanyCode) {
     return {
         "lineDetail_ID": oLineDetail.ID,
         "headerGLAccountIntegrationInfo_Id": oLineDetail.header_Id,
         "bodyInvoiceItalianTrace_Id": oLineDetail.body_Id,
         "bodyGLAccountIntegrationInfo_Id": oLineDetail.bodyGLAccountIntegrationInfo_ID,
         "SupplierInvoiceItem": String(index + 1).padStart(4, '0'),
-        "CompanyCode": oLineDetail.companyCode ? oLineDetail.companyCode : null,
+        "CompanyCode": sCompanyCode,
         "GLAccount": oLineDetail.glAccount ? oLineDetail.glAccount : null,
         "DebitCreditCode": oLineDetail.debitCreditCode ? oLineDetail.debitCreditCode : null,
         "DocumentCurrency": bodyFatturaElettronica.datiGenerali_DatiGeneraliDocumento_Divisa ? bodyFatturaElettronica.datiGenerali_DatiGeneraliDocumento_Divisa : null,
         "SupplierInvoiceItemAmount": oLineDetail.supplierInvoiceItemAmount ? oLineDetail.supplierInvoiceItemAmount : null,
         "TaxCode": oLineDetail.taxCode ? oLineDetail.taxCode : null,
         "AssignmentReference": oLineDetail.assignmentReference ? oLineDetail.assignmentReference : null,
-        "SupplierInvoiceItemText": oLineDetail.descrizione ? oLineDetail.descrizione : null,
+        "SupplierInvoiceItemText": oLineDetail.supplierInvoiceItemText ? oLineDetail.supplierInvoiceItemText : null,
         "CostCenter": oLineDetail.costCenter ? oLineDetail.costCenter : null,
         "BusinessArea": oLineDetail.businessArea ? oLineDetail.businessArea : null,
         "PartnerBusinessArea": oLineDetail.partnerBusinessArea ? oLineDetail.partnerBusinessArea : null,
@@ -335,7 +340,7 @@ function createLineItemForPO(index, oLineDetail, bodyFatturaElettronica) {
         "QuantityInPurchaseOrderUnit": oLineDetail.quantita !== null ? oLineDetail.quantita : null,
         "QtyInPurchaseOrderPriceUnit": oLineDetail.qtyInPurchaseOrderPriceUnit ? oLineDetail.qtyInPurchaseOrderPriceUnit : null,
         "PurchaseOrderPriceUnit": oLineDetail.purchaseOrderPriceUnit !== null ? oLineDetail.purchaseOrderPriceUnit : null,
-        "SupplierInvoiceItemText": oLineDetail.descrizione ? oLineDetail.descrizione : null,
+        "SupplierInvoiceItemText": oLineDetail.supplierInvoiceItemText ? oLineDetail.supplierInvoiceItemText : null,
         "IsNotCashDiscountLiable": oLineDetail.isNotCashDiscountLiable ? oLineDetail.isNotCashDiscountLiable : null,
         "ServiceEntrySheet": oLineDetail.serviceEntrySheet ? oLineDetail.serviceEntrySheet : null,
         "ServiceEntrySheetItem": oLineDetail.serviceEntrySheetItem ? oLineDetail.serviceEntrySheetItem : null,
