@@ -366,8 +366,7 @@ async function updatePOLineDetails(poRecords, tx) {
                 .set({
                     "prezzoTotale": oLineDetail.SupplierInvoiceItemAmount,
                     "quantita": oLineDetail.QuantityInPurchaseOrderUnit,
-                    "prezzoUnitario": oLineDetail.PurchaseOrderPriceUnit,
-                    "descrizione": oLineDetail.SupplierInvoiceItemText
+                    "prezzoUnitario": oLineDetail.PurchaseOrderPriceUnit
                 })
                 .where(`ID = '${oLineDetail.lineDetail_ID}'`);
 
@@ -387,6 +386,7 @@ async function updatePOLineDetails(poRecords, tx) {
                     "costCenter": oLineDetail.CostCenter,
                     "controllingArea": oLineDetail.ControllingArea,
                     "businessArea": oLineDetail.BusinessArea,
+                    "supplierInvoiceItemText": oLineDetail.SupplierInvoiceItemText,
                     "taxCode": oLineDetail.TaxCode,
                     "profitCenter": oLineDetail.ProfitCenter,
                     "functionalArea": oLineDetail.FunctionalArea,
@@ -421,8 +421,7 @@ async function insertPOLineDetails(aNewPoLineDetails, header_Id_InvoiceIntegrati
             "bodyPOIntegrationInfo_ID": bodyPOIntegrationInfo_ID,
             "prezzoTotale": oLineDetail.SupplierInvoiceItemAmount,
             "quantita": oLineDetail.QuantityInPurchaseOrderUnit,
-            "prezzoUnitario": oLineDetail.PurchaseOrderPriceUnit,
-            "descrizione": oLineDetail.SupplierInvoiceItemText
+            "prezzoUnitario": oLineDetail.PurchaseOrderPriceUnit
         });
 
         aNewPoIntegrationInfoBodyRecords.push({
@@ -442,6 +441,7 @@ async function insertPOLineDetails(aNewPoLineDetails, header_Id_InvoiceIntegrati
             "costCenter": oLineDetail.CostCenter,
             "controllingArea": oLineDetail.ControllingArea,
             "businessArea": oLineDetail.BusinessArea,
+            "supplierInvoiceItemText": oLineDetail.SupplierInvoiceItemText,
             "profitCenter": oLineDetail.ProfitCenter,
             "taxCode": oLineDetail.TaxCode,
             "functionalArea": oLineDetail.FunctionalArea,
@@ -487,7 +487,6 @@ async function updateGLAccountLineDetails(glRecords, tx) {
         if (oLineDetail.lineDetail_ID) {
             const lineQuery = UPDATE('DettaglioLinee')
                 .set({
-                    "descrizione": oLineDetail.SupplierInvoiceItemText,
                     "unitaMisura": oLineDetail.QuantityUnit,
                     "quantita": oLineDetail.Quantity
                 })
@@ -503,6 +502,7 @@ async function updateGLAccountLineDetails(glRecords, tx) {
                     "assignmentReference": oLineDetail.AssignmentReference,
                     "costCenter": oLineDetail.CostCenter,
                     "businessArea": oLineDetail.BusinessArea,
+                    "supplierInvoiceItemText": oLineDetail.SupplierInvoiceItemText,
                     "partnerBusinessArea": oLineDetail.PartnerBusinessArea,
                     "profitCenter": oLineDetail.ProfitCenter,
                     "functionalArea": oLineDetail.FunctionalArea,
@@ -539,7 +539,6 @@ async function insertGLAccountLineDetails(aNewGlAccountLineDetails, header_Id_In
             "ID": lineDetail_ID,
             "body_Id": oLineDetail.bodyInvoiceItalianTrace_Id,
             "bodyGLAccountIntegrationInfo_ID": bodyGLAccountIntegrationInfo_ID,
-            "descrizione": oLineDetail.SupplierInvoiceItemText,
             "unitaMisura": oLineDetail.QuantityUnit,
             "quantita": oLineDetail.Quantity
         });
@@ -555,6 +554,7 @@ async function insertGLAccountLineDetails(aNewGlAccountLineDetails, header_Id_In
             "assignmentReference": oLineDetail.AssignmentReference,
             "costCenter": oLineDetail.CostCenter,
             "businessArea": oLineDetail.BusinessArea,
+            "supplierInvoiceItemText": oLineDetail.SupplierInvoiceItemText,
             "partnerBusinessArea": oLineDetail.PartnerBusinessArea,
             "profitCenter": oLineDetail.ProfitCenter,
             "functionalArea": oLineDetail.FunctionalArea,

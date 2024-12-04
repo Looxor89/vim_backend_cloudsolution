@@ -213,6 +213,7 @@ context vim {
         profitCenter                : String(10);
         functionalArea              : String(16);
         taxCode                     : String(2);
+        supplierInvoiceItemText     : String(50);
         wBSElement                  : String(24);
         salesOrder                  : String(10);
         salesOrderItem              : String(6);
@@ -243,6 +244,7 @@ context vim {
         partnerBusinessArea        : String(4);
         profitCenter               : String(10);
         functionalArea             : String(16);
+        supplierInvoiceItemText    : String(50);
         salesOrder                 : String(10);
         salesOrderItem             : String(6);
         costCtrActivityType        : String(6);
