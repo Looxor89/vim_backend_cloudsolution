@@ -24,6 +24,15 @@ modules:
       builder: npm
     properties:
       Path_API_COMPANYDATA: "/sap/opu/odata/sap/YY1_COMPANYDATA_CDS/YY1_COMPANYDATA?$format=json"
+      Path_API_BUSINESS_PARTNER: "/sap/opu/odata/sap/API_BUSINESS_PARTNER/A_BusinessPartnerTaxNumber?$format=json"
+      Path_API_PAYMENTTERMS: "/sap/opu/odata/sap/YY1_PAYMENTTERMS_CDS/YY1_PAYMENTTERMS?$format=json&$filter=Language eq 'EN'&$select=PaymentTerms,PaymentTermsName"
+      Path_API_BUSINESS_PARTNER_BANK: "/sap/opu/odata/sap/API_BUSINESS_PARTNER/A_BusinessPartnerBank?$format=json"
+      Path_API_PAYMENTMETHODS: "/sap/opu/odata/sap/YY1_PAYMENTMETHODS_CDS/YY1_PaymentMethods?$format=json"
+      Path_API_HOUSEBANKS: "/sap/opu/odata/sap/YY1_HOUSEBANKS_CDS/YY1_HouseBanks?$format=json"
+      Path_API_HOUSEBANKSACCOUNTS: "/sap/opu/odata/sap/YY1_HOUSEBANKACCOUNTS_CDS/YY1_HouseBankAccounts?$format=json"
+      Path_API_ACCOUNTINGDOCUMENTTYPE: "/sap/opu/odata/sap/YY1_ACCOUNTINGDOCUMENTTYPE_CDS/YY1_AccountingDocumentType?$format=json"
+      Path_API_WITHHOLDINGTAX: "/sap/opu/odata/sap/API_BUSINESS_PARTNER/A_SupplierWithHoldingTax?$format=json"
+      Path_API_WITHHOLDINGTAXES: "/sap/opu/odata/sap/YY1_WITHHOLDINGTAXES_CDS/YY1_WithholdingTaxes?$format=json"
       Path_API_SUPPLIER_INVOICE: "/sap/opu/odata/sap/API_SUPPLIERINVOICE_PROCESS_SRV/A_SupplierInvoice"
       Path_API_GLACCOUNTLINEITEM: "/sap/opu/odata/sap/API_GLACCOUNTLINEITEM/GLAccountLineItem"
       Path_API_CV_ATTACHMENT_SRV: "/sap/opu/odata/sap/API_CV_ATTACHMENT_SRV/AttachmentContentSet"

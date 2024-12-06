@@ -322,6 +322,42 @@ module.exports = function (srv) {
         await performRequest(srv, request, './func/getInvoice');
     });
 
+    srv.on('getPaymentTerms', '*', async request => {
+        await performRequest(srv, request, './func/getPaymentTerms');
+    });
+
+    srv.on('getBusinessPartnerBank', '*', async request => {
+        await performRequest(srv, request, './func/getBusinessPartnerBank');
+    });
+
+    srv.on('getPaymentMethods', '*', async request => {
+        await performRequest(srv, request, './func/getPaymentMethods');
+    });
+
+    srv.on('getHouseBanks', '*', async request => {
+        await performRequest(srv, request, './func/getHouseBanks');
+    });
+
+    srv.on('getHouseBanksAccounts', '*', async request => {
+        await performRequest(srv, request, './func/getHouseBanksAccounts');
+    });
+
+    srv.on('getAccountingDocumentType', '*', async request => {
+        await performRequest(srv, request, './func/getAccountingDocumentType');
+    });
+
+    srv.on('getWithholdingTax', '*', async request => {
+        await performRequest(srv, request, './func/getWithholdingTax');
+    });
+
+    srv.on('getWithholdingTaxesType', '*', async request => {
+        await performRequest(srv, request, './func/getWithholdingTaxesType');
+    });
+
+    srv.on('getWithholdingTaxesCode', '*', async request => {
+        await performRequest(srv, request, './func/getWithholdingTaxesCode');
+    });
+
     /**
      * Function for handling add notes requests based on role scopes.
      * 

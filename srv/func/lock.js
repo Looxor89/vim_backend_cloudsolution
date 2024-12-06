@@ -35,7 +35,7 @@ module.exports = async (request, tx) => {
             };
             // Defining update dock_pack query
             let updateDocPackQuery = UPDATE('DOC_PACK')
-                .set({ LockedAt: LockedAt, LockedBy: LockedBy })
+                .set({ LockedAt: LockedAt, LockedBy: LockedBy, Status: 'PROCESSING' })
                 .where({ PackageId: PackageId });
             // Execute the query and retrieve the data from the database.
             let aResult = await tx.run(updateDocPackQuery);
@@ -47,6 +47,31 @@ module.exports = async (request, tx) => {
                     status: 500,
                     message: 'Lock failed'
                 };
+            }
+
+            // Get SeqNo from DOC_WF
+            let seqNoQuery = SELECT.one(['max(SEQNO) as SeqNo'])
+                .from('DOC_WF')
+                .where({ PACKAGEID: PackageId });
+            let data = await tx.run(seqNoQuery),
+            seqNo = data?.SeqNo ? data.SeqNo + 1 : 1,
+            insertDocWfQuery = INSERT.into('DOC_WF').entries({
+                PackageId: PackageId,
+                SeqNo: seqNo,
+                Action: 'PROCESSING',
+                ActionAt: LockedAt,
+                ActionBy: LockedBy,
+                Note: `${LockedBy} is processing ${PackageId} invoice`
+            });
+            // Execute the query 
+            data = await tx.run(insertDocWfQuery);
+
+            // Return the result with status code, number of affected rows as count, and message.
+            if (data == null || data == undefined) {
+                throw new Error({
+                    status: 500,
+                    message: 'Insert failed'
+                });
             }
 
             // Define result

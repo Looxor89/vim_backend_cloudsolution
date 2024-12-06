@@ -1,6 +1,7 @@
 
 const { json } = require('express');
 const { v4: uuidv4 } = require('uuid');
+const { buildPayloadForSubmitInvoice } = require('./utils/payloadBuilder');
 
 "use strict";
 
@@ -13,8 +14,7 @@ module.exports = async (request, tx, errorMessage) => {
         createdAt = new Date(),
         modifiedAt = new Date();
     let data, 
-        jsonInvoice = JSON.parse(Invoice), 
-        submittedInvoice = buildPayloadForSubmitInvoice(jsonInvoice);
+        submittedInvoice = buildPayloadForSubmitInvoice(Invoice);
     
     let errorLogQuery = INSERT.into('ERROR_LOG')
         .entries({

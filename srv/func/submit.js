@@ -57,6 +57,23 @@ module.exports = async (request, tx) => {
         throw new Error('Update failed');
     }
 
+    // Get SeqNo from DOC_WF
+    let seqNoQuery = SELECT.one(['max(SEQNO) as SeqNo'])
+        .from('DOC_WF')
+        .where({ PACKAGEID: PackageId });
+    data = await tx.run(seqNoQuery),
+    seqNo = data?.SeqNo ? data.SeqNo + 1 : 1,
+    insertDocWfQuery = INSERT.into('DOC_WF').entries({
+        PackageId: PackageId,
+        SeqNo: seqNo,
+        Action: 'POSTED',
+        ActionAt: modifiedAt,
+        ActionBy: modifiedBy,
+        Note: `${modifiedBy} has posted ${PackageId} invoice`
+    });
+    // Execute the query 
+    data = await tx.run(insertDocWfQuery);
+
     let deleteQuery = DELETE.from('ERROR_LOG')
         .where(`PackageId = '${PackageId}'`);
 

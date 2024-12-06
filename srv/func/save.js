@@ -45,7 +45,8 @@ module.exports = async (request, tx) => {
         await deleteSelectedServiceEntrySheetsRecords(RemovedSelectedServiceEntrySheetsRecords, tx);
         await deleteSupplierInvoiceWhldgTaxRecords(RemovedSupplierInvoiceWhldgTaxRecords, tx);
         await deleteLineDetails(RemovedPoLineDetails, RemovedGlAccountLineDetails, tx);
-
+        await updateInvoiceAction(tx, PackageId, modifiedAt, modifiedBy);
+        
         return { status: 201, message: 'Data stored in database' }
     } catch (err) {
         console.error('Error during save operation:', err);
@@ -596,6 +597,26 @@ async function updateDocPack(modifiedBy, modifiedAt, PackageId, tx) {
         .where(`PackageId = '${PackageId}'`);
 
     await executeQuery(tx, updateDocPackQuery);
+}
+
+async function updateInvoiceAction(tx, PackageId, modifiedAt, modifiedBy) {
+    // Get SeqNo from DOC_WF
+    let seqNoQuery = SELECT.one(['max(SEQNO) as SeqNo'])
+    .from('DOC_WF')
+    .where({ PACKAGEID: PackageId });
+    // Execute the query 
+    let data = await executeQuery(tx, seqNoQuery),
+    seqNo = data?.SeqNo ? data.SeqNo + 1 : 1,
+    insertDocWfQuery = INSERT.into('DOC_WF').entries({
+        PackageId: PackageId,
+        SeqNo: seqNo,
+        Action: 'SAVED',
+        ActionAt: modifiedAt,
+        ActionBy: modifiedBy,
+        Note: `${modifiedBy} has saved ${PackageId} invoice`
+    });
+    // Execute the query 
+    await executeQuery(tx, insertDocWfQuery);
 }
 
 // Execute query and handle errors

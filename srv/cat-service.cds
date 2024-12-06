@@ -49,6 +49,15 @@ service CatalogService {
     function currency()                                             returns array of String;
     function getMetadata()                                          returns array of String;
     function getAttachment()                                        returns array of String;
+    function getPaymentTerms()                                      returns array of String;
+    function getBusinessPartnerBank()                               returns array of String;
+    function getPaymentMethods()                                    returns array of String;
+    function getHouseBanks()                                        returns array of String;
+    function getHouseBanksAccounts()                                returns array of String;
+    function getAccountingDocumentType()                            returns array of String;
+    function getWithholdingTax()                                    returns array of String;
+    function getWithholdingTaxesType()                              returns array of String;
+    function getWithholdingTaxesCode()                              returns array of String;
     action   assign(payload : assignPayload)                        returns array of String;
     action   forward(payload : forwardPayload)                      returns array of String;
     action   unlock(payload : unlockPayload)                        returns array of String;

@@ -1,4 +1,5 @@
 const { checkReadScope } = require('./utils/scopes');
+const transcoder = require('./utils/transcoders');
 
 "use strict";
 
@@ -174,6 +175,28 @@ function mergeGLAccountLineDetailsWithIntegrationInfoBody(dataDettaglioLinee, da
     }));
 }
 
+async function getCompanyCode (serviceRequestS4_HANA, idPaeseCessionarioCommittente, idCodiceCessionarioCommittente) {
+    const sVATRegistration = idPaeseCessionarioCommittente+idCodiceCessionarioCommittente;
+    const oResultCompanyCodeRequest = await serviceRequestS4_HANA.get(process.env['Path_API_COMPANYDATA']+"&$filter=VATRegistration eq '"+sVATRegistration+"'&$select=CompanyCode");
+    return oResultCompanyCodeRequest.length > 0 ? oResultCompanyCodeRequest[0].CompanyCode : null;
+}
+
+async function getInvocingParty (serviceRequestS4_HANA, idPaeseCedentePrestatore, idCodiceCedentePrestatore) {
+    const sBPTaxNumber  = idPaeseCedentePrestatore+idCodiceCedentePrestatore;
+    const oResultBusinessPartnerRequest = await serviceRequestS4_HANA.get(process.env['Path_API_BUSINESS_PARTNER']+"&$filter=BPTaxNumber eq '"+sBPTaxNumber+"'&$select=BusinessPartner");
+    return oResultBusinessPartnerRequest.length > 0 ? oResultBusinessPartnerRequest[0].BusinessPartner : null;
+}
+
+async function getPaymentMethod(dataDettaglioPagamento) { // In the future will be a request to a transcoder service, but currently it is just a placeholder.
+    if (dataDettaglioPagamento.length > 0) {
+        return await transcoder.paymentMethod[dataDettaglioPagamento[0].modalitaPagamento];
+    }
+}
+
+function getAccountingDocumentType(sBodyDocumentType) { // In the future will be a request to a transcoder service, but currently it is just a placeholder.
+    return transcoder.accountingDocumentType[sBodyDocumentType];
+}
+
 // Create the result object containing all invoice details
 async function createResultObject(headerData, bodyData, paymentData, serviceRequestS4_HANA) {
     const { errorLog, headerFatturaElettronica, headerInvoiceIntegrationInfo, dataSelectedPurchaseOrders, dataSelectedDeliveryNotes, dataSelectedServiceEntrySheets, dataSupplierInvoiceWhldgTax } = headerData;
@@ -182,9 +205,10 @@ async function createResultObject(headerData, bodyData, paymentData, serviceRequ
     const aLineDetailsMergedWithPOIntegrations = mergePOLineDetailsWithIntegrationInfoBody(dataDettaglioLinee, dataPOIntegrationInfoBody);
     const aLineDetailsMergedWithGLAccountIntegrations = mergeGLAccountLineDetailsWithIntegrationInfoBody(dataDettaglioLinee, dataGLAccountIntegrationInfoBody);
 
-    const sVATRegistration = headerFatturaElettronica.cessionarioCommittente_DatiAnagrafici_IdFiscaleIVA_IdPaese+headerFatturaElettronica.cessionarioCommittente_DatiAnagrafici_IdFiscaleIVA_IdCodice;
-    const oResultCompanyCodeRequest = await serviceRequestS4_HANA.get(process.env['Path_API_COMPANYDATA']+"&$filter=VATRegistration eq '"+sVATRegistration+"'&$select=CompanyCode");
-    const sCompanyCode = oResultCompanyCodeRequest.length > 0 ? oResultCompanyCodeRequest[0].CompanyCode : null;
+    const sCompanyCode = await getCompanyCode(serviceRequestS4_HANA, headerFatturaElettronica.cessionarioCommittente_DatiAnagrafici_IdFiscaleIVA_IdPaese, headerFatturaElettronica.cessionarioCommittente_DatiAnagrafici_IdFiscaleIVA_IdCodice);
+    const sInvoiceingParty = await getInvocingParty(serviceRequestS4_HANA, headerFatturaElettronica.cedentePrestatore_DatiAnagrafici_IdFiscaleIVA_IdPaese, headerFatturaElettronica.cedentePrestatore_DatiAnagrafici_IdFiscaleIVA_IdCodice);
+    const sPaymentMethod = await getPaymentMethod(dataDettaglioPagamento);
+    const sAccountingDocumentType = await getAccountingDocumentType(bodyFatturaElettronica.datiGenerali_DatiGeneraliDocumento_TipoDocumento);
     // Generate arrays for GL Account and Purchase Order records
     const aGLAccountRecords = aLineDetailsMergedWithGLAccountIntegrations.map((line, index) => createLineItemForGLAccount(index + 1, line, bodyFatturaElettronica, sCompanyCode));
 
@@ -237,7 +261,7 @@ async function createResultObject(headerData, bodyData, paymentData, serviceRequ
         "DocumentDate": bodyFatturaElettronica.datiGenerali_DatiGeneraliDocumento_Data ? bodyFatturaElettronica.datiGenerali_DatiGeneraliDocumento_Data : null,
         "InvoiceReceiptDate": headerInvoiceIntegrationInfo.invoiceReceiptDate ? headerInvoiceIntegrationInfo.invoiceReceiptDate : null,
         "PostingDate": headerInvoiceIntegrationInfo.postingDate ? headerInvoiceIntegrationInfo.postingDate : null,
-        "InvoicingParty": headerInvoiceIntegrationInfo.invoicingParty ? headerInvoiceIntegrationInfo.invoicingParty : null,
+        "InvoicingParty": headerInvoiceIntegrationInfo.invoicingParty ? headerInvoiceIntegrationInfo.invoicingParty : sInvoiceingParty,
         "Currency": bodyFatturaElettronica.datiGenerali_DatiGeneraliDocumento_Divisa ? bodyFatturaElettronica.datiGenerali_DatiGeneraliDocumento_Divisa : null,
         "SupplierInvoiceIDByInvcgParty": bodyFatturaElettronica.datiGenerali_DatiGeneraliDocumento_Numero ? bodyFatturaElettronica.datiGenerali_DatiGeneraliDocumento_Numero : null,
         "InvoiceGrossAmount": parseFloat(bodyFatturaElettronica.datiGenerali_DatiGeneraliDocumento_ImportoTotaleDocumento),
@@ -253,7 +277,7 @@ async function createResultObject(headerData, bodyData, paymentData, serviceRequ
         "FixedCashDiscount": headerInvoiceIntegrationInfo.fixedCashDiscount ? headerInvoiceIntegrationInfo.fixedCashDiscount : null,
         "NetPaymentDays": headerInvoiceIntegrationInfo.netPaymentDays != null ? headerInvoiceIntegrationInfo.netPaymentDays : null,
         "BPBankAccountInternalID": headerInvoiceIntegrationInfo.bPBankAccountInternalID ? headerInvoiceIntegrationInfo.bPBankAccountInternalID : null,
-        "PaymentMethod": headerInvoiceIntegrationInfo.paymentMethod,
+        "PaymentMethod": headerInvoiceIntegrationInfo.paymentMethod ? headerInvoiceIntegrationInfo.paymentMethod : sPaymentMethod,
         "InvoiceReference": headerInvoiceIntegrationInfo.invoiceReference ? headerInvoiceIntegrationInfo.invoiceReference : null,
         "InvoiceReferenceFiscalYear": headerInvoiceIntegrationInfo.invoiceReferenceFiscalYear ? headerInvoiceIntegrationInfo.invoiceReferenceFiscalYear : null,
         "HouseBank": headerInvoiceIntegrationInfo.houseBank ? headerInvoiceIntegrationInfo.houseBank : null,
@@ -262,7 +286,7 @@ async function createResultObject(headerData, bodyData, paymentData, serviceRequ
         "PaymentReason": headerInvoiceIntegrationInfo.paymentReason ? headerInvoiceIntegrationInfo.paymentReason : null,
         "UnplannedDeliveryCost": headerInvoiceIntegrationInfo.unplannedDeliveryCost ? headerInvoiceIntegrationInfo.unplannedDeliveryCost : null,
         "DocumentHeaderText": headerInvoiceIntegrationInfo.documentHeaderText ? headerInvoiceIntegrationInfo.documentHeaderText : null,
-        "AccountingDocumentType": headerInvoiceIntegrationInfo.accountingDocumentType,
+        "AccountingDocumentType": headerInvoiceIntegrationInfo.accountingDocumentType ? headerInvoiceIntegrationInfo.accountingDocumentType : sAccountingDocumentType,
         "SupplyingCountry": headerFatturaElettronica.datiTrasmissione_IdPaese ? headerFatturaElettronica.datiTrasmissione_IdPaese : null,
         "AssignmentReference": headerInvoiceIntegrationInfo.assignmentReference ? headerInvoiceIntegrationInfo.assignmentReference : null,
         "IsEUTriangularDeal": headerInvoiceIntegrationInfo.isEUTriangularDeal ? headerInvoiceIntegrationInfo.isEUTriangularDeal : null,
@@ -281,6 +305,15 @@ async function createResultObject(headerData, bodyData, paymentData, serviceRequ
     };
 }
 
+function getTaxCode (aliquotaIVA, natura) {
+    if (!natura) {
+        return transcoder.taxCode[aliquotaIVA];
+    } else if (aliquotaIVA === 0.00) {
+        return transcoder.taxCode[aliquotaIVA][natura];
+    }
+    return null;
+}
+
 // Create a line item object for GL Account records
 function createLineItemForGLAccount(index, oLineDetail, bodyFatturaElettronica, sCompanyCode) {
     return {
@@ -294,7 +327,7 @@ function createLineItemForGLAccount(index, oLineDetail, bodyFatturaElettronica, 
         "DebitCreditCode": oLineDetail.debitCreditCode ? oLineDetail.debitCreditCode : null,
         "DocumentCurrency": bodyFatturaElettronica.datiGenerali_DatiGeneraliDocumento_Divisa ? bodyFatturaElettronica.datiGenerali_DatiGeneraliDocumento_Divisa : null,
         "SupplierInvoiceItemAmount": oLineDetail.supplierInvoiceItemAmount ? oLineDetail.supplierInvoiceItemAmount : null,
-        "TaxCode": oLineDetail.taxCode ? oLineDetail.taxCode : null,
+        "TaxCode": oLineDetail.taxCode ? oLineDetail.taxCode : getTaxCode(oLineDetail.aliquotaIVA, oLineDetail.natura),
         "AssignmentReference": oLineDetail.assignmentReference ? oLineDetail.assignmentReference : null,
         "SupplierInvoiceItemText": oLineDetail.supplierInvoiceItemText ? oLineDetail.supplierInvoiceItemText : null,
         "CostCenter": oLineDetail.costCenter ? oLineDetail.costCenter : null,
@@ -333,7 +366,7 @@ function createLineItemForPO(index, oLineDetail, bodyFatturaElettronica) {
         "PurchaseOrderItem": oLineDetail.purchaseOrderItem ? oLineDetail.purchaseOrderItem : null,
         "Plant": oLineDetail.plant ? oLineDetail.plant : null,
         "IsSubsequentDebitCredit": oLineDetail.isSubsequentDebitCredit ? oLineDetail.isSubsequentDebitCredit : null,
-        "TaxCode": oLineDetail.taxCode ? oLineDetail.taxCode : null,
+        "TaxCode": oLineDetail.taxCode ? oLineDetail.taxCode : getTaxCode(oLineDetail.aliquotaIVA, oLineDetail.natura),
         "DocumentCurrency": bodyFatturaElettronica.datiGenerali_DatiGeneraliDocumento_Divisa ? bodyFatturaElettronica.datiGenerali_DatiGeneraliDocumento_Divisa : null,
         "SupplierInvoiceItemAmount": oLineDetail.prezzoTotale ? oLineDetail.prezzoTotale : null,
         "PurchaseOrderQuantityUnit": oLineDetail.PurchaseOrderQuantityUnit !== null ? oLineDetail.PurchaseOrderQuantityUnit : null,

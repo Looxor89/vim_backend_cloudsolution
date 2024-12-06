@@ -2,112 +2,120 @@ TRIGGER trg_delete_invoice
   AFTER DELETE
    ON VIM_DOC_PACK REFERENCING OLD ROW OLDROW FOR EACH ROW
 BEGIN 
--- Declare variables
+  -- Declare variables
   DECLARE FatturaElettronicaId NVARCHAR(36);
   DECLARE InvoiceIntegrationInfoId NVARCHAR(36);
   DECLARE FatturaElettronicaBodyId NVARCHAR(36);
--- Assign values to the variables
+  -- Assign values to the variables
   SELECT ID INTO FatturaElettronicaId
   FROM VIM_FatturaElettronica
   WHERE navigation_to_PackageId = :OLDROW.PackageId;
-
+  
   SELECT ID INTO InvoiceIntegrationInfoId
   FROM VIM_InvoiceIntegrationInfo
   WHERE navigation_to_PackageId = :OLDROW.PackageId;
 
-  SELECT ID INTO FatturaElettronicaBodyId
-  FROM VIM_FatturaElettronicaBody
-  WHERE header_Id = :FatturaElettronicaId;
--- Execute delete queries
-  DELETE FROM VIM_CodiceArticolo
-  WHERE dettaglioLinee_Id IN (
-      SELECT ID
-      FROM VIM_DettaglioLinee
-      WHERE body_Id = :FatturaElettronicaBodyId
-    );
+  -- Execute delete queries if variables has been assigned
+  IF FatturaElettronicaId IS NOT NULL THEN
 
-  DELETE FROM VIM_AltriDatiGestionali
-  WHERE dettaglioLinee_Id IN (
-      SELECT ID
-      FROM VIM_DettaglioLinee
-      WHERE body_Id = :FatturaElettronicaBodyId
-    );
+    SELECT ID INTO FatturaElettronicaBodyId
+    FROM VIM_FatturaElettronicaBody
+    WHERE header_Id = :FatturaElettronicaId;
 
-  DELETE FROM VIM_DettaglioPagamento
-  WHERE datiPagamento_Id IN (
-      SELECT ID
-      FROM VIM_DatiPagamento
-      WHERE body_Id = :FatturaElettronicaBodyId
-    );
-    
-  DELETE FROM VIM_RiferimentoNumeroLineaDDT
-  WHERE datiDDT_Id IN (
-      SELECT ID
-      FROM VIM_DatiDDT
-      WHERE body_Id = :FatturaElettronicaBodyId
-    );
+    DELETE FROM VIM_FatturaElettronica
+    WHERE ID IN ( :FatturaElettronicaId );
 
-  DELETE FROM VIM_RiferimentoNumeroLinea
-  WHERE datiOrdineAcquisto_Id IN (
-      SELECT ID
-      FROM VIM_DatiOrdineAcquisto
-      WHERE body_Id = :FatturaElettronicaBodyId
-    );
+    IF FatturaElettronicaBodyId IS NOT NULL THEN
+      DELETE FROM VIM_CodiceArticolo
+      WHERE dettaglioLinee_Id IN (
+          SELECT ID
+          FROM VIM_DettaglioLinee
+          WHERE body_Id = :FatturaElettronicaBodyId
+        );
 
-  DELETE FROM VIM_InvoiceIntegrationInfo
-  WHERE ID IN ( :InvoiceIntegrationInfoId );
+      DELETE FROM VIM_AltriDatiGestionali
+      WHERE dettaglioLinee_Id IN (
+          SELECT ID
+          FROM VIM_DettaglioLinee
+          WHERE body_Id = :FatturaElettronicaBodyId
+        );
 
-  DELETE FROM VIM_SelectedPurchaseOrders
-  WHERE header_Id IN ( :InvoiceIntegrationInfoId );
+      DELETE FROM VIM_DettaglioPagamento
+      WHERE datiPagamento_Id IN (
+          SELECT ID
+          FROM VIM_DatiPagamento
+          WHERE body_Id = :FatturaElettronicaBodyId
+        );
+        
+      DELETE FROM VIM_RiferimentoNumeroLineaDDT
+      WHERE datiDDT_Id IN (
+          SELECT ID
+          FROM VIM_DatiDDT
+          WHERE body_Id = :FatturaElettronicaBodyId
+        );
 
-  DELETE FROM VIM_SelectedDeliveryNotes
-  WHERE header_Id IN ( :InvoiceIntegrationInfoId );
+      DELETE FROM VIM_RiferimentoNumeroLinea
+        WHERE datiOrdineAcquisto_Id IN (
+            SELECT ID
+            FROM VIM_DatiOrdineAcquisto
+            WHERE body_Id = :FatturaElettronicaBodyId
+          );
 
-  DELETE FROM VIM_SelectedServiceEntrySheets
-  WHERE header_Id IN ( :InvoiceIntegrationInfoId );
+      DELETE FROM VIM_FatturaElettronicaBody
+      WHERE ID IN ( :FatturaElettronicaBodyId );
 
-  DELETE FROM VIM_SupplierInvoiceWhldgTax
-  WHERE header_Id IN ( :InvoiceIntegrationInfoId );
+      DELETE FROM VIM_DatiRitenuta
+      WHERE body_Id IN ( :FatturaElettronicaBodyId );
 
-  DELETE FROM VIM_POIntegrationInfoBody
-  WHERE header_Id IN ( :InvoiceIntegrationInfoId );
+      DELETE FROM VIM_DatiCassaPrevidenziale
+      WHERE body_Id IN ( :FatturaElettronicaBodyId );
 
-  DELETE FROM VIM_GLAccountIntegrationInfoBody
-  WHERE header_Id IN ( :InvoiceIntegrationInfoId );
+      DELETE FROM VIM_ScontoMaggiorazione
+      WHERE body_Id IN ( :FatturaElettronicaBodyId );
 
-  DELETE FROM VIM_FatturaElettronica
-  WHERE ID IN ( :FatturaElettronicaId );
+      DELETE FROM VIM_Causale
+      WHERE body_Id IN ( :FatturaElettronicaBodyId );
 
-  DELETE FROM VIM_FatturaElettronicaBody
-  WHERE ID IN ( :FatturaElettronicaBodyId );
+      DELETE FROM VIM_DettaglioLinee
+      WHERE body_Id IN ( :FatturaElettronicaBodyId );
 
-  DELETE FROM VIM_DatiRitenuta
-  WHERE body_Id IN ( :FatturaElettronicaBodyId );
+      DELETE FROM VIM_DatiRiepilogo
+      WHERE body_Id IN ( :FatturaElettronicaBodyId );
 
-  DELETE FROM VIM_DatiCassaPrevidenziale
-  WHERE body_Id IN ( :FatturaElettronicaBodyId );
+      DELETE FROM VIM_DatiPagamento
+      WHERE body_Id IN ( :FatturaElettronicaBodyId );
 
-  DELETE FROM VIM_ScontoMaggiorazione
-  WHERE body_Id IN ( :FatturaElettronicaBodyId );
+      DELETE FROM VIM_Allegati
+      WHERE body_Id IN ( :FatturaElettronicaBodyId );
 
-  DELETE FROM VIM_Causale
-  WHERE body_Id IN ( :FatturaElettronicaBodyId );
+      DELETE FROM VIM_DatiDDT
+      WHERE body_Id IN ( :FatturaElettronicaBodyId );
 
-  DELETE FROM VIM_DettaglioLinee
-  WHERE body_Id IN ( :FatturaElettronicaBodyId );
+      DELETE FROM VIM_DatiOrdineAcquisto
+      WHERE body_Id IN ( :FatturaElettronicaBodyId );
+    END IF;
+  END IF;
 
-  DELETE FROM VIM_DatiRiepilogo
-  WHERE body_Id IN ( :FatturaElettronicaBodyId );
+  IF InvoiceIntegrationInfoId IS NOT NULL THEN
+    DELETE FROM VIM_InvoiceIntegrationInfo
+    WHERE ID IN ( :InvoiceIntegrationInfoId );
 
-  DELETE FROM VIM_DatiPagamento
-  WHERE body_Id IN ( :FatturaElettronicaBodyId );
+    DELETE FROM VIM_SelectedPurchaseOrders
+    WHERE header_Id IN ( :InvoiceIntegrationInfoId );
 
-  DELETE FROM VIM_Allegati
-  WHERE body_Id IN ( :FatturaElettronicaBodyId );
+    DELETE FROM VIM_SelectedDeliveryNotes
+    WHERE header_Id IN ( :InvoiceIntegrationInfoId );
 
-  DELETE FROM VIM_DatiDDT
-  WHERE body_Id IN ( :FatturaElettronicaBodyId );
+    DELETE FROM VIM_SelectedServiceEntrySheets
+    WHERE header_Id IN ( :InvoiceIntegrationInfoId );
 
-  DELETE FROM VIM_DatiOrdineAcquisto
-  WHERE body_Id IN ( :FatturaElettronicaBodyId );
+    DELETE FROM VIM_SupplierInvoiceWhldgTax
+    WHERE header_Id IN ( :InvoiceIntegrationInfoId );
+
+    DELETE FROM VIM_POIntegrationInfoBody
+    WHERE header_Id IN ( :InvoiceIntegrationInfoId );
+
+    DELETE FROM VIM_GLAccountIntegrationInfoBody
+    WHERE header_Id IN ( :InvoiceIntegrationInfoId );
+  END IF;
 END

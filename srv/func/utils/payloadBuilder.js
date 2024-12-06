@@ -82,7 +82,7 @@ function buildPayloadForSubmitInvoice(jsonInvoice) {
             DebitCreditCode: oTo_SupplierInvoiceItemGLAcct.DebitCreditCode,
             DocumentCurrency: oTo_SupplierInvoiceItemGLAcct.DocumentCurrency,
             SupplierInvoiceItemAmount: oTo_SupplierInvoiceItemGLAcct.SupplierInvoiceItemAmount,
-            TaxCode: oTo_SupplierInvoiceItemGLAcct.CompanyTaxCodeCode,
+            TaxCode: oTo_SupplierInvoiceItemGLAcct.CompanyTaxCode,
             AssignmentReference: oTo_SupplierInvoiceItemGLAcct.AssignmentReference,
             SupplierInvoiceItemText: oTo_SupplierInvoiceItemGLAcct.SupplierInvoiceItemText,
             CostCenter: oTo_SupplierInvoiceItemGLAcct.CostCenter,
