@@ -146,9 +146,6 @@ function buildPayloadForSubmitInvoice(jsonInvoice) {
         TaxReportingDate: getDateWithMilliseconds(jsonInvoice.TaxReportingDate),
         TaxFulfillmentDate: getDateWithMilliseconds(jsonInvoice.TaxFulfillmentDate),
         to_SupplierInvoiceWhldgTax: { results: aTo_SupplierInvoiceWhldgTax },
-        to_SelectedPurchaseOrders: { results: aTo_SelectedPurchaseOrders },
-        to_SelectedDeliveryNotes: { results: aTo_SelectedDeliveryNotes },
-        to_SelectedServiceEntrySheets: { results: aTo_SelectedServiceEntrySheets },
         to_SuplrInvcItemPurOrdRef: {results: aTo_SuplrInvcItemPurOrdRef},
         to_SupplierInvoiceItemGLAcct: { results: aTo_SupplierInvoiceItemGLAcct }
     };

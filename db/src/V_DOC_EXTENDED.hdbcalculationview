@@ -69,8 +69,10 @@
       <viewAttribute id="FISCALYEAR"/>
       <viewAttribute id="ID_FATTURAELETTRONICA"/>
     
-      <viewAttribute id="CESSIONARIOCOMMITTENTE_DATIANAGRAFICI_IDFISCALEIVA_IDPAESE"/>
-      <viewAttribute id="CESSIONARIOCOMMITTENTE_DATIANAGRAFICI_IDFISCALEIVA_IDCODICE"/>
+      <viewAttribute id="CEDENTEPRESTATORE_DATIANAGRAFICI_IDFISCALEIVA_IDPAESE"/>
+      <viewAttribute id="CEDENTEPRESTATORE_DATIANAGRAFICI_IDFISCALEIVA_IDCODICE"/>
+    
+      <viewAttribute id="CEDENTEPRESTATORE_DATIANAGRAFICI_ANAGRAFICA_DENOMINAZIONE"/>
     </viewAttributes>
     <calculatedViewAttributes/>
     <input node="VIM_DOC_PACK">
@@ -89,8 +91,10 @@
     <input node="VIM_FATTURAELETTRONICA">
       <mapping xsi:type="Calculation:AttributeMapping" target="ID_FATTURAELETTRONICA" source="ID"/>
     
-      <mapping xsi:type="Calculation:AttributeMapping" target="CESSIONARIOCOMMITTENTE_DATIANAGRAFICI_IDFISCALEIVA_IDPAESE" source="CESSIONARIOCOMMITTENTE_DATIANAGRAFICI_IDFISCALEIVA_IDPAESE"/>
-      <mapping xsi:type="Calculation:AttributeMapping" target="CESSIONARIOCOMMITTENTE_DATIANAGRAFICI_IDFISCALEIVA_IDCODICE" source="CESSIONARIOCOMMITTENTE_DATIANAGRAFICI_IDFISCALEIVA_IDCODICE"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="CEDENTEPRESTATORE_DATIANAGRAFICI_IDFISCALEIVA_IDPAESE" source="CEDENTEPRESTATORE_DATIANAGRAFICI_IDFISCALEIVA_IDPAESE"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="CEDENTEPRESTATORE_DATIANAGRAFICI_IDFISCALEIVA_IDCODICE" source="CEDENTEPRESTATORE_DATIANAGRAFICI_IDFISCALEIVA_IDCODICE"/>
+    
+      <mapping xsi:type="Calculation:AttributeMapping" target="CEDENTEPRESTATORE_DATIANAGRAFICI_ANAGRAFICA_DENOMINAZIONE" source="CEDENTEPRESTATORE_DATIANAGRAFICI_ANAGRAFICA_DENOMINAZIONE"/>
     </input>
     <joinAttribute leftColumn="PACKAGEID" rightColumn="NAVIGATION_TO_PACKAGEID" operator="EQ"/>
   </calculationView>
@@ -184,8 +188,10 @@
       <viewAttribute id="FISCALYEAR"/>
       <viewAttribute id="ID_FATTURAELETTRONICA"/>
     
-      <viewAttribute id="CESSIONARIOCOMMITTENTE_DATIANAGRAFICI_IDFISCALEIVA_IDCODICE"/>
-      <viewAttribute id="CESSIONARIOCOMMITTENTE_DATIANAGRAFICI_IDFISCALEIVA_IDPAESE"/>
+      <viewAttribute id="CEDENTEPRESTATORE_DATIANAGRAFICI_IDFISCALEIVA_IDCODICE"/>
+      <viewAttribute id="CEDENTEPRESTATORE_DATIANAGRAFICI_IDFISCALEIVA_IDPAESE"/>
+    
+      <viewAttribute id="CEDENTEPRESTATORE_DATIANAGRAFICI_ANAGRAFICA_DENOMINAZIONE"/>
     </viewAttributes>
     <calculatedViewAttributes/>
     <input node="Invoice_Header_ItalianTrace">
@@ -201,8 +207,10 @@
       <mapping xsi:type="Calculation:AttributeMapping" target="REFERENCEDOCUMENT" source="REFERENCEDOCUMENT"/>
       <mapping xsi:type="Calculation:AttributeMapping" target="ID_FATTURAELETTRONICA" source="ID_FATTURAELETTRONICA"/>
     
-      <mapping xsi:type="Calculation:AttributeMapping" target="CESSIONARIOCOMMITTENTE_DATIANAGRAFICI_IDFISCALEIVA_IDCODICE" source="CESSIONARIOCOMMITTENTE_DATIANAGRAFICI_IDFISCALEIVA_IDCODICE"/>
-      <mapping xsi:type="Calculation:AttributeMapping" target="CESSIONARIOCOMMITTENTE_DATIANAGRAFICI_IDFISCALEIVA_IDPAESE" source="CESSIONARIOCOMMITTENTE_DATIANAGRAFICI_IDFISCALEIVA_IDPAESE"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="CEDENTEPRESTATORE_DATIANAGRAFICI_IDFISCALEIVA_IDCODICE" source="CEDENTEPRESTATORE_DATIANAGRAFICI_IDFISCALEIVA_IDCODICE"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="CEDENTEPRESTATORE_DATIANAGRAFICI_IDFISCALEIVA_IDPAESE" source="CEDENTEPRESTATORE_DATIANAGRAFICI_IDFISCALEIVA_IDPAESE"/>
+    
+      <mapping xsi:type="Calculation:AttributeMapping" target="CEDENTEPRESTATORE_DATIANAGRAFICI_ANAGRAFICA_DENOMINAZIONE" source="CEDENTEPRESTATORE_DATIANAGRAFICI_ANAGRAFICA_DENOMINAZIONE"/>
     </input>
     <input node="Invoice_Header_IntegrationInfo">
       <mapping xsi:type="Calculation:AttributeMapping" target="COMPANYCODE" source="COMPANYCODE"/>
@@ -230,8 +238,10 @@
       <viewAttribute id="REFERENCEDOCUMENT"/>
       <viewAttribute id="FISCALYEAR"/>
     
-      <viewAttribute id="CESSIONARIOCOMMITTENTE_DATIANAGRAFICI_IDFISCALEIVA_IDPAESE"/>
-      <viewAttribute id="CESSIONARIOCOMMITTENTE_DATIANAGRAFICI_IDFISCALEIVA_IDCODICE"/>
+      <viewAttribute id="CEDENTEPRESTATORE_DATIANAGRAFICI_IDFISCALEIVA_IDPAESE"/>
+      <viewAttribute id="CEDENTEPRESTATORE_DATIANAGRAFICI_IDFISCALEIVA_IDCODICE"/>
+    
+      <viewAttribute id="CEDENTEPRESTATORE_DATIANAGRAFICI_ANAGRAFICA_DENOMINAZIONE"/>
     </viewAttributes>
     <calculatedViewAttributes/>
     <input node="Invoice_Header">
@@ -248,8 +258,10 @@
       <mapping xsi:type="Calculation:AttributeMapping" target="REFERENCEDOCUMENT" source="REFERENCEDOCUMENT"/>
       <mapping xsi:type="Calculation:AttributeMapping" target="FISCALYEAR" source="FISCALYEAR"/>
     
-      <mapping xsi:type="Calculation:AttributeMapping" target="CESSIONARIOCOMMITTENTE_DATIANAGRAFICI_IDFISCALEIVA_IDPAESE" source="CESSIONARIOCOMMITTENTE_DATIANAGRAFICI_IDFISCALEIVA_IDPAESE"/>
-      <mapping xsi:type="Calculation:AttributeMapping" target="CESSIONARIOCOMMITTENTE_DATIANAGRAFICI_IDFISCALEIVA_IDCODICE" source="CESSIONARIOCOMMITTENTE_DATIANAGRAFICI_IDFISCALEIVA_IDCODICE"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="CEDENTEPRESTATORE_DATIANAGRAFICI_IDFISCALEIVA_IDPAESE" source="CEDENTEPRESTATORE_DATIANAGRAFICI_IDFISCALEIVA_IDPAESE"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="CEDENTEPRESTATORE_DATIANAGRAFICI_IDFISCALEIVA_IDCODICE" source="CEDENTEPRESTATORE_DATIANAGRAFICI_IDFISCALEIVA_IDCODICE"/>
+    
+      <mapping xsi:type="Calculation:AttributeMapping" target="CEDENTEPRESTATORE_DATIANAGRAFICI_ANAGRAFICA_DENOMINAZIONE" source="CEDENTEPRESTATORE_DATIANAGRAFICI_ANAGRAFICA_DENOMINAZIONE"/>
     </input>
     <input node="Invoice_Body">
       <mapping xsi:type="Calculation:AttributeMapping" target="DATIGENERALI_DATIGENERALIDOCUMENTO_TIPODOCUMENTO" source="DATIGENERALI_DATIGENERALIDOCUMENTO_TIPODOCUMENTO"/>
@@ -282,8 +294,10 @@
     
       <viewAttribute id="COMPANYCODE"/>
     
-      <viewAttribute id="CESSIONARIOCOMMITTENTE_DATIANAGRAFICI_IDFISCALEIVA_IDCODICE"/>
-      <viewAttribute id="CESSIONARIOCOMMITTENTE_DATIANAGRAFICI_IDFISCALEIVA_IDPAESE"/>
+      <viewAttribute id="CEDENTEPRESTATORE_DATIANAGRAFICI_IDFISCALEIVA_IDCODICE"/>
+      <viewAttribute id="CEDENTEPRESTATORE_DATIANAGRAFICI_IDFISCALEIVA_IDPAESE"/>
+    
+      <viewAttribute id="CEDENTEPRESTATORE_DATIANAGRAFICI_ANAGRAFICA_DENOMINAZIONE"/>
     </viewAttributes>
     <calculatedViewAttributes/>
     <input node="Invoice">
@@ -305,8 +319,10 @@
     
       <mapping xsi:type="Calculation:AttributeMapping" target="COMPANYCODE" source="COMPANYCODE"/>
     
-      <mapping xsi:type="Calculation:AttributeMapping" target="CESSIONARIOCOMMITTENTE_DATIANAGRAFICI_IDFISCALEIVA_IDCODICE" source="CESSIONARIOCOMMITTENTE_DATIANAGRAFICI_IDFISCALEIVA_IDCODICE"/>
-      <mapping xsi:type="Calculation:AttributeMapping" target="CESSIONARIOCOMMITTENTE_DATIANAGRAFICI_IDFISCALEIVA_IDPAESE" source="CESSIONARIOCOMMITTENTE_DATIANAGRAFICI_IDFISCALEIVA_IDPAESE"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="CEDENTEPRESTATORE_DATIANAGRAFICI_IDFISCALEIVA_IDCODICE" source="CEDENTEPRESTATORE_DATIANAGRAFICI_IDFISCALEIVA_IDCODICE"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="CEDENTEPRESTATORE_DATIANAGRAFICI_IDFISCALEIVA_IDPAESE" source="CEDENTEPRESTATORE_DATIANAGRAFICI_IDFISCALEIVA_IDPAESE"/>
+    
+      <mapping xsi:type="Calculation:AttributeMapping" target="CEDENTEPRESTATORE_DATIANAGRAFICI_ANAGRAFICA_DENOMINAZIONE" source="CEDENTEPRESTATORE_DATIANAGRAFICI_ANAGRAFICA_DENOMINAZIONE"/>
     </input>
     <input node="Latest_Action">
       <mapping xsi:type="Calculation:AttributeMapping" target="LATEST_ACTION" source="ACTION"/>
@@ -345,8 +361,10 @@
     
       <viewAttribute id="COMPANYCODE"/>
     
-      <viewAttribute id="CESSIONARIOCOMMITTENTE_DATIANAGRAFICI_IDFISCALEIVA_IDPAESE"/>
-      <viewAttribute id="CESSIONARIOCOMMITTENTE_DATIANAGRAFICI_IDFISCALEIVA_IDCODICE"/>
+      <viewAttribute id="CEDENTEPRESTATORE_DATIANAGRAFICI_IDFISCALEIVA_IDPAESE"/>
+      <viewAttribute id="CEDENTEPRESTATORE_DATIANAGRAFICI_IDFISCALEIVA_IDCODICE"/>
+    
+      <viewAttribute id="CEDENTEPRESTATORE_DATIANAGRAFICI_ANAGRAFICA_DENOMINAZIONE"/>
     </viewAttributes>
     <calculatedViewAttributes/>
     <input node="Invoice_with_LatestAction">
@@ -371,8 +389,10 @@
     
       <mapping xsi:type="Calculation:AttributeMapping" target="COMPANYCODE" source="COMPANYCODE"/>
     
-      <mapping xsi:type="Calculation:AttributeMapping" target="CESSIONARIOCOMMITTENTE_DATIANAGRAFICI_IDFISCALEIVA_IDPAESE" source="CESSIONARIOCOMMITTENTE_DATIANAGRAFICI_IDFISCALEIVA_IDPAESE"/>
-      <mapping xsi:type="Calculation:AttributeMapping" target="CESSIONARIOCOMMITTENTE_DATIANAGRAFICI_IDFISCALEIVA_IDCODICE" source="CESSIONARIOCOMMITTENTE_DATIANAGRAFICI_IDFISCALEIVA_IDCODICE"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="CEDENTEPRESTATORE_DATIANAGRAFICI_IDFISCALEIVA_IDPAESE" source="CEDENTEPRESTATORE_DATIANAGRAFICI_IDFISCALEIVA_IDPAESE"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="CEDENTEPRESTATORE_DATIANAGRAFICI_IDFISCALEIVA_IDCODICE" source="CEDENTEPRESTATORE_DATIANAGRAFICI_IDFISCALEIVA_IDCODICE"/>
+    
+      <mapping xsi:type="Calculation:AttributeMapping" target="CEDENTEPRESTATORE_DATIANAGRAFICI_ANAGRAFICA_DENOMINAZIONE" source="CEDENTEPRESTATORE_DATIANAGRAFICI_ANAGRAFICA_DENOMINAZIONE"/>
     </input>
     <input node="VIM_AP_USERS">
       <mapping xsi:type="Calculation:AttributeMapping" target="MODUSER_EMAIL" source="EMAIL"/>
@@ -422,8 +442,10 @@
     
       <viewAttribute id="COMPANYCODE"/>
     
-      <viewAttribute id="CESSIONARIOCOMMITTENTE_DATIANAGRAFICI_IDFISCALEIVA_IDCODICE"/>
-      <viewAttribute id="CESSIONARIOCOMMITTENTE_DATIANAGRAFICI_IDFISCALEIVA_IDPAESE"/>
+      <viewAttribute id="CEDENTEPRESTATORE_DATIANAGRAFICI_IDFISCALEIVA_IDCODICE"/>
+      <viewAttribute id="CEDENTEPRESTATORE_DATIANAGRAFICI_IDFISCALEIVA_IDPAESE"/>
+    
+      <viewAttribute id="CEDENTEPRESTATORE_DATIANAGRAFICI_ANAGRAFICA_DENOMINAZIONE"/>
     </viewAttributes>
     <calculatedViewAttributes/>
     <input node="Invoice_with_LatestAction_and_ModUser">
@@ -455,8 +477,10 @@
     
       <mapping xsi:type="Calculation:AttributeMapping" target="COMPANYCODE" source="COMPANYCODE"/>
     
-      <mapping xsi:type="Calculation:AttributeMapping" target="CESSIONARIOCOMMITTENTE_DATIANAGRAFICI_IDFISCALEIVA_IDCODICE" source="CESSIONARIOCOMMITTENTE_DATIANAGRAFICI_IDFISCALEIVA_IDCODICE"/>
-      <mapping xsi:type="Calculation:AttributeMapping" target="CESSIONARIOCOMMITTENTE_DATIANAGRAFICI_IDFISCALEIVA_IDPAESE" source="CESSIONARIOCOMMITTENTE_DATIANAGRAFICI_IDFISCALEIVA_IDPAESE"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="CEDENTEPRESTATORE_DATIANAGRAFICI_IDFISCALEIVA_IDCODICE" source="CEDENTEPRESTATORE_DATIANAGRAFICI_IDFISCALEIVA_IDCODICE"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="CEDENTEPRESTATORE_DATIANAGRAFICI_IDFISCALEIVA_IDPAESE" source="CEDENTEPRESTATORE_DATIANAGRAFICI_IDFISCALEIVA_IDPAESE"/>
+    
+      <mapping xsi:type="Calculation:AttributeMapping" target="CEDENTEPRESTATORE_DATIANAGRAFICI_ANAGRAFICA_DENOMINAZIONE" source="CEDENTEPRESTATORE_DATIANAGRAFICI_ANAGRAFICA_DENOMINAZIONE"/>
     </input>
     <input node="Invoice_with_LatestAction_and_ModUser_and_AssignUser$$$$VIM_AP_USERS$$">
       <mapping xsi:type="Calculation:AttributeMapping" target="ASSIGN_EMAIL" source="EMAIL"/>
@@ -513,8 +537,10 @@
     
       <viewAttribute id="COMPANYCODE"/>
     
-      <viewAttribute id="CESSIONARIOCOMMITTENTE_DATIANAGRAFICI_IDFISCALEIVA_IDPAESE"/>
-      <viewAttribute id="CESSIONARIOCOMMITTENTE_DATIANAGRAFICI_IDFISCALEIVA_IDCODICE"/>
+      <viewAttribute id="CEDENTEPRESTATORE_DATIANAGRAFICI_IDFISCALEIVA_IDPAESE"/>
+      <viewAttribute id="CEDENTEPRESTATORE_DATIANAGRAFICI_IDFISCALEIVA_IDCODICE"/>
+    
+      <viewAttribute id="CEDENTEPRESTATORE_DATIANAGRAFICI_ANAGRAFICA_DENOMINAZIONE"/>
     </viewAttributes>
     <calculatedViewAttributes/>
     <input node="Invoice_with_LatestAction_and_ModUser_and_AssignUser">
@@ -553,8 +579,10 @@
     
       <mapping xsi:type="Calculation:AttributeMapping" target="COMPANYCODE" source="COMPANYCODE"/>
     
-      <mapping xsi:type="Calculation:AttributeMapping" target="CESSIONARIOCOMMITTENTE_DATIANAGRAFICI_IDFISCALEIVA_IDPAESE" source="CESSIONARIOCOMMITTENTE_DATIANAGRAFICI_IDFISCALEIVA_IDPAESE"/>
-      <mapping xsi:type="Calculation:AttributeMapping" target="CESSIONARIOCOMMITTENTE_DATIANAGRAFICI_IDFISCALEIVA_IDCODICE" source="CESSIONARIOCOMMITTENTE_DATIANAGRAFICI_IDFISCALEIVA_IDCODICE"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="CEDENTEPRESTATORE_DATIANAGRAFICI_IDFISCALEIVA_IDPAESE" source="CEDENTEPRESTATORE_DATIANAGRAFICI_IDFISCALEIVA_IDPAESE"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="CEDENTEPRESTATORE_DATIANAGRAFICI_IDFISCALEIVA_IDCODICE" source="CEDENTEPRESTATORE_DATIANAGRAFICI_IDFISCALEIVA_IDCODICE"/>
+    
+      <mapping xsi:type="Calculation:AttributeMapping" target="CEDENTEPRESTATORE_DATIANAGRAFICI_ANAGRAFICA_DENOMINAZIONE" source="CEDENTEPRESTATORE_DATIANAGRAFICI_ANAGRAFICA_DENOMINAZIONE"/>
     </input>
     <input node="Invoice_with_LatestAction_and_ModUser_and_LockUser$$$$VIM_AP_USERS$$">
       <mapping xsi:type="Calculation:AttributeMapping" target="LOCKUSER_EMAIL" source="EMAIL"/>
@@ -618,8 +646,10 @@
     
       <viewAttribute id="COMPANYCODE"/>
     
-      <viewAttribute id="CESSIONARIOCOMMITTENTE_DATIANAGRAFICI_IDFISCALEIVA_IDCODICE"/>
-      <viewAttribute id="CESSIONARIOCOMMITTENTE_DATIANAGRAFICI_IDFISCALEIVA_IDPAESE"/>
+      <viewAttribute id="CEDENTEPRESTATORE_DATIANAGRAFICI_IDFISCALEIVA_IDCODICE"/>
+      <viewAttribute id="CEDENTEPRESTATORE_DATIANAGRAFICI_IDFISCALEIVA_IDPAESE"/>
+    
+      <viewAttribute id="CEDENTEPRESTATORE_DATIANAGRAFICI_ANAGRAFICA_DENOMINAZIONE"/>
     </viewAttributes>
     <calculatedViewAttributes/>
     <input node="Invoice_with_LatestAction_and_ModUser_and_LockUser">
@@ -665,8 +695,10 @@
     
       <mapping xsi:type="Calculation:AttributeMapping" target="COMPANYCODE" source="COMPANYCODE"/>
     
-      <mapping xsi:type="Calculation:AttributeMapping" target="CESSIONARIOCOMMITTENTE_DATIANAGRAFICI_IDFISCALEIVA_IDCODICE" source="CESSIONARIOCOMMITTENTE_DATIANAGRAFICI_IDFISCALEIVA_IDCODICE"/>
-      <mapping xsi:type="Calculation:AttributeMapping" target="CESSIONARIOCOMMITTENTE_DATIANAGRAFICI_IDFISCALEIVA_IDPAESE" source="CESSIONARIOCOMMITTENTE_DATIANAGRAFICI_IDFISCALEIVA_IDPAESE"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="CEDENTEPRESTATORE_DATIANAGRAFICI_IDFISCALEIVA_IDCODICE" source="CEDENTEPRESTATORE_DATIANAGRAFICI_IDFISCALEIVA_IDCODICE"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="CEDENTEPRESTATORE_DATIANAGRAFICI_IDFISCALEIVA_IDPAESE" source="CEDENTEPRESTATORE_DATIANAGRAFICI_IDFISCALEIVA_IDPAESE"/>
+    
+      <mapping xsi:type="Calculation:AttributeMapping" target="CEDENTEPRESTATORE_DATIANAGRAFICI_ANAGRAFICA_DENOMINAZIONE" source="CEDENTEPRESTATORE_DATIANAGRAFICI_ANAGRAFICA_DENOMINAZIONE"/>
     </input>
     <input node="Invoice_with_LatestAction_and_ModUser_and_LockUser_and_ActionPerformedUser$$$$VIM_AP_USERS$$">
       <mapping xsi:type="Calculation:AttributeMapping" target="ACTIONUSER_EMAIL" source="EMAIL"/>
@@ -787,15 +819,20 @@
   
     </attribute>
   
-    <attribute id="CESSIONARIOCOMMITTENTE_DATIANAGRAFICI_IDFISCALEIVA_IDPAESE" order="31" displayAttribute="false" attributeHierarchyActive="false">
-      <descriptions defaultDescription="CESSIONARIOCOMMITTENTE_DATIANAGRAFICI_IDFISCALEIVA_IDPAESE"/>
+    <attribute id="CEDENTEPRESTATORE_DATIANAGRAFICI_IDFISCALEIVA_IDPAESE" order="31" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="CEDENTEPRESTATORE_DATIANAGRAFICI_IDFISCALEIVA_IDPAESE"/>
   
-      <keyMapping columnObjectName="Invoice_with_LatestAction_and_ModUser_and_LockUser_and_ActionPerformedUser" columnName="CESSIONARIOCOMMITTENTE_DATIANAGRAFICI_IDFISCALEIVA_IDPAESE"/>
+      <keyMapping columnObjectName="Invoice_with_LatestAction_and_ModUser_and_LockUser_and_ActionPerformedUser" columnName="CEDENTEPRESTATORE_DATIANAGRAFICI_IDFISCALEIVA_IDPAESE"/>
   
     </attribute>
-    <attribute id="CESSIONARIOCOMMITTENTE_DATIANAGRAFICI_IDFISCALEIVA_IDCODICE" order="32" displayAttribute="false" attributeHierarchyActive="false">
-      <descriptions defaultDescription="CESSIONARIOCOMMITTENTE_DATIANAGRAFICI_IDFISCALEIVA_IDCODICE"/>
-      <keyMapping columnObjectName="Invoice_with_LatestAction_and_ModUser_and_LockUser_and_ActionPerformedUser" columnName="CESSIONARIOCOMMITTENTE_DATIANAGRAFICI_IDFISCALEIVA_IDCODICE"/>
+    <attribute id="CEDENTEPRESTATORE_DATIANAGRAFICI_IDFISCALEIVA_IDCODICE" order="32" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="CEDENTEPRESTATORE_DATIANAGRAFICI_IDFISCALEIVA_IDCODICE"/>
+      <keyMapping columnObjectName="Invoice_with_LatestAction_and_ModUser_and_LockUser_and_ActionPerformedUser" columnName="CEDENTEPRESTATORE_DATIANAGRAFICI_IDFISCALEIVA_IDCODICE"/>
+    </attribute>
+  
+    <attribute id="VENDOR_NAME" order="34" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="CEDENTEPRESTATORE_DATIANAGRAFICI_ANAGRAFICA_DENOMINAZIONE"/>
+      <keyMapping columnObjectName="Invoice_with_LatestAction_and_ModUser_and_LockUser_and_ActionPerformedUser" columnName="CEDENTEPRESTATORE_DATIANAGRAFICI_ANAGRAFICA_DENOMINAZIONE"/>
     </attribute>
   </attributes>
   <calculatedAttributes>
@@ -840,8 +877,11 @@
   
     <calculatedAttribute id="VAT" order="33" semanticType="empty" displayAttribute="false" attributeHierarchyActive="false">
       <descriptions defaultDescription="VAT"/>
+  
       <keyCalculation datatype="NVARCHAR" expressionLanguage="SQL" length="30">
-        <formula>CONCAT(&quot;CESSIONARIOCOMMITTENTE_DATIANAGRAFICI_IDFISCALEIVA_IDPAESE&quot;, &quot;CESSIONARIOCOMMITTENTE_DATIANAGRAFICI_IDFISCALEIVA_IDCODICE&quot;)</formula>
+  
+        <formula>CONCAT(&quot;CEDENTEPRESTATORE_DATIANAGRAFICI_IDFISCALEIVA_IDPAESE&quot;, &quot;CEDENTEPRESTATORE_DATIANAGRAFICI_IDFISCALEIVA_IDCODICE&quot;)</formula>
+  
       </keyCalculation>
       </calculatedAttribute>
   </calculatedAttributes>
