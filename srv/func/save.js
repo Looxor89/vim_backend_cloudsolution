@@ -111,6 +111,7 @@ async function updateHeaders(Invoice, tx) {
             "documentHeaderText": Invoice.DocumentHeaderText,
             "assignmentReference": Invoice.AssignmentReference,
             "isEUTriangularDeal": Invoice.IsEUTriangularDeal,
+            "taxDeterminationDate": Invoice.TaxDeterminationDate,
             "taxReportingDate": Invoice.TaxReportingDate,
             "taxFulfillmentDate": Invoice.TaxFulfillmentDate,
             "refDocumentCategory": Invoice.RefDocumentCategory
@@ -488,6 +489,7 @@ async function updateGLAccountLineDetails(glRecords, tx) {
         if (oLineDetail.lineDetail_ID) {
             const lineQuery = UPDATE('DettaglioLinee')
                 .set({
+                    "prezzoTotale": oLineDetail.SupplierInvoiceItemAmount,
                     "unitaMisura": oLineDetail.QuantityUnit,
                     "quantita": oLineDetail.Quantity
                 })
@@ -498,7 +500,6 @@ async function updateGLAccountLineDetails(glRecords, tx) {
                     "companyCode": oLineDetail.CompanyCode,
                     "glAccount": oLineDetail.GLAccount,
                     "debitCreditCode": oLineDetail.DebitCreditCode,
-                    "supplierInvoiceItemAmount": oLineDetail.SupplierInvoiceItemAmount,
                     "taxCode": oLineDetail.TaxCode,
                     "assignmentReference": oLineDetail.AssignmentReference,
                     "costCenter": oLineDetail.CostCenter,
@@ -540,6 +541,7 @@ async function insertGLAccountLineDetails(aNewGlAccountLineDetails, header_Id_In
             "ID": lineDetail_ID,
             "body_Id": oLineDetail.bodyInvoiceItalianTrace_Id,
             "bodyGLAccountIntegrationInfo_ID": bodyGLAccountIntegrationInfo_ID,
+            "prezzoTotale": oLineDetail.SupplierInvoiceItemAmount,
             "unitaMisura": oLineDetail.QuantityUnit,
             "quantita": oLineDetail.Quantity
         });
@@ -550,7 +552,6 @@ async function insertGLAccountLineDetails(aNewGlAccountLineDetails, header_Id_In
             "companyCode": oLineDetail.CompanyCode,
             "glAccount": oLineDetail.GLAccount,
             "debitCreditCode": oLineDetail.DebitCreditCode,
-            "supplierInvoiceItemAmount": oLineDetail.SupplierInvoiceItemAmount,
             "taxCode": oLineDetail.TaxCode,
             "assignmentReference": oLineDetail.AssignmentReference,
             "costCenter": oLineDetail.CostCenter,

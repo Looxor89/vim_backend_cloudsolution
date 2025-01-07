@@ -196,6 +196,7 @@ async function createResultObject(headerData, bodyData, paymentData, serviceRequ
     const sPaymentMethod = await getPaymentMethod(dataDettaglioPagamento);
     const sAccountingDocumentType = await getAccountingDocumentType(bodyFatturaElettronica.datiGenerali_DatiGeneraliDocumento_TipoDocumento);
     const sCompanyCode = headerInvoiceIntegrationInfo.companyCode ? headerInvoiceIntegrationInfo.companyCode : null;
+    const sTaxDeterminationDate = headerInvoiceIntegrationInfo.taxDeterminationDate ? headerInvoiceIntegrationInfo.taxDeterminationDate : bodyFatturaElettronica.datiGenerali_DatiGeneraliDocumento_Data;
     // Generate arrays for GL Account and Purchase Order records
     const aGLAccountRecords = aLineDetailsMergedWithGLAccountIntegrations.map((line, index) => createLineItemForGLAccount(index + 1, line, bodyFatturaElettronica, sCompanyCode));
 
@@ -277,7 +278,7 @@ async function createResultObject(headerData, bodyData, paymentData, serviceRequ
         "SupplyingCountry": headerFatturaElettronica.datiTrasmissione_IdPaese ? headerFatturaElettronica.datiTrasmissione_IdPaese : null,
         "AssignmentReference": headerInvoiceIntegrationInfo.assignmentReference ? headerInvoiceIntegrationInfo.assignmentReference : null,
         "IsEUTriangularDeal": headerInvoiceIntegrationInfo.isEUTriangularDeal ? headerInvoiceIntegrationInfo.isEUTriangularDeal : null,
-        "TaxDeterminationDate": bodyFatturaElettronica.datiGenerali_DatiGeneraliDocumento_Data ? bodyFatturaElettronica.datiGenerali_DatiGeneraliDocumento_Data : null,
+        "TaxDeterminationDate": sTaxDeterminationDate,
         "TaxReportingDate": headerInvoiceIntegrationInfo.taxReportingDate ? headerInvoiceIntegrationInfo.taxReportingDate : null,
         "TaxFulfillmentDate": headerInvoiceIntegrationInfo.taxFulfillmentDate ? headerInvoiceIntegrationInfo.taxFulfillmentDate : null,
         "To_SupplierInvoiceWhldgTax": aDataSupplierInvoiceWhldgTax,
@@ -313,7 +314,7 @@ function createLineItemForGLAccount(index, oLineDetail, bodyFatturaElettronica, 
         "GLAccount": oLineDetail.glAccount ? oLineDetail.glAccount : null,
         "DebitCreditCode": oLineDetail.debitCreditCode ? oLineDetail.debitCreditCode : null,
         "DocumentCurrency": bodyFatturaElettronica.datiGenerali_DatiGeneraliDocumento_Divisa ? bodyFatturaElettronica.datiGenerali_DatiGeneraliDocumento_Divisa : null,
-        "SupplierInvoiceItemAmount": oLineDetail.supplierInvoiceItemAmount ? oLineDetail.supplierInvoiceItemAmount : null,
+        "SupplierInvoiceItemAmount": oLineDetail.prezzoTotale ? oLineDetail.prezzoTotale : null,
         "TaxCode": oLineDetail.taxCode ? oLineDetail.taxCode : getTaxCode(oLineDetail.aliquotaIVA, oLineDetail.natura),
         "AssignmentReference": oLineDetail.assignmentReference ? oLineDetail.assignmentReference : null,
         "SupplierInvoiceItemText": oLineDetail.supplierInvoiceItemText ? oLineDetail.supplierInvoiceItemText : null,

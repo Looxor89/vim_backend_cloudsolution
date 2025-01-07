@@ -230,7 +230,6 @@ context vim {
         glAccount                  : String(10);
         debitCreditCode            : String(1);
         // documentCurrency           : String;
-        supplierInvoiceItemAmount  : Decimal(14, 3);
         taxCode                    : String(2);
         assignmentReference        : String(18);
         costCenter                 : String(10);

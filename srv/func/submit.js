@@ -47,7 +47,7 @@ module.exports = async (request, tx) => {
 
     // Defining update dock_pack query
     let updateDocPackQuery = UPDATE('DOC_PACK')
-        .set(`modifiedBy = '${modifiedBy}', modifiedAt = '${modifiedAt}', Status = 'POSTED', ReferenceDocument = '${sReferenceDocument}', FiscalYear = '${sFiscalYear}', CompanyCode = '${sCompanyCode}'`)
+        .set(`modifiedBy = '${modifiedBy}', modifiedAt = '${modifiedAt}', Status = 'POSTED', ReferenceDocument = '${sReferenceDocument}', FiscalYear = '${sFiscalYear}'`)
         .where(`PackageId = '${PackageId}'`);
     // Execute the query and retrieve the data from the database.
     data = await tx.run(updateDocPackQuery);
@@ -86,3 +86,12 @@ module.exports = async (request, tx) => {
     };
 
 };
+
+// Execute query and handle errors
+async function executeQuery(tx, query) {
+    const data = await tx.run(query);
+    if (!data) {
+        throw new Error('Query execution failed');
+    }
+    return data;
+}
