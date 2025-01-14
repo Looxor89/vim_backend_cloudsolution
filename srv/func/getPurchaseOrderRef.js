@@ -1,0 +1,17 @@
+const { checkReadScope } = require('./utils/scopes');
+
+"use strict";
+
+module.exports = async (request, tx) => {
+    // Extract PackageId from request query parameters
+    const companyCode = request.req.query.CompanyCode;
+    const supplier = request.req.query.Supplier;
+    if (!companyCode || !supplier) {
+        // Return error response if CompanyCode is not provided
+        return { status: 400, message: 'Bad Request' };
+    }
+    const serviceS4_HANA = await cds.connect.to(process.env['Destination_OData_S4HANA']);
+    const serviceRequestS4_HANA = serviceS4_HANA.tx(request);
+    const oResultPurchaseOrderRefRequest = await serviceRequestS4_HANA.get(process.env['Path_API_purchaseorder']+"?$format=json&$filter=CompanyCode eq '"+companyCode+"' and Supplier eq '"+supplier+"'&$select=PurchaseOrder,PurchaseOrderType,PurchaseOrderDate,Supplier,DocumentCurrency");
+    return { status: 200, result: oResultPurchaseOrderRefRequest, message: 'Executed' };
+};

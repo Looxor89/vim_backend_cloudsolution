@@ -32,7 +32,8 @@ async function performRequest(srv, request, path) {
         // If no errors, return the successful result to the client.
         return request.reply(result);
 
-    } catch (error) { console.log(error);
+    } catch (error) {
+        console.log(error);
         await tx.rollback(error);
         return request.error({
             code: error.status || 500,
@@ -86,7 +87,7 @@ async function performSubmitRequest(srv, request, path) {
         console.error('Error during submit request:', error);
         // await tx.rollback(error);
         await srv.transaction(async tx => {
-            return require('./func/logErrorHandler')(request, tx, error.message); 
+            return require('./func/logErrorHandler')(request, tx, error.message);
         });
 
         return request.error({
@@ -368,6 +369,42 @@ module.exports = function (srv) {
      */
     srv.on('addNotes', '*', async request => {
         await performRequest(srv, request, './func/addNotes');
+    });
+
+    srv.on('getGlAccount', '*', async request => {
+        await performRequest(srv, request, './func/getGlAccount');
+    });
+
+    srv.on('getCostCenters', '*', async request => {
+        await performRequest(srv, request, './func/getCostCenters');
+    });
+
+    srv.on('getPurchaseOrderRef', '*', async request => {
+        await performRequest(srv, request, './func/getPurchaseOrderRef');
+    });
+
+
+    srv.on('getPurchaseOrderItemRef', '*', async request => {
+        await performRequest(srv, request, './func/getPurchaseOrderItemRef');
+    });
+
+
+    srv.on('getDeliveryNoteRef', '*', async request => {
+        await performRequest(srv, request, './func/getDeliveryNoteRef');
+    });
+
+    srv.on('getServiceEntrySheetRef', '*', async request => {
+        await performRequest(srv, request, './func/getServiceEntrySheetRef');
+    });
+
+
+    srv.on('getServiceEntrySheetItemRef', '*', async request => {
+        await performRequest(srv, request, './func/getServiceEntrySheetItemRef');
+    });
+
+
+    srv.on('getTaxCodes', '*', async request => {
+        await performRequest(srv, request, './func/getTaxCodes');
     });
 
     /**

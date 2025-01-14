@@ -55,6 +55,14 @@ service CatalogService {
     function getHouseBanks()                                        returns array of String;
     function getHouseBanksAccounts()                                returns array of String;
     function getAccountingDocumentType()                            returns array of String;
+    function getGlAccount()                                         returns array of String;
+    function getPurchaseOrderRef()                                  returns array of String;
+    function getPurchaseOrderItemRef()                              returns array of String;
+    function getDeliveryNoteRef()                                   returns array of String;
+    function getServiceEntrySheetRef()                              returns array of String;
+    function getServiceEntrySheetItemRef()                          returns array of String;
+    function getTaxCodes()                                          returns array of String;
+    function getCostCenters()                                       returns array of String;
     function getWithholdingTax()                                    returns array of String;
     function getWithholdingTaxesType()                              returns array of String;
     function getWithholdingTaxesCode()                              returns array of String;
