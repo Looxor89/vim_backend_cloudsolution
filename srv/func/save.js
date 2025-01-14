@@ -368,7 +368,8 @@ async function updatePOLineDetails(poRecords, tx) {
                 .set({
                     "prezzoTotale": oLineDetail.SupplierInvoiceItemAmount,
                     "quantita": oLineDetail.QuantityInPurchaseOrderUnit,
-                    "prezzoUnitario": oLineDetail.PurchaseOrderPriceUnit
+                    "prezzoUnitario": oLineDetail.PurchaseOrderPriceUnit,
+                    "unitaMisura": oLineDetail.PurchaseOrderQuantityUnit
                 })
                 .where(`ID = '${oLineDetail.lineDetail_ID}'`);
 
@@ -378,7 +379,6 @@ async function updatePOLineDetails(poRecords, tx) {
                     "purchaseOrderItem": oLineDetail.PurchaseOrderItem,
                     "plant": oLineDetail.Plant,
                     "isSubsequentDebitCredit": oLineDetail.IsSubsequentDebitCredit,
-                    "purchaseOrderQuantityUnit": oLineDetail.PurchaseOrderQuantityUnit,
                     "qtyInPurchaseOrderPriceUnit": oLineDetail.QtyInPurchaseOrderPriceUnit,
                     "isNotCashDiscountLiable": oLineDetail.IsNotCashDiscountLiable,
                     "serviceEntrySheet": oLineDetail.ServiceEntrySheet,
@@ -423,7 +423,8 @@ async function insertPOLineDetails(aNewPoLineDetails, header_Id_InvoiceIntegrati
             "bodyPOIntegrationInfo_ID": bodyPOIntegrationInfo_ID,
             "prezzoTotale": oLineDetail.SupplierInvoiceItemAmount,
             "quantita": oLineDetail.QuantityInPurchaseOrderUnit,
-            "prezzoUnitario": oLineDetail.PurchaseOrderPriceUnit
+            "prezzoUnitario": oLineDetail.PurchaseOrderPriceUnit,
+            "unitaMisura": oLineDetail.PurchaseOrderQuantityUnit
         });
 
         aNewPoIntegrationInfoBodyRecords.push({

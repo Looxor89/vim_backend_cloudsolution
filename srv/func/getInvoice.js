@@ -357,7 +357,7 @@ function createLineItemForPO(index, oLineDetail, bodyFatturaElettronica) {
         "TaxCode": oLineDetail.taxCode ? oLineDetail.taxCode : getTaxCode(oLineDetail.aliquotaIVA, oLineDetail.natura),
         "DocumentCurrency": bodyFatturaElettronica.datiGenerali_DatiGeneraliDocumento_Divisa ? bodyFatturaElettronica.datiGenerali_DatiGeneraliDocumento_Divisa : null,
         "SupplierInvoiceItemAmount": oLineDetail.prezzoTotale ? oLineDetail.prezzoTotale : null,
-        "PurchaseOrderQuantityUnit": oLineDetail.PurchaseOrderQuantityUnit !== null ? oLineDetail.PurchaseOrderQuantityUnit : null,
+        "PurchaseOrderQuantityUnit": oLineDetail.unitaMisura !== null ? oLineDetail.unitaMisura : null,
         "QuantityInPurchaseOrderUnit": oLineDetail.quantita !== null ? oLineDetail.quantita : null,
         "QtyInPurchaseOrderPriceUnit": oLineDetail.qtyInPurchaseOrderPriceUnit ? oLineDetail.qtyInPurchaseOrderPriceUnit : null,
         "PurchaseOrderPriceUnit": oLineDetail.purchaseOrderPriceUnit !== null ? oLineDetail.purchaseOrderPriceUnit : null,
