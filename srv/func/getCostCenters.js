@@ -1,4 +1,5 @@
 const { checkReadScope } = require('./utils/scopes');
+const { formatDateToString } = require('./utils/utilities');
 
 "use strict";
 
@@ -11,6 +12,19 @@ module.exports = async (request, tx) => {
     }
     const serviceS4_HANA = await cds.connect.to(process.env['Destination_OData_S4HANA']);
     const serviceRequestS4_HANA = serviceS4_HANA.tx(request);
-    const oResultCostCentersRequest = await serviceRequestS4_HANA.get(process.env['Path_API_YY1_COSTCENTERS_CDS']+"&$filter=CompanyCode eq '"+companyCode+"'");
+    var oResultCostCentersRequest = await serviceRequestS4_HANA.get(process.env['Path_API_YY1_COSTCENTERS_CDS']+"&$filter=CompanyCode eq '"+companyCode+"'");
+    // Regular expression to extract milliseconds from ValidityEndDate
+    const dateRegex = /\/Date\((\d+)\)\//;
+
+    // Process the results to extract and update ValidityEndDate
+    oResultCostCentersRequest.forEach((result) => {
+        if (result.ValidityEndDate) {
+            const match = dateRegex.exec(result.ValidityEndDate);
+            if (match) {
+                result.ValidityEndDate = formatDateToString(new Date(parseInt(match[1], 10))); // Update with milliseconds as a number
+            }
+        }
+    });
+    
     return { status: 200, result: oResultCostCentersRequest, message: 'Executed' };
 };
