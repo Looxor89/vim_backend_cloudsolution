@@ -56,6 +56,7 @@ service CatalogService {
     function getHouseBanksAccounts()                                returns array of String;
     function getAccountingDocumentType()                            returns array of String;
     function getGlAccount()                                         returns array of String;
+    function getPOAccountAssignment()                               returns array of String;
     function getPurchaseOrderRef()                                  returns array of String;
     function getPurchaseOrderItemRef()                              returns array of String;
     function getDeliveryNoteRef()                                   returns array of String;

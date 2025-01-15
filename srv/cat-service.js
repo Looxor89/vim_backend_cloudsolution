@@ -389,6 +389,11 @@ module.exports = function (srv) {
     });
 
 
+    srv.on('getPOAccountAssignment', '*', async request => {
+        await performRequest(srv, request, './func/getPOAccountAssignment');
+    });
+
+
     srv.on('getDeliveryNoteRef', '*', async request => {
         await performRequest(srv, request, './func/getDeliveryNoteRef');
     });
