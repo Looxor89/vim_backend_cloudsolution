@@ -35,13 +35,13 @@ module.exports = async (request, tx) => {
 };
 
 // Fetch header data for a specific package
-    // Get error log during last submit attempt (if any)
+// Get error log during last submit attempt (if any)
 async function fetchHeaderData(tx, packageId) {
     const errorLog = (await tx.run(
         SELECT('*').from('ERROR_LOG')
-        .where({ PackageId: packageId })
-        .orderBy('CreatedAt desc') // Order by CreatedAt in descending order
-        .limit(1)                  // Limit the result to the last inserted record
+            .where({ PackageId: packageId })
+            .orderBy('CreatedAt desc') // Order by CreatedAt in descending order
+            .limit(1)                  // Limit the result to the last inserted record
     ));
 
     // Query header invoice data by PackageId
@@ -200,7 +200,7 @@ async function createResultObject(headerData, bodyData, paymentData, serviceRequ
     // Generate arrays for GL Account and Purchase Order records
     const aGLAccountRecords = aLineDetailsMergedWithGLAccountIntegrations.map((line, index) => createLineItemForGLAccount(index + 1, line, bodyFatturaElettronica, sCompanyCode));
 
-    const aPORecords = aLineDetailsMergedWithPOIntegrations.map((line, index) => createLineItemForPO(index + 1, line, bodyFatturaElettronica));
+    const aPORecords = await Promise.all(aLineDetailsMergedWithPOIntegrations.map((line, index) => createLineItemForPO(index + 1, line, bodyFatturaElettronica, serviceRequestS4_HANA, sCompanyCode)));
 
     const aDataSupplierInvoiceWhldgTax = dataSupplierInvoiceWhldgTax.map((oItem, index) => {
         return {
@@ -220,6 +220,7 @@ async function createResultObject(headerData, bodyData, paymentData, serviceRequ
             "header_Id_InvoiceIntegrationInfo": oItem.header_Id,
             "PurchaseOrder": oItem.purchaseOrder ? oItem.purchaseOrder : null,
             "PurchaseOrderItem": oItem.purchaseOrderItem ? oItem.purchaseOrderItem : null
+
         }
     });
 
@@ -293,7 +294,7 @@ async function createResultObject(headerData, bodyData, paymentData, serviceRequ
     };
 }
 
-function getTaxCode (aliquotaIVA, natura) {
+function getTaxCode(aliquotaIVA, natura) {
     if (!natura) {
         return transcoder.taxCode[aliquotaIVA];
     } else if (aliquotaIVA === 0.00) {
@@ -343,7 +344,54 @@ function createLineItemForGLAccount(index, oLineDetail, bodyFatturaElettronica, 
 }
 
 // Create a line item object for Purchase Order records
-function createLineItemForPO(index, oLineDetail, bodyFatturaElettronica) {
+async function createLineItemForPO(index, oLineDetail, bodyFatturaElettronica, serviceRequestS4_HANA, sCompanyCode) {
+    let sPlant = null,
+        bIsFinallyInvoiced = null,
+        sCostCenter = null,
+        sControllingArea = null,
+        sBusinessArea = null,
+        sProfitCenter = null,
+        sFunctionalArea = null,
+        sWBSElement = null,
+        sSalesOrder = null,
+        sSalesOrderItem = null,
+        sInternalOrder = null,
+        sCommitmentItem = null,
+        sFund = null,
+        sFundsCenter = null,
+        sGrantID = null,
+        sProfitabilitySegment = null,
+        sBudgetPeriod = null;
+    let oResultAccountAssignmentRequest = null;
+    if (oLineDetail.purchaseOrder && oLineDetail.purchaseOrderItem) {
+        oResultAccountAssignmentRequest = await serviceRequestS4_HANA.get(process.env['Path_API_YY1_POACCOUNTASSIGNMENT_CDS'] + "&$filter=PurchaseOrder eq '" + oLineDetail.purchaseOrder + "' and PurchaseOrderItem eq '" + oLineDetail.purchaseOrderItem + "'");
+        if (oResultAccountAssignmentRequest[0]) {
+            sCostCenter = oResultAccountAssignmentRequest[0].CostCenter;
+            sControllingArea = oResultAccountAssignmentRequest[0].ControllingArea;
+            sBusinessArea = oResultAccountAssignmentRequest[0].BusinessArea;
+            sProfitCenter = oResultAccountAssignmentRequest[0].ProfitCenter;
+            sFunctionalArea = oResultAccountAssignmentRequest[0].FunctionalArea;
+            sWBSElement = oResultAccountAssignmentRequest[0].WBSElementInternalID_2;
+            sSalesOrder = oResultAccountAssignmentRequest[0].SalesOrder;
+            sSalesOrderItem = oResultAccountAssignmentRequest[0].SalesOrderItem;
+            sInternalOrder = oResultAccountAssignmentRequest[0].OrderInternalID;
+            sCommitmentItem = oResultAccountAssignmentRequest[0].CommitmentItemShortID;
+            sFund = oResultAccountAssignmentRequest[0].Fund;
+            sFundsCenter = oResultAccountAssignmentRequest[0].FundsCenter;
+            sGrantID = oResultAccountAssignmentRequest[0].GrantID;
+            sProfitabilitySegment = oResultAccountAssignmentRequest[0].ProfitabilitySegment_2;
+            sBudgetPeriod = oResultAccountAssignmentRequest[0].BudgetPeriod;
+        }
+    }
+    let oResultPurchaseOrderItemRefRequest = null;
+    if (sCompanyCode && oLineDetail.purchaseOrder && oLineDetail.purchaseOrderItem) {
+        oResultPurchaseOrderItemRefRequest = await serviceRequestS4_HANA.get(process.env['Path_API_purchaseorder'] + "/" + oLineDetail.purchaseOrder + "/" + process.env['Path_API_purchaseorder_2'] + "&$filter=CompanyCode eq '" + sCompanyCode + "' and PurchaseOrderItem eq '" + oLineDetail.purchaseOrderItem + "'")
+        if (oResultPurchaseOrderItemRefRequest[0]) {
+            sPlant = oResultPurchaseOrderItemRefRequest[0].Plant;
+            bIsFinallyInvoiced = oResultPurchaseOrderItemRefRequest[0].IsFinallyInvoiced;
+        }
+    }
+
     return {
         "lineDetail_ID": oLineDetail.ID,
         "headerPOIntegrationInfo_Id": oLineDetail.header_Id,
@@ -352,7 +400,7 @@ function createLineItemForPO(index, oLineDetail, bodyFatturaElettronica) {
         "SupplierInvoiceItem": String(index).padStart(4, '0'),
         "PurchaseOrder": oLineDetail.purchaseOrder ? oLineDetail.purchaseOrder : null,
         "PurchaseOrderItem": oLineDetail.purchaseOrderItem ? oLineDetail.purchaseOrderItem : null,
-        "Plant": oLineDetail.plant ? oLineDetail.plant : null,
+        "Plant": oLineDetail.plant ? oLineDetail.plant : sPlant,
         "IsSubsequentDebitCredit": oLineDetail.isSubsequentDebitCredit ? oLineDetail.isSubsequentDebitCredit : null,
         "TaxCode": oLineDetail.taxCode ? oLineDetail.taxCode : getTaxCode(oLineDetail.aliquotaIVA, oLineDetail.natura),
         "DocumentCurrency": bodyFatturaElettronica.datiGenerali_DatiGeneraliDocumento_Divisa ? bodyFatturaElettronica.datiGenerali_DatiGeneraliDocumento_Divisa : null,
@@ -365,22 +413,22 @@ function createLineItemForPO(index, oLineDetail, bodyFatturaElettronica) {
         "IsNotCashDiscountLiable": oLineDetail.isNotCashDiscountLiable ? oLineDetail.isNotCashDiscountLiable : null,
         "ServiceEntrySheet": oLineDetail.serviceEntrySheet ? oLineDetail.serviceEntrySheet : null,
         "ServiceEntrySheetItem": oLineDetail.serviceEntrySheetItem ? oLineDetail.serviceEntrySheetItem : null,
-        "IsFinallyInvoiced": oLineDetail.isFinallyInvoiced ? oLineDetail.isFinallyInvoiced : null,
+        "IsFinallyInvoiced": oLineDetail.isFinallyInvoiced ? oLineDetail.isFinallyInvoiced : bIsFinallyInvoiced,
         "TaxDeterminationDate": oLineDetail.taxDeterminationDate ? oLineDetail.taxDeterminationDate : null,
-        "CostCenter": oLineDetail.costCenter ? oLineDetail.costCenter : null,
-        "ControllingArea": oLineDetail.controllingArea ? oLineDetail.controllingArea : null,
-        "BusinessArea": oLineDetail.businessArea ? oLineDetail.businessArea : null,
-        "ProfitCenter": oLineDetail.profitCenter ? oLineDetail.profitCenter : null,
-        "FunctionalArea": oLineDetail.functionalArea ? oLineDetail.functionalArea : null,
-        "WBSElement": oLineDetail.wBSElement ? oLineDetail.wBSElement : null,
-        "SalesOrder": oLineDetail.salesOrder ? oLineDetail.salesOrder : null,
-        "SalesOrderItem": oLineDetail.salesOrderItem ? oLineDetail.salesOrderItem : null,
-        "InternalOrder": oLineDetail.internalOrder ? oLineDetail.internalOrder : null,
-        "CommitmentItem": oLineDetail.commitmentItem ? oLineDetail.commitmentItem : null,
-        "FundsCenter": oLineDetail.fundsCenter ? oLineDetail.fundsCenter : null,
-        "Fund": oLineDetail.fund ? oLineDetail.fund : null,
-        "GrantID": oLineDetail.grantID ? oLineDetail.grantID : null,
-        "ProfitabilitySegment": oLineDetail.profitabilitySegment ? oLineDetail.profitabilitySegment : null,
-        "BudgetPeriod": oLineDetail.budgetPeriod ? oLineDetail.budgetPeriod : null
+        "CostCenter": oLineDetail.costCenter ? oLineDetail.costCenter : sCostCenter,
+        "ControllingArea": oLineDetail.controllingArea ? oLineDetail.controllingArea : sControllingArea,
+        "BusinessArea": oLineDetail.businessArea ? oLineDetail.businessArea : sBusinessArea,
+        "ProfitCenter": oLineDetail.profitCenter ? oLineDetail.profitCenter : sProfitCenter,
+        "FunctionalArea": oLineDetail.functionalArea ? oLineDetail.functionalArea : sFunctionalArea,
+        "WBSElement": oLineDetail.wBSElement ? oLineDetail.wBSElement : sWBSElement,
+        "SalesOrder": oLineDetail.salesOrder ? oLineDetail.salesOrder : sSalesOrder,
+        "SalesOrderItem": oLineDetail.salesOrderItem ? oLineDetail.salesOrderItem : sSalesOrderItem,
+        "InternalOrder": oLineDetail.internalOrder ? oLineDetail.internalOrder : sInternalOrder,
+        "CommitmentItem": oLineDetail.commitmentItem ? oLineDetail.commitmentItem : sCommitmentItem,
+        "FundsCenter": oLineDetail.fundsCenter ? oLineDetail.fundsCenter : sFundsCenter,
+        "Fund": oLineDetail.fund ? oLineDetail.fund : sFund,
+        "GrantID": oLineDetail.grantID ? oLineDetail.grantID : sGrantID,
+        "ProfitabilitySegment": oLineDetail.profitabilitySegment ? oLineDetail.profitabilitySegment : sProfitabilitySegment,
+        "BudgetPeriod": oLineDetail.budgetPeriod ? oLineDetail.budgetPeriod : sBudgetPeriod
     };
 }
