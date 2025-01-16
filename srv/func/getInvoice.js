@@ -366,21 +366,21 @@ async function createLineItemForPO(index, oLineDetail, bodyFatturaElettronica, s
     if (oLineDetail.purchaseOrder && oLineDetail.purchaseOrderItem) {
         oResultAccountAssignmentRequest = await serviceRequestS4_HANA.get(process.env['Path_API_YY1_POACCOUNTASSIGNMENT_CDS'] + "&$filter=PurchaseOrder eq '" + oLineDetail.purchaseOrder + "' and PurchaseOrderItem eq '" + oLineDetail.purchaseOrderItem + "'");
         if (oResultAccountAssignmentRequest[0]) {
-            sCostCenter = oResultAccountAssignmentRequest[0].CostCenter;
-            sControllingArea = oResultAccountAssignmentRequest[0].ControllingArea;
-            sBusinessArea = oResultAccountAssignmentRequest[0].BusinessArea;
-            sProfitCenter = oResultAccountAssignmentRequest[0].ProfitCenter;
-            sFunctionalArea = oResultAccountAssignmentRequest[0].FunctionalArea;
-            sWBSElement = oResultAccountAssignmentRequest[0].WBSElementInternalID_2;
-            sSalesOrder = oResultAccountAssignmentRequest[0].SalesOrder;
-            sSalesOrderItem = oResultAccountAssignmentRequest[0].SalesOrderItem;
-            sInternalOrder = oResultAccountAssignmentRequest[0].OrderInternalID;
-            sCommitmentItem = oResultAccountAssignmentRequest[0].CommitmentItemShortID;
-            sFund = oResultAccountAssignmentRequest[0].Fund;
-            sFundsCenter = oResultAccountAssignmentRequest[0].FundsCenter;
-            sGrantID = oResultAccountAssignmentRequest[0].GrantID;
-            sProfitabilitySegment = oResultAccountAssignmentRequest[0].ProfitabilitySegment_2;
-            sBudgetPeriod = oResultAccountAssignmentRequest[0].BudgetPeriod;
+            sCostCenter = oResultAccountAssignmentRequest[0].CostCenter != "" ? oResultAccountAssignmentRequest[0].CostCenter : null;
+            sControllingArea = oResultAccountAssignmentRequest[0].ControllingArea != "" ? oResultAccountAssignmentRequest[0].ControllingArea : null;
+            sBusinessArea = oResultAccountAssignmentRequest[0].BusinessArea != "" ? oResultAccountAssignmentRequest[0].BusinessArea : null;
+            sProfitCenter = oResultAccountAssignmentRequest[0].ProfitCenter != "" ? oResultAccountAssignmentRequest[0].ProfitCenter : null;
+            sFunctionalArea = oResultAccountAssignmentRequest[0].FunctionalArea != "" ? oResultAccountAssignmentRequest[0].FunctionalArea : null;
+            sWBSElement = oResultAccountAssignmentRequest[0].WBSElementInternalID_2 != "" ? oResultAccountAssignmentRequest[0].WBSElementInternalID_2 : null;
+            sSalesOrder = oResultAccountAssignmentRequest[0].SalesOrder != "" ? oResultAccountAssignmentRequest[0].SalesOrder : null;
+            sSalesOrderItem = oResultAccountAssignmentRequest[0].SalesOrderItem != "" ? oResultAccountAssignmentRequest[0].SalesOrderItem : null;
+            sInternalOrder = oResultAccountAssignmentRequest[0].OrderInternalID != "" ? oResultAccountAssignmentRequest[0].OrderInternalID : null;
+            sCommitmentItem = oResultAccountAssignmentRequest[0].CommitmentItemShortID != "" ? oResultAccountAssignmentRequest[0].CommitmentItemShortID : null;
+            sFund = oResultAccountAssignmentRequest[0].Fund != "" ? oResultAccountAssignmentRequest[0].Fund : null;
+            sFundsCenter = oResultAccountAssignmentRequest[0].FundsCenter != "" ? oResultAccountAssignmentRequest[0].FundsCenter : null;
+            sGrantID = oResultAccountAssignmentRequest[0].GrantID != "" ? oResultAccountAssignmentRequest[0].GrantID : null;
+            sProfitabilitySegment = oResultAccountAssignmentRequest[0].ProfitabilitySegment_2 != "" ? oResultAccountAssignmentRequest[0].ProfitabilitySegment_2 : null;
+            sBudgetPeriod = oResultAccountAssignmentRequest[0].BudgetPeriod != "" ? oResultAccountAssignmentRequest[0].BudgetPeriod : null;
         }
     }
     let oResultPurchaseOrderItemRefRequest = null;
