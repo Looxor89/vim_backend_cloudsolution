@@ -434,7 +434,6 @@ async function insertPOLineDetails(aNewPoLineDetails, header_Id_InvoiceIntegrati
             "purchaseOrderItem": oLineDetail.PurchaseOrderItem,
             "plant": oLineDetail.Plant,
             "isSubsequentDebitCredit": oLineDetail.IsSubsequentDebitCredit,
-            "quantityInPurchaseOrderUnit": oLineDetail.QuantityInPurchaseOrderUnit,
             "qtyInPurchaseOrderPriceUnit": oLineDetail.QtyInPurchaseOrderPriceUnit,
             "isNotCashDiscountLiable": oLineDetail.IsNotCashDiscountLiable,
             "serviceEntrySheet": oLineDetail.ServiceEntrySheet,
