@@ -68,10 +68,26 @@ function formatDateToString(dDate) {
     return sYear+"-"+sMonth+"-"+sDay;
 }
 
+/**
+ * Format DateTime like "2025-01-03T12:22:31.276259Z" to "2025-01-03 12:22:31"
+ * @param {Date} sDateTime 
+ * @returns Date in yyyy-MM-dd HH:mm:ss format
+ */
+function formatDateTimeToString(sDateTime) {
+    if(!sDateTime) return null;
+    let aDateTime = sDateTime.split("T");
+    let sDate = aDateTime[0],
+    sUnformattedTime = aDateTime[1];
+    let aTime = sUnformattedTime.split("."),
+    sTime = aTime[0];
+    return sDate+" "+sTime;
+}
+
 module.exports = {
     parseMultipleParamsForDocPack,
     getDateWithMilliseconds,
     getDateWithMillisecondsWithoutParam,
     formatDateFromString,
-    formatDateToString
+    formatDateToString,
+    formatDateTimeToString
 }
