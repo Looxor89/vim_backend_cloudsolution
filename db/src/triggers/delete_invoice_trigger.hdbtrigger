@@ -194,24 +194,6 @@ BEGIN
       FROM VIM_InvoiceIntegrationInfo
       WHERE navigation_to_PackageId = :OLDROW.PackageId
     );
-  DELETE FROM VIM_SelectedPurchaseOrders
-  WHERE header_Id IN (
-      SELECT ID
-      FROM VIM_InvoiceIntegrationInfo
-      WHERE navigation_to_PackageId = :OLDROW.PackageId
-    );
-  DELETE FROM VIM_SelectedDeliveryNotes
-  WHERE header_Id IN (
-      SELECT ID
-      FROM VIM_InvoiceIntegrationInfo
-      WHERE navigation_to_PackageId = :OLDROW.PackageId
-    );
-  DELETE FROM VIM_SelectedServiceEntrySheets
-  WHERE header_Id IN (
-      SELECT ID
-      FROM VIM_InvoiceIntegrationInfo
-      WHERE navigation_to_PackageId = :OLDROW.PackageId
-    );
   DELETE FROM VIM_SupplierInvoiceWhldgTax
   WHERE header_Id IN (
       SELECT ID

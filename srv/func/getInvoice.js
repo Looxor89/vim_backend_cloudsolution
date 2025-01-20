@@ -57,23 +57,11 @@ async function fetchHeaderData(tx, packageId) {
         SELECT('*').from('InvoiceIntegrationInfo').where({ navigation_to_PackageId: packageId })
     ))[0];
 
-    const dataSelectedPurchaseOrders = (await tx.run(
-        SELECT('*').from('SelectedPurchaseOrders').where({ header_Id: headerInvoiceIntegrationInfo.ID })
-    ));
-
-    const dataSelectedDeliveryNotes = (await tx.run(
-        SELECT('*').from('SelectedDeliveryNotes').where({ header_Id: headerInvoiceIntegrationInfo.ID })
-    ));
-
-    const dataSelectedServiceEntrySheets = (await tx.run(
-        SELECT('*').from('SelectedServiceEntrySheets').where({ header_Id: headerInvoiceIntegrationInfo.ID })
-    ));
-
     const dataSupplierInvoiceWhldgTax = (await tx.run(
         SELECT('*').from('SupplierInvoiceWhldgTax').where({ header_Id: headerInvoiceIntegrationInfo.ID })
     ));
 
-    return { errorLog, headerFatturaElettronica, headerInvoiceIntegrationInfo, dataSelectedPurchaseOrders, dataSelectedDeliveryNotes, dataSelectedServiceEntrySheets, dataSupplierInvoiceWhldgTax };
+    return { errorLog, headerFatturaElettronica, headerInvoiceIntegrationInfo, dataSupplierInvoiceWhldgTax };
 }
 
 // Fetch body data and related records based on header ID
@@ -187,7 +175,7 @@ function getAccountingDocumentType(sBodyDocumentType) { // In the future will be
 
 // Create the result object containing all invoice details
 async function createResultObject(headerData, bodyData, paymentData, serviceRequestS4_HANA) {
-    const { errorLog, headerFatturaElettronica, headerInvoiceIntegrationInfo, dataSelectedPurchaseOrders, dataSelectedDeliveryNotes, dataSelectedServiceEntrySheets, dataSupplierInvoiceWhldgTax } = headerData;
+    const { errorLog, headerFatturaElettronica, headerInvoiceIntegrationInfo, dataSupplierInvoiceWhldgTax } = headerData;
     const { bodyFatturaElettronica, dataDatiRitenuta, dataDatiOrdineAcquisto, dataDettaglioLinee, dataDatiRiepilogo, dataDatiPagamento, dataAllegati, dataPOIntegrationInfoBody, dataGLAccountIntegrationInfoBody } = bodyData;
     const { dataDettaglioPagamento } = paymentData;
     const aLineDetailsMergedWithPOIntegrations = mergePOLineDetailsWithIntegrationInfoBody(dataDettaglioLinee, dataPOIntegrationInfoBody);
@@ -211,33 +199,6 @@ async function createResultObject(headerData, bodyData, paymentData, serviceRequ
             "WithholdingTaxCode": oItem.withholdingTaxCode ? oItem.withholdingTaxCode : null,
             "WithholdingTaxBaseAmount": oItem.withholdingTaxBaseAmount ? oItem.withholdingTaxBaseAmount : null,
             "WhldgTaxBaseIsEnteredManually": oItem.whldgTaxBaseIsEnteredManually ? oItem.whldgTaxBaseIsEnteredManually : null
-        }
-    });
-
-    const aDataSelectedPurchaseOrders = dataSelectedPurchaseOrders.map((oItem, index) => {
-        return {
-            "selectedPurchaseOrders_Id": oItem.ID,
-            "header_Id_InvoiceIntegrationInfo": oItem.header_Id,
-            "PurchaseOrder": oItem.purchaseOrder ? oItem.purchaseOrder : null,
-            "PurchaseOrderItem": oItem.purchaseOrderItem ? oItem.purchaseOrderItem : null
-
-        }
-    });
-
-    const aDataSelectedDeliveryNotes = dataSelectedDeliveryNotes.map((oItem, index) => {
-        return {
-            "selectedDeliveryNotes_Id": oItem.ID,
-            "header_Id_InvoiceIntegrationInfo": oItem.header_Id,
-            "InboundDeliveryNote": oItem.inboundDeliveryNote ? oItem.inboundDeliveryNote : null
-        }
-    });
-
-    const aDataSelectedServiceEntrySheets = dataSelectedServiceEntrySheets.map((oItem, index) => {
-        return {
-            "selectedServiceEntrySheets_Id": oItem.ID,
-            "header_Id_InvoiceIntegrationInfo": oItem.header_Id,
-            "serviceEntrySheet": oItem.serviceEntrySheet ? oItem.serviceEntrySheet : null,
-            "serviceEntrySheetItem": oItem.serviceEntrySheetItem ? oItem.serviceEntrySheetItem : null
         }
     });
 
@@ -285,10 +246,6 @@ async function createResultObject(headerData, bodyData, paymentData, serviceRequ
         "To_SupplierInvoiceWhldgTax": aDataSupplierInvoiceWhldgTax,
         "Allegati": dataAllegati,
         "GLAccountRecords": aGLAccountRecords,
-        "RefDocumentCategory": headerInvoiceIntegrationInfo.refDocumentCategory ? headerInvoiceIntegrationInfo.refDocumentCategory : null,
-        "To_SelectedPurchaseOrders": aDataSelectedPurchaseOrders,
-        "To_SelectedDeliveryNotes": aDataSelectedDeliveryNotes,
-        "To_SelectedServiceEntrySheets": aDataSelectedServiceEntrySheets,
         "PORecords": aPORecords,
         "ErrorLog": errorLog
     };

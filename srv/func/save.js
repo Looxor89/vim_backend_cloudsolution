@@ -7,9 +7,6 @@ const { v4: uuidv4 } = require('uuid');
 module.exports = async (request, tx) => {
     const { PackageId,
         Invoice,
-        RemovedSelectedPurchaseOrdersRecords,
-        RemovedSelectedDeliveryNotesRecords,
-        RemovedSelectedServiceEntrySheetsRecords,
         RemovedSupplierInvoiceWhldgTaxRecords,
         RemovedPoLineDetails,
         RemovedGlAccountLineDetails } = request.data.payload;
@@ -21,9 +18,6 @@ module.exports = async (request, tx) => {
         return { status: 422, message: valid.message }
     }
 
-    const aNewSelectedPurchaseOrders = Invoice.To_SelectedPurchaseOrders.filter(oItem => oItem.selectedPurchaseOrders_Id === null);
-    const aNewSelectedDeliveryNotes = Invoice.To_SelectedDeliveryNotes.filter(oItem => oItem.selectedDeliveryNotes_Id === null);
-    const aNewSelectedServiceEntrySheets = Invoice.To_SelectedServiceEntrySheets.filter(oItem => oItem.selectedServiceEntrySheets_Id === null);
     const aNewSupplierInvoiceWhldgTaxRecords = Invoice.To_SupplierInvoiceWhldgTax.filter(oItem => oItem.supplierInvoiceWhldgTax_Id === null);
     const aNewPoLineDetails = Invoice.PORecords.filter(oLineDetail => oLineDetail.lineDetail_ID === null);
     const aNewGlAccountLineDetails = Invoice.GLAccountRecords.filter(oLineDetail => oLineDetail.lineDetail_ID === null);
@@ -35,14 +29,8 @@ module.exports = async (request, tx) => {
         await updatePaymentDetails(Invoice, tx);
         await updateLineDetails(Invoice, tx);
         await updateDocPack(modifiedBy, modifiedAt, PackageId, tx);
-        await insertSelectedPurchaseOrders(Invoice, aNewSelectedPurchaseOrders, tx);
-        await insertSelectedDeliveryNotes(Invoice, aNewSelectedDeliveryNotes, tx);
-        await insertSelectedServiceEntrySheets(Invoice, aNewSelectedServiceEntrySheets, tx);
         await insertSupplierInvoiceWhldgTaxRecords(Invoice, aNewSupplierInvoiceWhldgTaxRecords, tx);
         await insertLineDetails(Invoice, aNewPoLineDetails, aNewGlAccountLineDetails, tx);
-        await deleteSelectedPurchaseOrdersRecords(RemovedSelectedPurchaseOrdersRecords, tx);
-        await deleteSelectedDeliveryNotesRecords(RemovedSelectedDeliveryNotesRecords, tx);
-        await deleteSelectedServiceEntrySheetsRecords(RemovedSelectedServiceEntrySheetsRecords, tx);
         await deleteSupplierInvoiceWhldgTaxRecords(RemovedSupplierInvoiceWhldgTaxRecords, tx);
         await deleteLineDetails(RemovedPoLineDetails, RemovedGlAccountLineDetails, tx);
         await updateInvoiceAction(tx, PackageId, modifiedAt, modifiedBy);
@@ -113,51 +101,12 @@ async function updateHeaders(Invoice, tx) {
             "isEUTriangularDeal": Invoice.IsEUTriangularDeal,
             "taxDeterminationDate": Invoice.TaxDeterminationDate,
             "taxReportingDate": Invoice.TaxReportingDate,
-            "taxFulfillmentDate": Invoice.TaxFulfillmentDate,
-            "refDocumentCategory": Invoice.RefDocumentCategory
+            "taxFulfillmentDate": Invoice.TaxFulfillmentDate
         })
         .where(`ID = '${Invoice.header_Id_InvoiceIntegrationInfo}'`);
 
     await executeQuery(tx, fatturaQuery);
     await executeQuery(tx, invoiceQuery);
-
-    for (const oSelectedPurchaseOrders of Invoice.To_SelectedPurchaseOrders) {
-        if (oSelectedPurchaseOrders.selectedPurchaseOrders_Id) {
-            const lineSelectedPurchaseOrdersQuery = UPDATE('SelectedPurchaseOrders')
-                .set({
-                    "header_Id": oSelectedPurchaseOrders.header_Id_InvoiceIntegrationInfo,
-                    "purchaseOrder": oSelectedPurchaseOrders.PurchaseOrder,
-                    "purchaseOrderItem": oSelectedPurchaseOrders.PurchaseOrderItem
-                })
-                .where(`ID = '${oSelectedPurchaseOrders.selectedPurchaseOrders_Id}'`);
-            await executeQuery(tx, lineSelectedPurchaseOrdersQuery);
-        }
-    }
-
-    for (const oSelectedDeliveryNotes of Invoice.To_SelectedDeliveryNotes) {
-        if (oSelectedDeliveryNotes.selectedDeliveryNotes_Id) {
-            const lineSelectedDeliveryNotesQuery = UPDATE('SelectedDeliveryNotes')
-                .set({
-                    "header_Id": oSelectedDeliveryNotes.header_Id_InvoiceIntegrationInfo,
-                    "inboundDeliveryNote": oSelectedDeliveryNotes.InboundDeliveryNote
-                })
-                .where(`ID = '${oSelectedDeliveryNotes.selectedDeliveryNotes_Id}'`);
-            await executeQuery(tx, lineSelectedDeliveryNotesQuery);
-        }
-    }
-
-    for (const oSelectedServiceEntrySheets of Invoice.To_SelectedServiceEntrySheets) {
-        if (oSelectedServiceEntrySheets.selectedServiceEntrySheets_Id) {
-            const lineSelectedServiceEntrySheetsQuery = UPDATE('SelectedServiceEntrySheets')
-                .set({
-                    "header_Id": oSelectedServiceEntrySheets.header_Id_InvoiceIntegrationInfo,
-                    "serviceEntrySheet": oSelectedServiceEntrySheets.ServiceEntrySheet,
-                    "serviceEntrySheetItem": oSelectedServiceEntrySheets.ServiceEntrySheetItem
-                })
-                .where(`ID = '${oSelectedServiceEntrySheets.selectedServiceEntrySheets_Id}'`);
-            await executeQuery(tx, lineSelectedServiceEntrySheetsQuery);
-        }
-    }
 
     for (const oSupplierInvoiceWhldgTax of Invoice.To_SupplierInvoiceWhldgTax) {
         if (oSupplierInvoiceWhldgTax.supplierInvoiceWhldgTax_Id) {
@@ -235,96 +184,11 @@ async function insertSupplierInvoiceWhldgTaxRecords(invoice, aNewSupplierInvoice
     }
 }
 
-// Insert records into SelectedPurchaseOrders if any
-async function insertSelectedPurchaseOrders(invoice, aNewSupplierInvoiceWhldgTaxRecords, tx) {
-    var aNewRecords = [];
-    aNewRecords = aNewSupplierInvoiceWhldgTaxRecords.map(record => ({
-        ID: uuidv4(),
-        header_Id: record.header_Id_InvoiceIntegrationInfo,
-        purchaseOrder: record.PurchaseOrder,
-        purchaseOrderItem: record.PurchaseOrderItem
-    }));
-
-    if (aNewRecords.length > 0) {
-        const lineQuery = INSERT.into('SelectedPurchaseOrders')
-            .entries(aNewRecords);
-
-        await executeQuery(tx, lineQuery);
-    }
-}
-
-// Insert records into SelectedDeliveryNotes if any
-async function insertSelectedDeliveryNotes(invoice, aNewSupplierInvoiceWhldgTaxRecords, tx) {
-    var aNewRecords = [];
-    aNewRecords = aNewSupplierInvoiceWhldgTaxRecords.map(record => ({
-        ID: uuidv4(),
-        header_Id: record.header_Id_InvoiceIntegrationInfo,
-        inboundDeliveryNote: record.InboundDeliveryNote
-    }));
-
-    if (aNewRecords.length > 0) {
-        const lineQuery = INSERT.into('SelectedDeliveryNotes')
-            .entries(aNewRecords);
-
-        await executeQuery(tx, lineQuery);
-    }
-}
-
-// Insert records into SelectedServiceEntrySheets if any
-async function insertSelectedServiceEntrySheets(invoice, aNewSupplierInvoiceWhldgTaxRecords, tx) {
-    var aNewRecords = [];
-    aNewRecords = aNewSupplierInvoiceWhldgTaxRecords.map(record => ({
-        ID: uuidv4(),
-        header_Id: record.header_Id_InvoiceIntegrationInfo,
-        serviceEntrySheet: record.ServiceEntrySheet,
-        serviceEntrySheetItem: record.ServiceEntrySheetItem
-    }));
-
-    if (aNewRecords.length > 0) {
-        const lineQuery = INSERT.into('SelectedServiceEntrySheets')
-            .entries(aNewRecords);
-
-        await executeQuery(tx, lineQuery);
-    }
-}
 
 // Insert line details for PO and GL Account records if any
 async function insertLineDetails(invoice, aNewPoLineDetails, aNewGlAccountLineDetails, tx) {
     await insertPOLineDetails(aNewPoLineDetails, invoice.header_Id_InvoiceIntegrationInfo, tx);
     await insertGLAccountLineDetails(aNewGlAccountLineDetails, invoice.header_Id_InvoiceIntegrationInfo, tx);
-}
-
-// Delete records for SupplierInvoiceWhldgTax if any
-async function deleteSelectedPurchaseOrdersRecords(RemovedSelectedPurchaseOrdersRecords, tx) {
-    let aRemovedSelectedPurchaseOrdersRecords_Ids = RemovedSelectedPurchaseOrdersRecords.map(record => record.selectedPurchaseOrders_Id);
-    if (aRemovedSelectedPurchaseOrdersRecords_Ids.length > 0) {
-        var lineQuery = DELETE.from('SelectedPurchaseOrders')
-            .where({ ID: { in: aRemovedSelectedPurchaseOrdersRecords_Ids } });
-
-        await executeQuery(tx, lineQuery);
-    }
-}
-
-// Delete records for SupplierInvoiceWhldgTax if any
-async function deleteSelectedDeliveryNotesRecords(RemovedSelectedDeliveryNotesRecords, tx) {
-    let aRemovedSelectedDeliveryNotesRecords_Ids = RemovedSelectedDeliveryNotesRecords.map(record => record.selectedDeliveryNotes_Id);
-    if (aRemovedSelectedDeliveryNotesRecords_Ids.length > 0) {
-        var lineQuery = DELETE.from('SelectedDeliveryNotes')
-            .where({ ID: { in: aRemovedSelectedDeliveryNotesRecords_Ids } });
-
-        await executeQuery(tx, lineQuery);
-    }
-}
-
-// Delete records for SupplierInvoiceWhldgTax if any
-async function deleteSelectedServiceEntrySheetsRecords(RemovedSelectedServiceEntrySheetsRecords, tx) {
-    let aRemovedSelectedServiceEntrySheetsRecords_Ids = RemovedSelectedServiceEntrySheetsRecords.map(record => record.selectedServiceEntrySheets_Id);
-    if (aRemovedSelectedServiceEntrySheetsRecords_Ids.length > 0) {
-        var lineQuery = DELETE.from('SelectedServiceEntrySheets')
-            .where({ ID: { in: aRemovedSelectedServiceEntrySheetsRecords_Ids } });
-
-        await executeQuery(tx, lineQuery);
-    }
 }
 
 // Delete records for SupplierInvoiceWhldgTax if any

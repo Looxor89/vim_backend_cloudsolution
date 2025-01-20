@@ -133,7 +133,6 @@ context vim {
         accountingDocumentType                          : String(2);
         unplannedDeliveryCost                           : Decimal(14, 3);
         documentHeaderText                              : String(25);
-        // supplyingCountry              : String;
         assignmentReference                             : String(18);
         isEUTriangularDeal                              : Boolean;
         taxDeterminationDate                            : Date;
@@ -141,37 +140,10 @@ context vim {
         taxFulfillmentDate                              : Date;
         to_SupplierInvoiceWhldgTax                      : Association to many SupplierInvoiceWhldgTax
                                                             on to_SupplierInvoiceWhldgTax.header_Id = $self.ID;
-        refDocumentCategory                             : String(28);
-        to_SelectedPurchaseOrders_PurchaseOrder         : Association to many SelectedPurchaseOrders
-                                                            on to_SelectedPurchaseOrders_PurchaseOrder.header_Id = $self.ID;
-        to_SelectedDeliveryNotes_InboundDeliveryNote    : Association to many SelectedDeliveryNotes
-                                                            on to_SelectedDeliveryNotes_InboundDeliveryNote.header_Id = $self.ID;
-        to_SelectedServiceEntrySheets_ServiceEntrySheet : Association to many SelectedServiceEntrySheets
-                                                            on to_SelectedServiceEntrySheets_ServiceEntrySheet.header_Id = $self.ID;
         bodyPOIntegrationInfo                           : Association to many POIntegrationInfoBody
                                                             on bodyPOIntegrationInfo.header_Id = $self.ID;
         bodyGLAccountIntegrationInfo                    : Association to many GLAccountIntegrationInfoBody
                                                             on bodyGLAccountIntegrationInfo.header_Id = $self.ID;
-  }
-
-  entity SelectedPurchaseOrders {
-    key ID                : UUID;
-        header_Id         : UUID;
-        purchaseOrder     : String(10);
-        purchaseOrderItem : String(5);
-  }
-
-  entity SelectedDeliveryNotes {
-    key ID                  : UUID;
-        header_Id           : UUID;
-        inboundDeliveryNote : String(16);
-  }
-
-  entity SelectedServiceEntrySheets {
-    key ID                    : UUID;
-        header_Id             : UUID;
-        serviceEntrySheet     : String(10);
-        serviceEntrySheetItem : String(5);
   }
 
   entity SupplierInvoiceWhldgTax {

@@ -14,9 +14,6 @@ service CatalogService {
     // Integration data for invoice
     entity ERROR_LOG                    as projection on vim.ERROR_LOG;
     entity InvoiceIntegrationInfo       as projection on vim.InvoiceIntegrationInfo;
-    entity SelectedPurchaseOrders       as projection on vim.SelectedPurchaseOrders;
-    entity SelectedDeliveryNotes        as projection on vim.SelectedDeliveryNotes;
-    entity SelectedServiceEntrySheets   as projection on vim.SelectedServiceEntrySheets;
     entity SupplierInvoiceWhldgTax      as projection on vim.SupplierInvoiceWhldgTax;
     entity POIntegrationInfoBody        as projection on vim.POIntegrationInfoBody;
     entity GLAccountIntegrationInfoBody as projection on vim.GLAccountIntegrationInfoBody;
@@ -106,9 +103,6 @@ service CatalogService {
     type savePayload {
         PackageId                                : String;
         Invoice                                  : InvoiceRecord;
-        RemovedSelectedPurchaseOrdersRecords     : array of RemovedSelectedPurchaseOrdersRecords;
-        RemovedSelectedDeliveryNotesRecords      : array of RemovedSelectedDeliveryNotesRecords;
-        RemovedSelectedServiceEntrySheetsRecords : array of RemovedSelectedServiceEntrySheetsRecords;
         RemovedSupplierInvoiceWhldgTaxRecords    : array of RemovedSupplierInvoiceWhldgTaxRecords;
         RemovedPoLineDetails                     : array of RemovedPoLineDetails;
         RemovedGlAccountLineDetails              : array of RemovedGlAccountLineDetails;
@@ -158,9 +152,6 @@ service CatalogService {
         Allegati                         : array of Attachment;
         GLAccountRecords                 : array of GLAccountRecord;
         PORecords                        : array of PORecord;
-        To_SelectedDeliveryNotes         : array of SelectedDeliveryNote;
-        To_SelectedPurchaseOrders        : array of SelectedPurchaseOrder;
-        To_SelectedServiceEntrySheets    : array of SelectedServiceEntrySheet;
         To_SupplierInvoiceWhldgTax       : array of SuppInvoiceWhldgTax;
     };
 
@@ -251,26 +242,6 @@ service CatalogService {
         attachment            : LargeString;
     };
 
-    type SelectedPurchaseOrder {
-        selectedPurchaseOrders_Id        : String;
-        header_Id_InvoiceIntegrationInfo : String;
-        PurchaseOrder                    : String;
-        PurchaseOrderItem                : String;
-    };
-
-    type SelectedDeliveryNote {
-        selectedDeliveryNotes_Id         : String;
-        header_Id_InvoiceIntegrationInfo : String;
-        InboundDeliveryNote              : String;
-    };
-
-    type SelectedServiceEntrySheet {
-        selectedServiceEntrySheets_Id    : String;
-        header_Id_InvoiceIntegrationInfo : String;
-        serviceEntrySheet                : String;
-        serviceEntrySheetItem            : String;
-    };
-
     type SuppInvoiceWhldgTax {
         supplierInvoiceWhldgTax_Id       : String;
         header_Id_InvoiceIntegrationInfo : String;
@@ -279,18 +250,6 @@ service CatalogService {
         WithholdingTaxCode               : String;
         WithholdingTaxBaseAmount         : Decimal;
         WhldgTaxBaseIsEnteredManually    : Boolean;
-    };
-
-    type RemovedSelectedPurchaseOrdersRecords {
-        selectedPurchaseOrders_Id : String;
-    };
-
-    type RemovedSelectedDeliveryNotesRecords {
-        selectedDeliveryNotes_Id : String;
-    };
-
-    type RemovedSelectedServiceEntrySheetsRecords {
-        selectedServiceEntrySheets_Id : String;
     };
 
     type RemovedSupplierInvoiceWhldgTaxRecords {
@@ -310,9 +269,6 @@ service CatalogService {
     type submitPayload {
         PackageId                                : String;
         Invoice                                  : InvoiceRecord;
-        RemovedSelectedPurchaseOrdersRecords     : array of RemovedSelectedPurchaseOrdersRecords;
-        RemovedSelectedDeliveryNotesRecords      : array of RemovedSelectedDeliveryNotesRecords;
-        RemovedSelectedServiceEntrySheetsRecords : array of RemovedSelectedServiceEntrySheetsRecords;
         RemovedSupplierInvoiceWhldgTaxRecords    : array of RemovedSupplierInvoiceWhldgTaxRecords;
         RemovedPoLineDetails                     : array of RemovedPoLineDetails;
         RemovedGlAccountLineDetails              : array of RemovedGlAccountLineDetails;
