@@ -74,13 +74,36 @@ function formatDateToString(dDate) {
  * @returns Date in yyyy-MM-dd HH:mm:ss format
  */
 function formatDateTimeToString(sDateTime) {
-    if(!sDateTime) return null;
-    let aDateTime = sDateTime.split("T");
-    let sDate = aDateTime[0],
-    sUnformattedTime = aDateTime[1];
-    let aTime = sUnformattedTime.split("."),
-    sTime = aTime[0];
-    return sDate+" "+sTime;
+    // Regular expression to extract milliseconds from CreationDate
+    const dateRegex = /\/Date\((\d+)\)\//;
+    const match = dateRegex.exec(sDateTime);
+    if (match) {
+        let dDate = new Date(parseInt(match[1], 10)); // Update with milliseconds as a number
+        let sYear = dDate.getFullYear(),
+        sMonth = dDate.getMonth() + 1,
+        sDay = dDate.getDate();
+        return sYear+"-"+sMonth+"-"+sDay;
+        
+    }
+    return sDate;
+}
+
+/**
+ * Format Time like "PT08H28M22S" to "08:28:22"
+ * @param {Time} sTime 
+ * @returns TimeHH:mm:ss format
+ */
+function formatTimeToString(sTime) {
+    const regex = /^PT(\d{2})H(\d{2})M(\d{2})S$/;
+    const match = regex.exec(sTime);
+
+    if (match) {
+        const hours = match[1];
+        const minutes = match[2];
+        const seconds = match[3];
+        return `${hours}:${minutes}:${seconds}`;
+    } 
+    return sTime;
 }
 
 module.exports = {
@@ -89,5 +112,6 @@ module.exports = {
     getDateWithMillisecondsWithoutParam,
     formatDateFromString,
     formatDateToString,
-    formatDateTimeToString
+    formatDateTimeToString,
+    formatTimeToString
 }
