@@ -1,5 +1,4 @@
 const { parseMultipleParamsForDocPack } = require('./utils/utilities');
-const { checkReadAllData, checkReadData } = require('./utils/scopes');
 const transcoder = require('./utils/transcoders');
 
 "use strict";
@@ -12,11 +11,6 @@ module.exports = async (request, tx) => {
     // Extract pagination parameters ($top and $skip)
     const top = parseInt(params.$top) || 10;   // Default value for $top is 10
     const skip = parseInt(params.$skip) || 0;  // Default value for $skip is 0
-
-    // If the user has permission to read specific data, set 'ASSIGNEDTO' to the user's ID.
-    if (checkReadData(request.req)) {
-        params.ASSIGNEDTO = request.req.authInfo.getLogonName();
-    }
 
     console.log("REQUEST: ", request.req);
     console.log('params ', params);

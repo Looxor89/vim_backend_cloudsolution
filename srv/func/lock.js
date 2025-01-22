@@ -1,4 +1,3 @@
-const { checkWriteScope, checkAdminScope } = require('./utils/scopes');
 const schema = require('./utils/validator');
 
 "use strict";
@@ -88,9 +87,6 @@ module.exports = async (request, tx) => {
         }
 
         LockUser = LockUser == null ? request.req.authInfo.getLogonName() : LockUser;
-        if (checkAdminScope(request.req)) {
-            sMode = 'ADMIN_SET';
-        }
 
         try {
             // Get locked info from dock_pack
@@ -111,24 +107,7 @@ module.exports = async (request, tx) => {
             result.locked = data[0].LockedBy !== null ? true : false;
             result.lockedBy = data[0].LockedBy !== null ? data[0].LockedBy : null;
             result.lockedAt = data[0].LockedAt !== null ? data[0].LockedAt : null;
-
-            // Mode evaluation
-            switch (sMode) {
-                case 'SET':
-                    // Allow set lock if lockedBy is null
-                    if (result.lockedBy) {
-                        return setLock(PackageId, new Date(), LockUser);
-                    }
-                    break;
-                case 'ADMIN_SET':
-                    return setLock(PackageId, new Date(), LockUser);
-                default:
-                    await tx.rollback();
-                    return {
-                        status: 500,
-                        message: 'Internal server error'
-                    };
-            }
+            return setLock(PackageId, new Date(), LockUser);
 
         } catch (err) {
             // Log any errors that occur during the query execution.

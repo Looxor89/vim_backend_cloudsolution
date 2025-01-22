@@ -1,4 +1,3 @@
-const { checkSaveScope } = require('./utils/scopes');
 const schema = require('./utils/validator');
 const { v4: uuidv4 } = require('uuid');
 

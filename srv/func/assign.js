@@ -1,4 +1,3 @@
-const { checkAssignScope } = require('./utils/scopes');
 const schema = require('./utils/validator');
 const moment = require('moment');
 

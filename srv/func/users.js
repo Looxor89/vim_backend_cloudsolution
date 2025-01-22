@@ -1,5 +1,4 @@
 const { parseMultipleParamsForDocPack } = require('./utils/utilities');
-const { checkReadAllData, checkReadData } = require('./utils/scopes');
 
 "use strict";
 

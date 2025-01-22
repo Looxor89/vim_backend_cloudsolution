@@ -1,4 +1,3 @@
-const { checkReadScope } = require('./utils/scopes');
 
 "use strict";
 

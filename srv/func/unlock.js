@@ -1,4 +1,3 @@
-const { checkWriteScope, checkAdminScope } = require('./utils/scopes');
 const schema = require('./utils/validator');
 
 "use strict";
@@ -63,9 +62,6 @@ module.exports = async (request, tx) => {
         }
 
         LockUser = LockUser == null ? request.req.authInfo.getLogonName() : LockUser;
-        if (checkAdminScope(request.req)) {
-            sMode = 'ADMIN_REMOVE';
-        }
 
         try {
             // Get locked info from dock_pack
@@ -86,24 +82,7 @@ module.exports = async (request, tx) => {
             result.locked = data[0].LockedBy !== null ? true : false;
             result.lockedBy = data[0].LockedBy !== null ? data[0].LockedBy : null;
             result.lockedAt = data[0].LockedAt !== null ? data[0].LockedAt : null;
-
-            // Mode evaluation
-            switch (sMode) {
-                case 'REMOVE':
-                    // Allow remove lock if lockedBy is same user
-                    if (result.lockedBy && result.lockedBy === LockUser) {
-                        return removeLock(PackageId);
-                    }
-                    break;
-                case 'ADMIN_REMOVE':
-                    return removeLock(PackageId);
-                default:
-                    await tx.rollback();
-                    return {
-                        status: 500,
-                        message: 'Internal server error'
-                    };
-            }
+            return removeLock(PackageId);
 
         } catch (err) {
             // Log any errors that occur during the query execution.

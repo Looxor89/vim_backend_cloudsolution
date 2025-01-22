@@ -1,5 +1,3 @@
-const { checkReadScope } = require('./utils/scopes');
-const cds = require('@sap/cds');
 
 "use strict";
 

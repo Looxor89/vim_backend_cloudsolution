@@ -1,7 +1,5 @@
 const { buildPayloadForSubmitInvoice, buildPayloadForSubmitAttachment } = require('./utils/payloadBuilder');
-const { checkSubmitScope } = require('./utils/scopes');
 const cds = require('@sap/cds');
-const schema = require('./utils/validator');
 const mimeTypes = require('../resources/mimeTypes.json');
 
 "use strict";

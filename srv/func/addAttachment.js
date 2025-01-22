@@ -1,5 +1,4 @@
 const { buildPayloadForSubmitAttachment } = require('./utils/payloadBuilder');
-const { checkReadScope } = require('./utils/scopes');
 const { v4: uuidv4 } = require('uuid');
 const schema = require('./utils/validator');
 

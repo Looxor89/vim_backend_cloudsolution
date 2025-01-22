@@ -1,4 +1,3 @@
-const { checkReadScope } = require('./utils/scopes');
 const { formatDateTimeToString } = require('./utils/utilities');
 
 "use strict";

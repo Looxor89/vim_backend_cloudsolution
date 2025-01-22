@@ -1,4 +1,3 @@
-const { checkReadAllData, checkReadData } = require('./utils/scopes');
 const currency = require('../resources/currency.json');
 
 "use strict";

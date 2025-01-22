@@ -1,4 +1,3 @@
-const { checkWriteScope } = require('./utils/scopes');
 const schema = require('./utils/validator');
 
 "use strict";

@@ -1,4 +1,3 @@
-const { checkReadScope } = require('./utils/scopes');
 const transcoder = require('./utils/transcoders');
 
 "use strict";
