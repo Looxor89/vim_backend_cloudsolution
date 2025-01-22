@@ -104,46 +104,51 @@ context vim {
   }
 
   entity InvoiceIntegrationInfo {
-    key ID                                              : UUID;
-        navigation_to                                   : Association to one DOC_PACK;
-        transaction                                     : String(28);
-        companyCode                                     : String(4);
-        supplierPostingLineItemText                     : String(50);
-        taxIsCalculatedAutomatically                    : Boolean;
-        invoiceReceiptDate                              : Date;
-        postingDate                                     : Date;
-        invoicingParty                                  : String(10);
-        dueCalculationBaseDate                          : Date;
-        manualCashDiscount                              : Decimal(14, 3);
-        paymentTerms                                    : String(4);
-        cashDiscount1Days                               : Integer;
-        cashDiscount1Percent                            : Decimal(5, 3);
-        cashDiscount2Days                               : Integer;
-        cashDiscount2Percent                            : Decimal(4, 3);
-        fixedCashDiscount                               : String(1);
-        netPaymentDays                                  : Integer;
-        bPBankAccountInternalID                         : String(4);
-        invoiceReference                                : String(10);
-        invoiceReferenceFiscalYear                      : String(4);
-        houseBank                                       : String(5);
-        houseBankAccount                                : String(5);
-        paymentBlockingReason                           : String(1);
-        paymentReason                                   : String(4);
-        paymentMethod                                   : String(1);
-        accountingDocumentType                          : String(2);
-        unplannedDeliveryCost                           : Decimal(14, 3);
-        documentHeaderText                              : String(25);
-        assignmentReference                             : String(18);
-        isEUTriangularDeal                              : Boolean;
-        taxDeterminationDate                            : Date;
-        taxReportingDate                                : Date;
-        taxFulfillmentDate                              : Date;
-        to_SupplierInvoiceWhldgTax                      : Association to many SupplierInvoiceWhldgTax
-                                                            on to_SupplierInvoiceWhldgTax.header_Id = $self.ID;
-        bodyPOIntegrationInfo                           : Association to many POIntegrationInfoBody
-                                                            on bodyPOIntegrationInfo.header_Id = $self.ID;
-        bodyGLAccountIntegrationInfo                    : Association to many GLAccountIntegrationInfoBody
-                                                            on bodyGLAccountIntegrationInfo.header_Id = $self.ID;
+    key ID                           : UUID;
+        navigation_to                : Association to one DOC_PACK;
+        transaction                  : String enum {
+          keyTransaction1 = 'Invoice';
+          keyTransaction2 = 'Creditmemo';
+          keyTransaction3 = 'Subsequentdebit';
+          keyTransaction4 = 'Subsequentcredit';
+        } default 'Invoice';
+        companyCode                  : String(4);
+        supplierPostingLineItemText  : String(50);
+        taxIsCalculatedAutomatically : Boolean;
+        invoiceReceiptDate           : Date;
+        postingDate                  : Date;
+        invoicingParty               : String(10);
+        dueCalculationBaseDate       : Date;
+        manualCashDiscount           : Decimal(14, 3);
+        paymentTerms                 : String(4);
+        cashDiscount1Days            : Integer;
+        cashDiscount1Percent         : Decimal(5, 3);
+        cashDiscount2Days            : Integer;
+        cashDiscount2Percent         : Decimal(4, 3);
+        fixedCashDiscount            : String(1);
+        netPaymentDays               : Integer;
+        bPBankAccountInternalID      : String(4);
+        invoiceReference             : String(10);
+        invoiceReferenceFiscalYear   : String(4);
+        houseBank                    : String(5);
+        houseBankAccount             : String(5);
+        paymentBlockingReason        : String(1);
+        paymentReason                : String(4);
+        paymentMethod                : String(1);
+        accountingDocumentType       : String(2);
+        unplannedDeliveryCost        : Decimal(14, 3);
+        documentHeaderText           : String(25);
+        assignmentReference          : String(18);
+        isEUTriangularDeal           : Boolean;
+        taxDeterminationDate         : Date;
+        taxReportingDate             : Date;
+        taxFulfillmentDate           : Date;
+        to_SupplierInvoiceWhldgTax   : Association to many SupplierInvoiceWhldgTax
+                                         on to_SupplierInvoiceWhldgTax.header_Id = $self.ID;
+        bodyPOIntegrationInfo        : Association to many POIntegrationInfoBody
+                                         on bodyPOIntegrationInfo.header_Id = $self.ID;
+        bodyGLAccountIntegrationInfo : Association to many GLAccountIntegrationInfoBody
+                                         on bodyGLAccountIntegrationInfo.header_Id = $self.ID;
   }
 
   entity SupplierInvoiceWhldgTax {
@@ -163,7 +168,10 @@ context vim {
         purchaseOrder               : String(10);
         purchaseOrderItem           : String(5);
         plant                       : String(4);
-        isSubsequentDebitCredit     : String(1);
+        isSubsequentDebitCredit     : String enum {
+          Debit  = 'S';
+          Credit = 'H';
+        } default 'S';
         // documentCurrency            : String;
         // purchaseOrderPriceUnit      : String;
         purchaseOrderQuantityUnit   : String(3);
@@ -525,6 +533,14 @@ context vim {
         dataDDT                : Date;
         riferimentoNumeroLinea : Association to many RiferimentoNumeroLineaDDT
                                    on riferimentoNumeroLinea.datiDDT_Id = $self.ID;
+  }
+
+  entity Transaction {
+    key transaction : String;
+  }
+
+  entity SubsequentDebitCredit {
+    key subsequentValue : String;
   }
 
 }

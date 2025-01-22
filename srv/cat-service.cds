@@ -35,6 +35,8 @@ service CatalogService {
     entity Allegati                     as projection on vim.Allegati;
     entity Causale                      as projection on vim.Causale;
     entity DatiDDT                      as projection on vim.DatiDDT;
+    entity Transaction                  as projection on vim.Transaction;
+    entity SubsequentDebitCredit        as projection on vim.SubsequentDebitCredit;
     // functions and actions
     function extended()                                             returns array of String;
     function capabilities()                                         returns array of String;
@@ -101,11 +103,11 @@ service CatalogService {
     };
 
     type savePayload {
-        PackageId                                : String;
-        Invoice                                  : InvoiceRecord;
-        RemovedSupplierInvoiceWhldgTaxRecords    : array of RemovedSupplierInvoiceWhldgTaxRecords;
-        RemovedPoLineDetails                     : array of RemovedPoLineDetails;
-        RemovedGlAccountLineDetails              : array of RemovedGlAccountLineDetails;
+        PackageId                             : String;
+        Invoice                               : InvoiceRecord;
+        RemovedSupplierInvoiceWhldgTaxRecords : array of RemovedSupplierInvoiceWhldgTaxRecords;
+        RemovedPoLineDetails                  : array of RemovedPoLineDetails;
+        RemovedGlAccountLineDetails           : array of RemovedGlAccountLineDetails;
     };
 
     type InvoiceRecord {
@@ -267,11 +269,11 @@ service CatalogService {
     };
 
     type submitPayload {
-        PackageId                                : String;
-        Invoice                                  : InvoiceRecord;
-        RemovedSupplierInvoiceWhldgTaxRecords    : array of RemovedSupplierInvoiceWhldgTaxRecords;
-        RemovedPoLineDetails                     : array of RemovedPoLineDetails;
-        RemovedGlAccountLineDetails              : array of RemovedGlAccountLineDetails;
+        PackageId                             : String;
+        Invoice                               : InvoiceRecord;
+        RemovedSupplierInvoiceWhldgTaxRecords : array of RemovedSupplierInvoiceWhldgTaxRecords;
+        RemovedPoLineDetails                  : array of RemovedPoLineDetails;
+        RemovedGlAccountLineDetails           : array of RemovedGlAccountLineDetails;
     };
 
     type massiveSubmitPayload {
