@@ -42,7 +42,7 @@
         "csrf": true,
         "csrfInBatch": true,
         "credentials": {
-          "destination": "S4_HANA_TEST"
+          "destination": "S4_HANA"
         }
       },
       "odataBackEnd": {
