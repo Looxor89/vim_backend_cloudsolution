@@ -74,6 +74,21 @@ function formatDateToString(dDate) {
  * @returns Date in yyyy-MM-dd HH:mm:ss format
  */
 function formatDateTimeToString(sDateTime) {
+    if(!sDateTime) return null;
+    let aDateTime = sDateTime.split("T");
+    let sDate = aDateTime[0],
+    sUnformattedTime = aDateTime[1];
+    let aTime = sUnformattedTime.split("."),
+    sTime = aTime[0];
+    return sDate+" "+sTime;
+}
+
+/**
+ * Format DateTime like "/Date(1243567890)/" to "2025-01-03 12:22:31"
+ * @param {Date} sDateTime 
+ * @returns Date in yyyy-MM-dd HH:mm:ss format
+ */
+function formatDateFromFunctionToString(sDateTime) {
     // Regular expression to extract milliseconds from CreationDate
     const dateRegex = /\/Date\((\d+)\)\//;
     const match = dateRegex.exec(sDateTime);
@@ -112,6 +127,7 @@ module.exports = {
     getDateWithMillisecondsWithoutParam,
     formatDateFromString,
     formatDateToString,
+    formatDateFromFunctionToString,
     formatDateTimeToString,
     formatTimeToString
 }
