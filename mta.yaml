@@ -10,7 +10,6 @@ modules:
       - name: VIM_backend-db
       - name: VIM_backend-destination-service
       - name: uaa_VIM_backend
-      - name: VIM_backend_applog
       - name: VIM_backend_autoscaler
         parameters:
           path: ./autoscaler.json
@@ -103,12 +102,6 @@ resources:
       service: destination
       service-name: VIM_backend-destination-service
       service-plan: lite
-  - name: VIM_backend_applog
-    parameters:
-      service-name: VIM_backend_applog
-      service: application-logs
-      service-plan: lite
-    type: org.cloudfoundry.managed-service
   - name: VIM_backend_autoscaler
     type: org.cloudfoundry.managed-service
     parameters:
