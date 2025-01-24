@@ -534,15 +534,6 @@ context vim {
         riferimentoNumeroLinea : Association to many RiferimentoNumeroLineaDDT
                                    on riferimentoNumeroLinea.datiDDT_Id = $self.ID;
   }
-
-  entity Transaction {
-    key transaction : String;
-  }
-
-  entity SubsequentDebitCredit {
-    key subsequentValue : String;
-  }
-
 }
 
 /**

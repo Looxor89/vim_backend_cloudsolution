@@ -35,8 +35,6 @@ service CatalogService {
     entity Allegati                     as projection on vim.Allegati;
     entity Causale                      as projection on vim.Causale;
     entity DatiDDT                      as projection on vim.DatiDDT;
-    entity Transaction                  as projection on vim.Transaction;
-    entity SubsequentDebitCredit        as projection on vim.SubsequentDebitCredit;
     // functions and actions
     function extended()                                             returns array of String;
     function capabilities()                                         returns array of String;
@@ -62,6 +60,8 @@ service CatalogService {
     function getServiceEntrySheetRef()                              returns array of String;
     function getServiceEntrySheetItemRef()                          returns array of String;
     function getTaxCodes()                                          returns array of String;
+    function getTransactionData()                                   returns array of String;
+    function getDebitCreditCodes()                                  returns array of String;
     function getCostCenters()                                       returns array of String;
     function getWithholdingTax()                                    returns array of String;
     function getWithholdingTaxesType()                              returns array of String;

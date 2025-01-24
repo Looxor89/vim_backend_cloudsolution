@@ -412,6 +412,16 @@ module.exports = function (srv) {
         await performRequest(srv, request, './func/getTaxCodes');
     });
 
+
+    srv.on('getTransactionData', '*', async request => {
+        await performRequest(srv, request, './func/getTransactionData');
+    });
+
+
+    srv.on('getDebitCreditCodes', '*', async request => {
+        await performRequest(srv, request, './func/getDebitCreditCodes');
+    });
+
     /**
      * Function for handling add doc requests based on role scopes.
      * 
