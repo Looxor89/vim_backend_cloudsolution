@@ -75,7 +75,7 @@ module.exports = async (request, tx) => {
     let deleteQuery = DELETE.from('ERROR_LOG')
         .where(`PackageId = '${PackageId}'`);
 
-    await tx.run(tx, deleteQuery);
+    await tx.run(deleteQuery);
 
     // Return the status code and message.
     return {
