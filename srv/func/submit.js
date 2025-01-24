@@ -32,7 +32,7 @@ module.exports = async (request, tx) => {
         let AttachmentExtension = oAttachment.formatoAttachment,
             Attachment = oAttachment.attachment,
             AttachmentName = oAttachment.nomeAttachment,
-            AttachmentType = mimeTypes(oAttachment.formatoAttachment.toLowerCase()),
+            AttachmentType = mimeTypes[oAttachment.formatoAttachment.toLowerCase()],
             oPayload = buildPayloadForSubmitAttachment(AttachmentExtension, Attachment, AttachmentName, AttachmentType, LinkedSapObjectKey);
 
         // Perform POST request
@@ -75,7 +75,7 @@ module.exports = async (request, tx) => {
     let deleteQuery = DELETE.from('ERROR_LOG')
         .where(`PackageId = '${PackageId}'`);
 
-    await executeQuery(tx, deleteQuery);
+    await tx.run(tx, deleteQuery);
 
     // Return the status code and message.
     return {
