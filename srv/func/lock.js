@@ -86,7 +86,7 @@ module.exports = async (request, tx) => {
             };
         }
 
-        LockUser = LockUser == null ? request.req.authInfo.getLogonName() : LockUser;
+        LockUser = LockUser == null || LockUser == '' ? request.req.authInfo.getLogonName() : LockUser;
 
         try {
             // Get locked info from dock_pack
@@ -105,7 +105,7 @@ module.exports = async (request, tx) => {
                 };
             }
             result.locked = data[0].LockedBy !== null ? true : false;
-            result.lockedBy = data[0].LockedBy !== null ? data[0].LockedBy : null;
+            result.lockedBy = data[0].LockedBy !== null ? data[0].LockedBy : request.req.authInfo.getLogonName();
             result.lockedAt = data[0].LockedAt !== null ? data[0].LockedAt : null;
             return setLock(PackageId, new Date(), LockUser);
 
