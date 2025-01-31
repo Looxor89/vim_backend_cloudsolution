@@ -324,7 +324,7 @@ const schema = {
      */
     action_addAttachment: Joi.object().min(1).keys({
         PackageId: Joi.string().max(36).required(),
-        BodyId: Joi.string().max(36).required(),
+        Header_Id_ItalianInvoiceTrace: Joi.string().max(36).required(),
         AttachmentName: Joi.string().max(60).required(),
         AttachmentType: Joi.string().required(),
         AttachmentExtension: Joi.string().max(10).required(),

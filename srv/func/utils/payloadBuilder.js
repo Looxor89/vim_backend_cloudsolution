@@ -153,20 +153,14 @@ function buildPayloadForSubmitInvoice(jsonInvoice) {
 }
 
 function buildPayloadForSubmitAttachment(AttachmentExtension, Attachment, AttachmentName, AttachmentType, LinkedSapObjectKey) {
+    const buffer = Buffer.from(Attachment, "base64");  // Decode Base64 into binary
     return {
         Headers: {
             'slug': AttachmentName,
             'BusinessObjectTypeName': 'BKPF',
             'LinkedSAPObjectKey': LinkedSapObjectKey
         },
-        Body: {
-            "DocumentInfoRecordDocType": AttachmentExtension,
-            "Content": Attachment,
-            "Content-Disposition": "form-data",
-            "name": "myFileUpload[]",
-            "filename": AttachmentName,
-            "Content-Type": AttachmentType
-        }
+        Body: buffer
     }
 }
 

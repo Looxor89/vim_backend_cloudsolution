@@ -299,7 +299,7 @@ service CatalogService {
         CompanyCode         : String;
         ReferenceDocument   : String;
         FiscalYear          : String;
-        BodyId              : String;
+        Header_Id_ItalianInvoiceTrace              : String;
         AttachmentName      : String;
         AttachmentType      : String;
         AttachmentExtension : String;

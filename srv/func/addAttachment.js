@@ -16,7 +16,7 @@ module.exports = async (request, tx) => {
             CompanyCode,
             ReferenceDocument,
             FiscalYear,
-            BodyId,
+            Header_Id_ItalianInvoiceTrace,
             AttachmentName,
             AttachmentType,
             AttachmentExtension,
@@ -29,8 +29,15 @@ module.exports = async (request, tx) => {
         try {
             const serviceS4_HANA = await cds.connect.to(process.env['Destination_OData_S4HANA']);
             const serviceRequestS4_HANA = serviceS4_HANA.tx(request);
+            // Get Body Id 
+            let sBodyIdQuery = SELECT.one(['ID'])
+                .from('FatturaElettronicaBody')
+                .where({ header_Id: Header_Id_ItalianInvoiceTrace });
+            let oBodyIdQueryResponse = await tx.run(sBodyIdQuery),
+            sBodyId = oBodyIdQueryResponse?.ID ? oBodyIdQueryResponse.ID : null;
+
             // Defining insert query for doc_list table
-            insertAllegatiQuery = INSERT.into('Allegati', { 'ID': uuidv4(), 'body_Id': BodyId, 'nomeAttachment': AttachmentName, 'algoritmoCompressione': null, 'formatoAttachment': AttachmentExtension, 'descrizioneAttachment': null, 'attachment': Attachment });
+            insertAllegatiQuery = INSERT.into('Allegati', { 'ID': uuidv4(), 'body_Id': sBodyId, 'nomeAttachment': AttachmentName, 'algoritmoCompressione': null, 'formatoAttachment': AttachmentExtension, 'descrizioneAttachment': null, 'attachment': Attachment });
             // Execute the query and retrieve the data from the database.
             data = await tx.run(insertAllegatiQuery);
 
@@ -45,7 +52,7 @@ module.exports = async (request, tx) => {
 
             // Defining update dock_pack query
             updateDocPackQuery = UPDATE('DOC_PACK')
-                .set(`ModifiedBy = '${updatedBy}', ModifiedAt = '${updatedAt}'`)
+                .set(`modifiedBy = '${updatedBy}', modifiedAt = '${updatedAt}'`)
                 .where(`PackageId = '${PackageId}'`);
             // Execute the query and retrieve the data from the database.
             data = await tx.run(updateDocPackQuery);
@@ -64,10 +71,9 @@ module.exports = async (request, tx) => {
             let oResult = await serviceRequestS4_HANA.get(process.env['Path_API_GLACCOUNTLINEITEM'] + `?$select=AccountingDocument&$format=json&$filter=ReferenceDocument eq '${ReferenceDocument}'&$top=1`),
                 sAccountingDocument = oResult[0].AccountingDocument,
                 LinkedSapObjectKey = CompanyCode + sAccountingDocument.padStart(10, "0") + FiscalYear;
+                
             let oPayload = buildPayloadForSubmitAttachment(AttachmentExtension, Attachment, AttachmentName, AttachmentType, LinkedSapObjectKey);
-
-            // Perform POST request
-            await serviceRequestS4_HANA.post(
+            const attachementRequestResult = await serviceRequestS4_HANA.post(
                 process.env['Path_API_CV_ATTACHMENT_SRV'],
                 oPayload.Body,
                 oPayload.Headers
@@ -96,7 +102,7 @@ module.exports = async (request, tx) => {
         return {
             code: '422',
             message: 'Error',
-            target: 'Invalid POST Payload',
+            target: 'Invalid POST Payload: ' + error,
             status: 422
         };
 
