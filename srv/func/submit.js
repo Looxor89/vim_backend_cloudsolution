@@ -45,10 +45,22 @@ module.exports = async (request, tx) => {
 
     // Defining update dock_pack query
     let updateDocPackQuery = UPDATE('DOC_PACK')
-        .set(`modifiedBy = '${modifiedBy}', modifiedAt = '${modifiedAt}', Status = 'POSTED', ReferenceDocument = '${sReferenceDocument}', FiscalYear = '${sFiscalYear}'`)
+        .set(`modifiedBy = '${modifiedBy}', modifiedAt = '${modifiedAt}', Status = 'POSTED'`)
         .where(`PackageId = '${PackageId}'`);
     // Execute the query and retrieve the data from the database.
     data = await tx.run(updateDocPackQuery);
+
+    // Return the result with status code, number of affected rows as count, and message.
+    if (data == null || data == undefined) {
+        throw new Error('Update failed');
+    }
+
+    // Defining update InvoiceIntegrationInfo query
+    let updateInvoiceIntegrationInfoQuery = UPDATE('InvoiceIntegrationInfo')
+        .set(`invoiceReference = '${sReferenceDocument}', invoiceReferenceFiscalYear = '${sFiscalYear}'`)
+        .where(`ID = '${Invoice.header_Id_InvoiceIntegrationInfo }'`);
+    // Execute the query and retrieve the data from the database.
+    data = await tx.run(updateInvoiceIntegrationInfoQuery);
 
     // Return the result with status code, number of affected rows as count, and message.
     if (data == null || data == undefined) {
@@ -75,7 +87,16 @@ module.exports = async (request, tx) => {
     let deleteQuery = DELETE.from('ERROR_LOG')
         .where(`PackageId = '${PackageId}'`);
 
-    await tx.run(deleteQuery);
+    // if there aren't records the execution of delete query will lead to 404 Not Found error
+    try {
+        await tx.run(deleteQuery);
+    } catch (error) {
+        if (error.code !== 404) {
+            throw error; // Rethrow if it's a different error
+        }
+        console.log("No records found to delete, skipping...");
+    }
+    
 
     // Return the status code and message.
     return {
