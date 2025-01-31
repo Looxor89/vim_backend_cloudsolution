@@ -32,8 +32,6 @@ context vim {
   entity DOC_PACK : managed {
     key PackageId              : UUID;
         Status                 : String(10);
-        ReferenceDocument      : String(10);
-        FiscalYear             : String(4);
         LockedAt               : DateTime;
         LockedBy               : String(255);
         AssignedTo             : String(255);
