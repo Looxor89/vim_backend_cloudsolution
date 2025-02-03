@@ -5,30 +5,15 @@ context vim {
    * Table which contains all relevant info about users
    */
   entity AP_USERS : managed {
-    key Email        : String(255);
-        FirstName    : String(50);
-        LastName     : String(50);
-        Flag         : Boolean;
-        Departement  : String(10);
-        CustomParam1 : String(10);
-        CustomParam2 : String(10);
+    key Email           : String(255);
+        FirstName       : String(50);
+        LastName        : String(50);
+        Role            : String;
+        Company         : String;
+        BusinessPartner : String;
+        UserId          : String;
   }
-
-  /**
-   * Table which contains all info about invoice's elaboration task
-   */
-  // entity DOC_PACK : managed {
-  //   key PackageId       : UUID;
-  //       Status          : String(10);
-  //       LockedAt        : DateTime;
-  //       LockedBy        : String(255);
-  //       AssignedTo      : String(255);
-  //       Flag            : Boolean;
-  //       InvoiceNumber   : String(40);
-  //       CompanyCode     : String(4);
-  //       CompanyCodeDesc : String(40);
-  //       PriorityCode    : String(2);
-  // }
+  
   entity DOC_PACK : managed {
     key PackageId              : UUID;
         Status                 : String(10);

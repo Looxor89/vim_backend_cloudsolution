@@ -358,10 +358,6 @@
       <viewAttribute id="MODUSER_EMAIL"/>
       <viewAttribute id="MODUSER_FIRSTNAME"/>
       <viewAttribute id="MODUSER_LASTNAME"/>
-      <viewAttribute id="MODUSER_FLAG"/>
-      <viewAttribute id="MODUSER_DEPARTEMENT"/>
-      <viewAttribute id="MODUSER_CUSTOMPARAM1"/>
-      <viewAttribute id="MODUSER_CUSTOMPARAM2"/>
     
       <viewAttribute id="COMPANYCODE"/>
     
@@ -404,12 +400,7 @@
     <input node="VIM_AP_USERS">
       <mapping xsi:type="Calculation:AttributeMapping" target="MODUSER_EMAIL" source="EMAIL"/>
       <mapping xsi:type="Calculation:AttributeMapping" target="MODUSER_FIRSTNAME" source="FIRSTNAME"/>
-      <mapping xsi:type="Calculation:AttributeMapping" target="MODUSER_LASTNAME" source="LASTNAME"/>
-      <mapping xsi:type="Calculation:AttributeMapping" target="MODUSER_FLAG" source="FLAG"/>
-      <mapping xsi:type="Calculation:AttributeMapping" target="MODUSER_DEPARTEMENT" source="DEPARTEMENT"/>
-      <mapping xsi:type="Calculation:AttributeMapping" target="MODUSER_CUSTOMPARAM1" source="CUSTOMPARAM1"/>
-      <mapping xsi:type="Calculation:AttributeMapping" target="MODUSER_CUSTOMPARAM2" source="CUSTOMPARAM2"/>
-    </input>
+      <mapping xsi:type="Calculation:AttributeMapping" target="MODUSER_LASTNAME" source="LASTNAME"/></input>
     <joinAttribute leftColumn="PACK_MODIFIEDBY" rightColumn="EMAIL" operator="EQ"/>
   </calculationView>
   <calculationView xsi:type="Calculation:NonEquiJoinView" id="Invoice_with_LatestAction_and_ModUser_and_AssignUser" cardinality="CN_N" joinType="leftOuter">
@@ -434,17 +425,9 @@
       <viewAttribute id="MODUSER_EMAIL"/>
       <viewAttribute id="MODUSER_FIRSTNAME"/>
       <viewAttribute id="MODUSER_LASTNAME"/>
-      <viewAttribute id="MODUSER_FLAG"/>
-      <viewAttribute id="MODUSER_DEPARTEMENT"/>
-      <viewAttribute id="MODUSER_CUSTOMPARAM1"/>
-      <viewAttribute id="MODUSER_CUSTOMPARAM2"/>
       <viewAttribute id="ASSIGN_EMAIL"/>
       <viewAttribute id="ASSIGN_FIRSTNAME"/>
       <viewAttribute id="ASSIGN_LASTNAME"/>
-      <viewAttribute id="ASSIGN_FLAG"/>
-      <viewAttribute id="ASSIGN_DEPARTEMENT"/>
-      <viewAttribute id="ASSIGN_CUSTOMPARAM1"/>
-      <viewAttribute id="ASSIGN_CUSTOMPARAM2"/>
     
       <viewAttribute id="COMPANYCODE"/>
     
@@ -477,10 +460,6 @@
       <mapping xsi:type="Calculation:AttributeMapping" target="MODUSER_EMAIL" source="MODUSER_EMAIL"/>
       <mapping xsi:type="Calculation:AttributeMapping" target="MODUSER_FIRSTNAME" source="MODUSER_FIRSTNAME"/>
       <mapping xsi:type="Calculation:AttributeMapping" target="MODUSER_LASTNAME" source="MODUSER_LASTNAME"/>
-      <mapping xsi:type="Calculation:AttributeMapping" target="MODUSER_FLAG" source="MODUSER_FLAG"/>
-      <mapping xsi:type="Calculation:AttributeMapping" target="MODUSER_DEPARTEMENT" source="MODUSER_DEPARTEMENT"/>
-      <mapping xsi:type="Calculation:AttributeMapping" target="MODUSER_CUSTOMPARAM1" source="MODUSER_CUSTOMPARAM1"/>
-      <mapping xsi:type="Calculation:AttributeMapping" target="MODUSER_CUSTOMPARAM2" source="MODUSER_CUSTOMPARAM2"/>
     
       <mapping xsi:type="Calculation:AttributeMapping" target="COMPANYCODE" source="COMPANYCODE"/>
     
@@ -494,12 +473,7 @@
     <input node="Invoice_with_LatestAction_and_ModUser_and_AssignUser$$$$VIM_AP_USERS$$">
       <mapping xsi:type="Calculation:AttributeMapping" target="ASSIGN_EMAIL" source="EMAIL"/>
       <mapping xsi:type="Calculation:AttributeMapping" target="ASSIGN_FIRSTNAME" source="FIRSTNAME"/>
-      <mapping xsi:type="Calculation:AttributeMapping" target="ASSIGN_LASTNAME" source="LASTNAME"/>
-      <mapping xsi:type="Calculation:AttributeMapping" target="ASSIGN_FLAG" source="FLAG"/>
-      <mapping xsi:type="Calculation:AttributeMapping" target="ASSIGN_DEPARTEMENT" source="DEPARTEMENT"/>
-      <mapping xsi:type="Calculation:AttributeMapping" target="ASSIGN_CUSTOMPARAM1" source="CUSTOMPARAM1"/>
-      <mapping xsi:type="Calculation:AttributeMapping" target="ASSIGN_CUSTOMPARAM2" source="CUSTOMPARAM2"/>
-    </input>
+      <mapping xsi:type="Calculation:AttributeMapping" target="ASSIGN_LASTNAME" source="LASTNAME"/></input>
     <joinAttribute leftColumn="PACK_ASSIGNEDTO" rightColumn="EMAIL" operator="EQ"/>
   </calculationView>
   <calculationView xsi:type="Calculation:NonEquiJoinView" id="Invoice_with_LatestAction_and_ModUser_and_LockUser" cardinality="CN_N" joinType="leftOuter">
@@ -524,24 +498,12 @@
       <viewAttribute id="MODUSER_EMAIL"/>
       <viewAttribute id="MODUSER_FIRSTNAME"/>
       <viewAttribute id="MODUSER_LASTNAME"/>
-      <viewAttribute id="MODUSER_FLAG"/>
-      <viewAttribute id="MODUSER_DEPARTEMENT"/>
-      <viewAttribute id="MODUSER_CUSTOMPARAM1"/>
-      <viewAttribute id="MODUSER_CUSTOMPARAM2"/>
       <viewAttribute id="ASSIGN_EMAIL"/>
       <viewAttribute id="ASSIGN_FIRSTNAME"/>
       <viewAttribute id="ASSIGN_LASTNAME"/>
-      <viewAttribute id="ASSIGN_FLAG"/>
-      <viewAttribute id="ASSIGN_DEPARTEMENT"/>
-      <viewAttribute id="ASSIGN_CUSTOMPARAM1"/>
-      <viewAttribute id="ASSIGN_CUSTOMPARAM2"/>
       <viewAttribute id="LOCKUSER_EMAIL"/>
       <viewAttribute id="LOCKUSER_FIRSTNAME"/>
       <viewAttribute id="LOCKUSER_LASTNAME"/>
-      <viewAttribute id="LOCKUSER_FLAG"/>
-      <viewAttribute id="LOCKUSER_DEPARTEMENT"/>
-      <viewAttribute id="LOCKUSER_CUSTOMPARAM1"/>
-      <viewAttribute id="LOCKUSER_CUSTOMPARAM2"/>
     
       <viewAttribute id="COMPANYCODE"/>
     
@@ -574,17 +536,9 @@
       <mapping xsi:type="Calculation:AttributeMapping" target="MODUSER_EMAIL" source="MODUSER_EMAIL"/>
       <mapping xsi:type="Calculation:AttributeMapping" target="MODUSER_FIRSTNAME" source="MODUSER_FIRSTNAME"/>
       <mapping xsi:type="Calculation:AttributeMapping" target="MODUSER_LASTNAME" source="MODUSER_LASTNAME"/>
-      <mapping xsi:type="Calculation:AttributeMapping" target="MODUSER_FLAG" source="MODUSER_FLAG"/>
-      <mapping xsi:type="Calculation:AttributeMapping" target="MODUSER_DEPARTEMENT" source="MODUSER_DEPARTEMENT"/>
-      <mapping xsi:type="Calculation:AttributeMapping" target="MODUSER_CUSTOMPARAM1" source="MODUSER_CUSTOMPARAM1"/>
-      <mapping xsi:type="Calculation:AttributeMapping" target="MODUSER_CUSTOMPARAM2" source="MODUSER_CUSTOMPARAM2"/>
       <mapping xsi:type="Calculation:AttributeMapping" target="ASSIGN_EMAIL" source="ASSIGN_EMAIL"/>
       <mapping xsi:type="Calculation:AttributeMapping" target="ASSIGN_FIRSTNAME" source="ASSIGN_FIRSTNAME"/>
       <mapping xsi:type="Calculation:AttributeMapping" target="ASSIGN_LASTNAME" source="ASSIGN_LASTNAME"/>
-      <mapping xsi:type="Calculation:AttributeMapping" target="ASSIGN_FLAG" source="ASSIGN_FLAG"/>
-      <mapping xsi:type="Calculation:AttributeMapping" target="ASSIGN_DEPARTEMENT" source="ASSIGN_DEPARTEMENT"/>
-      <mapping xsi:type="Calculation:AttributeMapping" target="ASSIGN_CUSTOMPARAM1" source="ASSIGN_CUSTOMPARAM1"/>
-      <mapping xsi:type="Calculation:AttributeMapping" target="ASSIGN_CUSTOMPARAM2" source="ASSIGN_CUSTOMPARAM2"/>
     
       <mapping xsi:type="Calculation:AttributeMapping" target="COMPANYCODE" source="COMPANYCODE"/>
     
@@ -598,12 +552,7 @@
     <input node="Invoice_with_LatestAction_and_ModUser_and_LockUser$$$$VIM_AP_USERS$$">
       <mapping xsi:type="Calculation:AttributeMapping" target="LOCKUSER_EMAIL" source="EMAIL"/>
       <mapping xsi:type="Calculation:AttributeMapping" target="LOCKUSER_FIRSTNAME" source="FIRSTNAME"/>
-      <mapping xsi:type="Calculation:AttributeMapping" target="LOCKUSER_LASTNAME" source="LASTNAME"/>
-      <mapping xsi:type="Calculation:AttributeMapping" target="LOCKUSER_FLAG" source="FLAG"/>
-      <mapping xsi:type="Calculation:AttributeMapping" target="LOCKUSER_DEPARTEMENT" source="DEPARTEMENT"/>
-      <mapping xsi:type="Calculation:AttributeMapping" target="LOCKUSER_CUSTOMPARAM1" source="CUSTOMPARAM1"/>
-      <mapping xsi:type="Calculation:AttributeMapping" target="LOCKUSER_CUSTOMPARAM2" source="CUSTOMPARAM2"/>
-    </input>
+      <mapping xsi:type="Calculation:AttributeMapping" target="LOCKUSER_LASTNAME" source="LASTNAME"/></input>
     <joinAttribute leftColumn="PACK_LOCKEDBY" rightColumn="EMAIL" operator="EQ"/>
   </calculationView>
   <calculationView xsi:type="Calculation:NonEquiJoinView" id="Invoice_with_LatestAction_and_ModUser_and_LockUser_and_ActionPerformedUser" cardinality="CN_N" joinType="leftOuter">
@@ -628,31 +577,15 @@
       <viewAttribute id="MODUSER_EMAIL"/>
       <viewAttribute id="MODUSER_FIRSTNAME"/>
       <viewAttribute id="MODUSER_LASTNAME"/>
-      <viewAttribute id="MODUSER_FLAG"/>
-      <viewAttribute id="MODUSER_DEPARTEMENT"/>
-      <viewAttribute id="MODUSER_CUSTOMPARAM1"/>
-      <viewAttribute id="MODUSER_CUSTOMPARAM2"/>
       <viewAttribute id="ASSIGN_EMAIL"/>
       <viewAttribute id="ASSIGN_FIRSTNAME"/>
       <viewAttribute id="ASSIGN_LASTNAME"/>
-      <viewAttribute id="ASSIGN_FLAG"/>
-      <viewAttribute id="ASSIGN_DEPARTEMENT"/>
-      <viewAttribute id="ASSIGN_CUSTOMPARAM1"/>
-      <viewAttribute id="ASSIGN_CUSTOMPARAM2"/>
       <viewAttribute id="LOCKUSER_EMAIL"/>
       <viewAttribute id="LOCKUSER_FIRSTNAME"/>
       <viewAttribute id="LOCKUSER_LASTNAME"/>
-      <viewAttribute id="LOCKUSER_FLAG"/>
-      <viewAttribute id="LOCKUSER_DEPARTEMENT"/>
-      <viewAttribute id="LOCKUSER_CUSTOMPARAM1"/>
-      <viewAttribute id="LOCKUSER_CUSTOMPARAM2"/>
       <viewAttribute id="ACTIONUSER_EMAIL"/>
       <viewAttribute id="ACTIONUSER_FIRSTNAME"/>
       <viewAttribute id="ACTIONUSER_LASTNAME"/>
-      <viewAttribute id="ACTIONUSER_FLAG"/>
-      <viewAttribute id="ACTIONUSER_DEPARTEMENT"/>
-      <viewAttribute id="ACTIONUSER_CUSTOMPARAM1"/>
-      <viewAttribute id="ACTIONUSER_CUSTOMPARAM2"/>
     
       <viewAttribute id="COMPANYCODE"/>
     
@@ -685,24 +618,12 @@
       <mapping xsi:type="Calculation:AttributeMapping" target="MODUSER_EMAIL" source="MODUSER_EMAIL"/>
       <mapping xsi:type="Calculation:AttributeMapping" target="MODUSER_FIRSTNAME" source="MODUSER_FIRSTNAME"/>
       <mapping xsi:type="Calculation:AttributeMapping" target="MODUSER_LASTNAME" source="MODUSER_LASTNAME"/>
-      <mapping xsi:type="Calculation:AttributeMapping" target="MODUSER_FLAG" source="MODUSER_FLAG"/>
-      <mapping xsi:type="Calculation:AttributeMapping" target="MODUSER_DEPARTEMENT" source="MODUSER_DEPARTEMENT"/>
-      <mapping xsi:type="Calculation:AttributeMapping" target="MODUSER_CUSTOMPARAM1" source="MODUSER_CUSTOMPARAM1"/>
-      <mapping xsi:type="Calculation:AttributeMapping" target="MODUSER_CUSTOMPARAM2" source="MODUSER_CUSTOMPARAM2"/>
       <mapping xsi:type="Calculation:AttributeMapping" target="ASSIGN_EMAIL" source="ASSIGN_EMAIL"/>
       <mapping xsi:type="Calculation:AttributeMapping" target="ASSIGN_FIRSTNAME" source="ASSIGN_FIRSTNAME"/>
       <mapping xsi:type="Calculation:AttributeMapping" target="ASSIGN_LASTNAME" source="ASSIGN_LASTNAME"/>
-      <mapping xsi:type="Calculation:AttributeMapping" target="ASSIGN_FLAG" source="ASSIGN_FLAG"/>
-      <mapping xsi:type="Calculation:AttributeMapping" target="ASSIGN_DEPARTEMENT" source="ASSIGN_DEPARTEMENT"/>
-      <mapping xsi:type="Calculation:AttributeMapping" target="ASSIGN_CUSTOMPARAM1" source="ASSIGN_CUSTOMPARAM1"/>
-      <mapping xsi:type="Calculation:AttributeMapping" target="ASSIGN_CUSTOMPARAM2" source="ASSIGN_CUSTOMPARAM2"/>
       <mapping xsi:type="Calculation:AttributeMapping" target="LOCKUSER_EMAIL" source="LOCKUSER_EMAIL"/>
       <mapping xsi:type="Calculation:AttributeMapping" target="LOCKUSER_FIRSTNAME" source="LOCKUSER_FIRSTNAME"/>
       <mapping xsi:type="Calculation:AttributeMapping" target="LOCKUSER_LASTNAME" source="LOCKUSER_LASTNAME"/>
-      <mapping xsi:type="Calculation:AttributeMapping" target="LOCKUSER_FLAG" source="LOCKUSER_FLAG"/>
-      <mapping xsi:type="Calculation:AttributeMapping" target="LOCKUSER_DEPARTEMENT" source="LOCKUSER_DEPARTEMENT"/>
-      <mapping xsi:type="Calculation:AttributeMapping" target="LOCKUSER_CUSTOMPARAM1" source="LOCKUSER_CUSTOMPARAM1"/>
-      <mapping xsi:type="Calculation:AttributeMapping" target="LOCKUSER_CUSTOMPARAM2" source="LOCKUSER_CUSTOMPARAM2"/>
     
       <mapping xsi:type="Calculation:AttributeMapping" target="COMPANYCODE" source="COMPANYCODE"/>
     
@@ -716,12 +637,7 @@
     <input node="Invoice_with_LatestAction_and_ModUser_and_LockUser_and_ActionPerformedUser$$$$VIM_AP_USERS$$">
       <mapping xsi:type="Calculation:AttributeMapping" target="ACTIONUSER_EMAIL" source="EMAIL"/>
       <mapping xsi:type="Calculation:AttributeMapping" target="ACTIONUSER_FIRSTNAME" source="FIRSTNAME"/>
-      <mapping xsi:type="Calculation:AttributeMapping" target="ACTIONUSER_LASTNAME" source="LASTNAME"/>
-      <mapping xsi:type="Calculation:AttributeMapping" target="ACTIONUSER_FLAG" source="FLAG"/>
-      <mapping xsi:type="Calculation:AttributeMapping" target="ACTIONUSER_DEPARTEMENT" source="DEPARTEMENT"/>
-      <mapping xsi:type="Calculation:AttributeMapping" target="ACTIONUSER_CUSTOMPARAM1" source="CUSTOMPARAM1"/>
-      <mapping xsi:type="Calculation:AttributeMapping" target="ACTIONUSER_CUSTOMPARAM2" source="CUSTOMPARAM2"/>
-    </input>
+      <mapping xsi:type="Calculation:AttributeMapping" target="ACTIONUSER_LASTNAME" source="LASTNAME"/></input>
     <joinAttribute leftColumn="LATEST_ACTIONBY" rightColumn="EMAIL" operator="EQ"/>
   </calculationView>
 </calculationViews>
@@ -848,7 +764,9 @@
   
     <attribute id="REFERENCEDOCUMENT" order="34" displayAttribute="false" attributeHierarchyActive="false">
       <descriptions defaultDescription="INVOICEREFERENCE"/>
+  
       <keyMapping columnObjectName="Invoice_with_LatestAction_and_ModUser_and_LockUser_and_ActionPerformedUser" columnName="REFERENCEDOCUMENT"/>
+  
     </attribute>
   </attributes>
   <calculatedAttributes>
@@ -857,25 +775,25 @@
       <keyCalculation datatype="NVARCHAR" expressionLanguage="SQL" length="101">
         <formula>CONCAT(&quot;MODUSER_FIRSTNAME&quot;, CONCAT(' ', &quot;MODUSER_LASTNAME&quot;))</formula>
       </keyCalculation>
-      </calculatedAttribute>
+    </calculatedAttribute>
     <calculatedAttribute id="ASSIGNEDTONAME" order="26" semanticType="empty" displayAttribute="false" attributeHierarchyActive="false">
       <descriptions defaultDescription="AssignedToName"/>
       <keyCalculation datatype="NVARCHAR" expressionLanguage="SQL" length="13">
         <formula>CONCAT(&quot;ASSIGNUSER_FIRSTNAME&quot;, CONCAT(' ', &quot;ASSIGNUSER_LASTNAME&quot;))</formula>
       </keyCalculation>
-      </calculatedAttribute>
+    </calculatedAttribute>
     <calculatedAttribute id="LOCKEDBYNAME" order="27" semanticType="empty" displayAttribute="false" attributeHierarchyActive="false">
       <descriptions defaultDescription="LockedByName"/>
       <keyCalculation datatype="NVARCHAR" expressionLanguage="SQL" length="101">
         <formula>CONCAT(&quot;LOCKUSER_FIRSTNAME&quot;, CONCAT(' ', &quot;LOCKUSER_LASTNAME&quot;))</formula>
       </keyCalculation>
-      </calculatedAttribute>
+    </calculatedAttribute>
     <calculatedAttribute id="ACTIONBYNAME" order="28" semanticType="empty" displayAttribute="false" attributeHierarchyActive="false">
       <descriptions defaultDescription="ActionByName"/>
       <keyCalculation datatype="NVARCHAR" expressionLanguage="SQL" length="101">
         <formula>CONCAT(&quot;ACTIONUSER_FIRSTNAME&quot;, CONCAT(' ', &quot;ACTIONUSER_LASTNAME&quot;))</formula>
       </keyCalculation>
-      </calculatedAttribute>
+    </calculatedAttribute>
     <calculatedAttribute id="DOCCATEGORY" order="29" semanticType="empty" displayAttribute="false" attributeHierarchyActive="false">
       <keyCalculation datatype="NVARCHAR" expressionLanguage="SQL" length="13">
         <formula>CASE &quot;ID_OCCUR&quot; 
@@ -889,7 +807,7 @@
             END 
  END</formula>
       </keyCalculation>
-      </calculatedAttribute>
+    </calculatedAttribute>
   
     <calculatedAttribute id="VAT" order="32" semanticType="empty" displayAttribute="false" attributeHierarchyActive="false">
       <descriptions defaultDescription="VAT"/>
@@ -899,7 +817,8 @@
         <formula>CONCAT(&quot;CEDENTEPRESTATORE_DATIANAGRAFICI_IDFISCALEIVA_IDPAESE&quot;, &quot;CEDENTEPRESTATORE_DATIANAGRAFICI_IDFISCALEIVA_IDCODICE&quot;)</formula>
   
       </keyCalculation>
-      </calculatedAttribute>
+  
+    </calculatedAttribute>
   </calculatedAttributes>
   <baseMeasures/>
   <calculatedMeasures/>
