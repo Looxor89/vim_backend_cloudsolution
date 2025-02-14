@@ -13,7 +13,7 @@ context vim {
         BusinessPartner : String;
         UserId          : String;
   }
-  
+
   entity DOC_PACK : managed {
     key PackageId              : UUID;
         Status                 : String(10);
@@ -549,7 +549,7 @@ entity V_DOC_EXTENDED {
       LOCKEDBY                                               : String(255)  @title: 'LOCKEDBY: LOCKEDBY';
       ASSIGNEDTO                                             : String(255)  @title: 'ASSIGNEDTO: ASSIGNEDTO';
       ACTIONBY                                               : String(255)  @title: 'ACTIONBY: ACTIONBY';
-      REFERENCEDOCUMENT                                      : String(10)   @title: 'REFERENCEDOCUMENT: REFERENCEDOCUMENT';
+      INVOICEREFERENCE                                       : String(10)   @title: 'INVOICEREFERENCE: INVOICEREFERENCE';
       FISCALYEAR                                             : String(4)    @title: 'FISCALYEAR: FISCALYEAR';
       INVOICENUMBER                                          : String(20)   @title: 'INVOICENUMBER: DATIGENERALI_DATIGENERALIDOCUMENTO_NUMERO';
       ID_OCCUR                                               : String(36)   @title: 'ID_OCCUR: ID_OCCUR';

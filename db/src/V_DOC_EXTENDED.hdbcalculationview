@@ -191,7 +191,7 @@
     
       <viewAttribute id="CEDENTEPRESTATORE_DATIANAGRAFICI_ANAGRAFICA_DENOMINAZIONE"/>
     
-      <viewAttribute id="REFERENCEDOCUMENT"/>
+      <viewAttribute id="INVOICEREFERENCE"/>
     </viewAttributes>
     <calculatedViewAttributes/>
     <input node="Invoice_Header_ItalianTrace">
@@ -215,7 +215,7 @@
       <mapping xsi:type="Calculation:AttributeMapping" target="COMPANYCODE" source="COMPANYCODE"/>
       <mapping xsi:type="Calculation:AttributeMapping" target="FISCALYEAR" source="INVOICEREFERENCEFISCALYEAR"/>
     
-      <mapping xsi:type="Calculation:AttributeMapping" target="REFERENCEDOCUMENT" source="INVOICEREFERENCE"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="INVOICEREFERENCE" source="INVOICEREFERENCE"/>
     </input>
     <joinAttribute leftColumn="PACKAGEID" rightColumn="PACKAGEID" operator="EQ"/>
   </calculationView>
@@ -243,7 +243,7 @@
     
       <viewAttribute id="CEDENTEPRESTATORE_DATIANAGRAFICI_ANAGRAFICA_DENOMINAZIONE"/>
     
-      <viewAttribute id="REFERENCEDOCUMENT"/>
+      <viewAttribute id="INVOICEREFERENCE"/>
     </viewAttributes>
     <calculatedViewAttributes/>
     <input node="Invoice_Header">
@@ -264,7 +264,7 @@
     
       <mapping xsi:type="Calculation:AttributeMapping" target="CEDENTEPRESTATORE_DATIANAGRAFICI_ANAGRAFICA_DENOMINAZIONE" source="CEDENTEPRESTATORE_DATIANAGRAFICI_ANAGRAFICA_DENOMINAZIONE"/>
     
-      <mapping xsi:type="Calculation:AttributeMapping" target="REFERENCEDOCUMENT" source="REFERENCEDOCUMENT"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="INVOICEREFERENCE" source="INVOICEREFERENCE"/>
     </input>
     <input node="Invoice_Body">
       <mapping xsi:type="Calculation:AttributeMapping" target="DATIGENERALI_DATIGENERALIDOCUMENTO_TIPODOCUMENTO" source="DATIGENERALI_DATIGENERALIDOCUMENTO_TIPODOCUMENTO"/>
@@ -301,7 +301,7 @@
     
       <viewAttribute id="CEDENTEPRESTATORE_DATIANAGRAFICI_ANAGRAFICA_DENOMINAZIONE"/>
     
-      <viewAttribute id="REFERENCEDOCUMENT"/>
+      <viewAttribute id="INVOICEREFERENCE"/>
     </viewAttributes>
     <calculatedViewAttributes/>
     <input node="Invoice">
@@ -327,7 +327,7 @@
     
       <mapping xsi:type="Calculation:AttributeMapping" target="CEDENTEPRESTATORE_DATIANAGRAFICI_ANAGRAFICA_DENOMINAZIONE" source="CEDENTEPRESTATORE_DATIANAGRAFICI_ANAGRAFICA_DENOMINAZIONE"/>
     
-      <mapping xsi:type="Calculation:AttributeMapping" target="REFERENCEDOCUMENT" source="REFERENCEDOCUMENT"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="INVOICEREFERENCE" source="INVOICEREFERENCE"/>
     </input>
     <input node="Latest_Action">
       <mapping xsi:type="Calculation:AttributeMapping" target="LATEST_ACTION" source="ACTION"/>
@@ -366,7 +366,7 @@
     
       <viewAttribute id="CEDENTEPRESTATORE_DATIANAGRAFICI_ANAGRAFICA_DENOMINAZIONE"/>
     
-      <viewAttribute id="REFERENCEDOCUMENT"/>
+      <viewAttribute id="INVOICEREFERENCE"/>
     </viewAttributes>
     <calculatedViewAttributes/>
     <input node="Invoice_with_LatestAction">
@@ -395,7 +395,7 @@
     
       <mapping xsi:type="Calculation:AttributeMapping" target="CEDENTEPRESTATORE_DATIANAGRAFICI_ANAGRAFICA_DENOMINAZIONE" source="CEDENTEPRESTATORE_DATIANAGRAFICI_ANAGRAFICA_DENOMINAZIONE"/>
     
-      <mapping xsi:type="Calculation:AttributeMapping" target="REFERENCEDOCUMENT" source="REFERENCEDOCUMENT"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="INVOICEREFERENCE" source="INVOICEREFERENCE"/>
     </input>
     <input node="VIM_AP_USERS">
       <mapping xsi:type="Calculation:AttributeMapping" target="MODUSER_EMAIL" source="EMAIL"/>
@@ -436,7 +436,7 @@
     
       <viewAttribute id="CEDENTEPRESTATORE_DATIANAGRAFICI_ANAGRAFICA_DENOMINAZIONE"/>
     
-      <viewAttribute id="REFERENCEDOCUMENT"/>
+      <viewAttribute id="INVOICEREFERENCE"/>
     </viewAttributes>
     <calculatedViewAttributes/>
     <input node="Invoice_with_LatestAction_and_ModUser">
@@ -468,7 +468,7 @@
     
       <mapping xsi:type="Calculation:AttributeMapping" target="CEDENTEPRESTATORE_DATIANAGRAFICI_ANAGRAFICA_DENOMINAZIONE" source="CEDENTEPRESTATORE_DATIANAGRAFICI_ANAGRAFICA_DENOMINAZIONE"/>
     
-      <mapping xsi:type="Calculation:AttributeMapping" target="REFERENCEDOCUMENT" source="REFERENCEDOCUMENT"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="INVOICEREFERENCE" source="INVOICEREFERENCE"/>
     </input>
     <input node="Invoice_with_LatestAction_and_ModUser_and_AssignUser$$$$VIM_AP_USERS$$">
       <mapping xsi:type="Calculation:AttributeMapping" target="ASSIGN_EMAIL" source="EMAIL"/>
@@ -512,7 +512,7 @@
     
       <viewAttribute id="CEDENTEPRESTATORE_DATIANAGRAFICI_ANAGRAFICA_DENOMINAZIONE"/>
     
-      <viewAttribute id="REFERENCEDOCUMENT"/>
+      <viewAttribute id="INVOICEREFERENCE"/>
     </viewAttributes>
     <calculatedViewAttributes/>
     <input node="Invoice_with_LatestAction_and_ModUser_and_AssignUser">
@@ -547,7 +547,7 @@
     
       <mapping xsi:type="Calculation:AttributeMapping" target="CEDENTEPRESTATORE_DATIANAGRAFICI_ANAGRAFICA_DENOMINAZIONE" source="CEDENTEPRESTATORE_DATIANAGRAFICI_ANAGRAFICA_DENOMINAZIONE"/>
     
-      <mapping xsi:type="Calculation:AttributeMapping" target="REFERENCEDOCUMENT" source="REFERENCEDOCUMENT"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="INVOICEREFERENCE" source="INVOICEREFERENCE"/>
     </input>
     <input node="Invoice_with_LatestAction_and_ModUser_and_LockUser$$$$VIM_AP_USERS$$">
       <mapping xsi:type="Calculation:AttributeMapping" target="LOCKUSER_EMAIL" source="EMAIL"/>
@@ -594,7 +594,7 @@
     
       <viewAttribute id="CEDENTEPRESTATORE_DATIANAGRAFICI_ANAGRAFICA_DENOMINAZIONE"/>
     
-      <viewAttribute id="REFERENCEDOCUMENT"/>
+      <viewAttribute id="INVOICEREFERENCE"/>
     </viewAttributes>
     <calculatedViewAttributes/>
     <input node="Invoice_with_LatestAction_and_ModUser_and_LockUser">
@@ -632,7 +632,7 @@
     
       <mapping xsi:type="Calculation:AttributeMapping" target="CEDENTEPRESTATORE_DATIANAGRAFICI_ANAGRAFICA_DENOMINAZIONE" source="CEDENTEPRESTATORE_DATIANAGRAFICI_ANAGRAFICA_DENOMINAZIONE"/>
     
-      <mapping xsi:type="Calculation:AttributeMapping" target="REFERENCEDOCUMENT" source="REFERENCEDOCUMENT"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="INVOICEREFERENCE" source="INVOICEREFERENCE"/>
     </input>
     <input node="Invoice_with_LatestAction_and_ModUser_and_LockUser_and_ActionPerformedUser$$$$VIM_AP_USERS$$">
       <mapping xsi:type="Calculation:AttributeMapping" target="ACTIONUSER_EMAIL" source="EMAIL"/>
@@ -762,10 +762,10 @@
   
     </attribute>
   
-    <attribute id="REFERENCEDOCUMENT" order="34" displayAttribute="false" attributeHierarchyActive="false">
+    <attribute id="INVOICEREFERENCE" order="34" displayAttribute="false" attributeHierarchyActive="false">
       <descriptions defaultDescription="INVOICEREFERENCE"/>
   
-      <keyMapping columnObjectName="Invoice_with_LatestAction_and_ModUser_and_LockUser_and_ActionPerformedUser" columnName="REFERENCEDOCUMENT"/>
+      <keyMapping columnObjectName="Invoice_with_LatestAction_and_ModUser_and_LockUser_and_ActionPerformedUser" columnName="INVOICEREFERENCE"/>
   
     </attribute>
   </attributes>
