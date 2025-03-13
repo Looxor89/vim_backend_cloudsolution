@@ -187,7 +187,7 @@ async function createResultObject(headerData, bodyData, paymentData, serviceRequ
     // Generate arrays for GL Account and Purchase Order records
     const aGLAccountRecords = aLineDetailsMergedWithGLAccountIntegrations.map((line, index) => createLineItemForGLAccount(index + 1, line, bodyFatturaElettronica, sCompanyCode));
 
-    const aPORecords = await Promise.all(aLineDetailsMergedWithPOIntegrations.map((line, index) => createLineItemForPO(index + 1, line, bodyFatturaElettronica, serviceRequestS4_HANA, sCompanyCode)));
+    const aPORecords = await Promise.all(aLineDetailsMergedWithPOIntegrations.map((line, index) => createLineItemForPO(index + 1, line, bodyFatturaElettronica, serviceRequestS4_HANA, sCompanyCode, headerInvoiceIntegrationInfo)));
 
     const aDataSupplierInvoiceWhldgTax = dataSupplierInvoiceWhldgTax.map((oItem, index) => {
         return {
@@ -205,7 +205,7 @@ async function createResultObject(headerData, bodyData, paymentData, serviceRequ
     return {
         "header_Id_ItalianInvoiceTrace": headerFatturaElettronica.ID,
         "header_Id_InvoiceIntegrationInfo": headerInvoiceIntegrationInfo.ID,
-        "Transaction": headerInvoiceIntegrationInfo.transaction ? headerInvoiceIntegrationInfo.transaction : null,
+        "Transaction": headerInvoiceIntegrationInfo.transaction ? headerInvoiceIntegrationInfo.transaction : 'Invoice',
         "CompanyCode": sCompanyCode,
         "DocumentDate": bodyFatturaElettronica.datiGenerali_DatiGeneraliDocumento_Data ? bodyFatturaElettronica.datiGenerali_DatiGeneraliDocumento_Data : null,
         "InvoiceReceiptDate": headerInvoiceIntegrationInfo.invoiceReceiptDate ? headerInvoiceIntegrationInfo.invoiceReceiptDate : null,
@@ -300,8 +300,11 @@ function createLineItemForGLAccount(index, oLineDetail, bodyFatturaElettronica, 
 }
 
 // Create a line item object for Purchase Order records
-async function createLineItemForPO(index, oLineDetail, bodyFatturaElettronica, serviceRequestS4_HANA, sCompanyCode) {
-    let sPlant = null,
+async function createLineItemForPO(index, oLineDetail, bodyFatturaElettronica, serviceRequestS4_HANA, sCompanyCode, headerInvoiceIntegrationInfo) {
+    let sReferenceDocument = null,
+        sReferenceDocumentFiscalYear = null,
+        sReferenceDocumentItem = null, 
+        sPlant = null,
         bIsFinallyInvoiced = null,
         sCostCenter = null,
         sControllingArea = null,
@@ -317,7 +320,8 @@ async function createLineItemForPO(index, oLineDetail, bodyFatturaElettronica, s
         sFundsCenter = null,
         sGrantID = null,
         sProfitabilitySegment = null,
-        sBudgetPeriod = null;
+        sBudgetPeriod = null,
+        sIsSubsequentDebitCredit = headerInvoiceIntegrationInfo.transaction === 'Invoice' ||  headerInvoiceIntegrationInfo.transaction === null ? '' : 'X';
     let oResultAccountAssignmentRequest = null;
     if (oLineDetail.purchaseOrder && oLineDetail.purchaseOrderItem) {
         oResultAccountAssignmentRequest = await serviceRequestS4_HANA.get(process.env['Path_API_YY1_POACCOUNTASSIGNMENT_CDS'] + "&$filter=PurchaseOrder eq '" + oLineDetail.purchaseOrder + "' and PurchaseOrderItem eq '" + oLineDetail.purchaseOrderItem + "'");
@@ -340,11 +344,19 @@ async function createLineItemForPO(index, oLineDetail, bodyFatturaElettronica, s
         }
     }
     let oResultPurchaseOrderItemRefRequest = null;
+    let oResultGoodsMovements = null;
     if (sCompanyCode && oLineDetail.purchaseOrder && oLineDetail.purchaseOrderItem) {
         oResultPurchaseOrderItemRefRequest = await serviceRequestS4_HANA.get(process.env['Path_API_purchaseorder'] + "/" + oLineDetail.purchaseOrder + "/" + process.env['Path_API_purchaseorder_2'] + "&$filter=CompanyCode eq '" + sCompanyCode + "' and PurchaseOrderItem eq '" + oLineDetail.purchaseOrderItem + "'")
-        if (oResultPurchaseOrderItemRefRequest[0]) {
-            sPlant = oResultPurchaseOrderItemRefRequest[0].Plant;
-            bIsFinallyInvoiced = oResultPurchaseOrderItemRefRequest[0].IsFinallyInvoiced;
+        if (oResultPurchaseOrderItemRefRequest.value.length>0) {
+            sPlant = oResultPurchaseOrderItemRefRequest.value[0].Plant;
+            bIsFinallyInvoiced = oResultPurchaseOrderItemRefRequest.value[0].IsFinallyInvoiced;
+
+            if (oResultPurchaseOrderItemRefRequest.value[0].InvoiceIsGoodsReceiptBased) {
+                oResultGoodsMovements = await serviceRequestS4_HANA.get(process.env['Path_API_YY1_GOODSMOVEMENTS_CDS'] + "&$filter=PurchaseOrder eq '" + oLineDetail.purchaseOrder + "' and PurchaseOrderItem eq '" + oLineDetail.purchaseOrderItem + "'");
+                sReferenceDocument = oResultGoodsMovements[0]?.MaterialDocument;
+                sReferenceDocumentFiscalYear = oResultGoodsMovements[0]?.MaterialDocumentYear;
+                sReferenceDocumentItem = oResultGoodsMovements[0]?.MaterialDocumentItem;
+            }
         }
     }
 
@@ -356,8 +368,11 @@ async function createLineItemForPO(index, oLineDetail, bodyFatturaElettronica, s
         "SupplierInvoiceItem": String(index).padStart(4, '0'),
         "PurchaseOrder": oLineDetail.purchaseOrder ? oLineDetail.purchaseOrder : null,
         "PurchaseOrderItem": oLineDetail.purchaseOrderItem ? oLineDetail.purchaseOrderItem : null,
+        "ReferenceDocument": oLineDetail.referenceDocument ? oLineDetail.referenceDocument : sReferenceDocument,
+        "ReferenceDocumentFiscalYear": oLineDetail.referenceDocumentFiscalYear ?  oLineDetail.referenceDocumentFiscalYear : sReferenceDocumentFiscalYear,
+        "ReferenceDocumentItem": oLineDetail.referenceDocumentItem ? oLineDetail.referenceDocumentItem : sReferenceDocumentItem,
         "Plant": oLineDetail.plant ? oLineDetail.plant : sPlant,
-        "IsSubsequentDebitCredit": oLineDetail.isSubsequentDebitCredit ? oLineDetail.isSubsequentDebitCredit : null,
+        "IsSubsequentDebitCredit": oLineDetail.isSubsequentDebitCredit ? oLineDetail.isSubsequentDebitCredit : sIsSubsequentDebitCredit,
         "TaxCode": oLineDetail.taxCode ? oLineDetail.taxCode : getTaxCode(oLineDetail.aliquotaIVA, oLineDetail.natura),
         "DocumentCurrency": bodyFatturaElettronica.datiGenerali_DatiGeneraliDocumento_Divisa ? bodyFatturaElettronica.datiGenerali_DatiGeneraliDocumento_Divisa : null,
         "SupplierInvoiceItemAmount": oLineDetail.prezzoTotale ? oLineDetail.prezzoTotale : null,

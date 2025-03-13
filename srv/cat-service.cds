@@ -165,6 +165,9 @@ service CatalogService {
         SupplierInvoiceItem         : String;
         PurchaseOrder               : String;
         PurchaseOrderItem           : String;
+        ReferenceDocument           : String;
+        ReferenceDocumentFiscalYear : String;
+        ReferenceDocumentItem       : String;
         Plant                       : String;
         IsSubsequentDebitCredit     : String;
         TaxCode                     : String;
@@ -295,15 +298,15 @@ service CatalogService {
     };
 
     type addAttachmentPayload {
-        PackageId           : String;
-        CompanyCode         : String;
-        ReferenceDocument   : String;
-        FiscalYear          : String;
-        Header_Id_ItalianInvoiceTrace              : String;
-        AttachmentName      : String;
-        AttachmentType      : String;
-        AttachmentExtension : String;
-        Attachment          : LargeString;
+        PackageId                     : String;
+        CompanyCode                   : String;
+        ReferenceDocument             : String;
+        FiscalYear                    : String;
+        Header_Id_ItalianInvoiceTrace : String;
+        AttachmentName                : String;
+        AttachmentType                : String;
+        AttachmentExtension           : String;
+        Attachment                    : LargeString;
     };
 
     type removeJobPayload {

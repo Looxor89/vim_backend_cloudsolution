@@ -150,11 +150,14 @@ context vim {
         // supplierInvoiceItem         : String;
         purchaseOrder               : String(10);
         purchaseOrderItem           : String(5);
+        referenceDocument           : String(10);
+        referenceDocumentFiscalYear : String(4);
+        referenceDocumentItem       : String(4);
         plant                       : String(4);
         isSubsequentDebitCredit     : String enum {
-          Debit  = 'S';
-          Credit = 'H';
-        } default 'S';
+          Debit  = 'X';
+          Credit = '';
+        } default '';
         // documentCurrency            : String;
         // purchaseOrderPriceUnit      : String;
         purchaseOrderQuantityUnit   : String(3);
