@@ -184,6 +184,7 @@ context vim {
         grantID                     : String(20);
         profitabilitySegment        : String(10);
         budgetPeriod                : String(10);
+        accountAssignmentNumber     : String(2);
         dettaglioLinee              : Association to one DettaglioLinee
                                         on dettaglioLinee.bodyPOIntegrationInfo = $self;
   }

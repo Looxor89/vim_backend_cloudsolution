@@ -198,6 +198,7 @@ service CatalogService {
         GrantID                     : String;
         ProfitabilitySegment        : String;
         BudgetPeriod                : String;
+        AccountAssignmentNumber     : String;
     };
 
     type GLAccountRecord {

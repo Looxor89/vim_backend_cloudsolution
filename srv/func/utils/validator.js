@@ -297,6 +297,7 @@ const schema = {
                 GrantID: Joi.string().max(20).allow(null),
                 ProfitabilitySegment: Joi.string().max(10).allow(null),
                 BudgetPeriod: Joi.string().max(10).allow(null),
+                AccountAssignmentNumber: Joi.string().max(2).allow(null)
             })
         )
 

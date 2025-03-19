@@ -267,7 +267,8 @@ async function updatePOLineDetails(poRecords, tx) {
                     "fund": oLineDetail.Fund,
                     "grantID": oLineDetail.GrantID,
                     "profitabilitySegment": oLineDetail.ProfitabilitySegment,
-                    "budgetPeriod": oLineDetail.BudgetPeriod
+                    "budgetPeriod": oLineDetail.BudgetPeriod,
+                    "accountAssignmentNumber": oLineDetail.AccountAssignmentNumber
                 })
                 .where(`ID = '${oLineDetail.bodyPOIntegrationInfo_Id}'`);
 
@@ -325,7 +326,8 @@ async function insertPOLineDetails(aNewPoLineDetails, header_Id_InvoiceIntegrati
             "fund": oLineDetail.Fund,
             "grantID": oLineDetail.GrantID,
             "profitabilitySegment": oLineDetail.ProfitabilitySegment,
-            "budgetPeriod": oLineDetail.BudgetPeriod
+            "budgetPeriod": oLineDetail.BudgetPeriod,
+            "accountAssignmentNumber": oLineDetail.AccountAssignmentNumber
         });
     }
 

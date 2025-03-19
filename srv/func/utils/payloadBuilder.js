@@ -72,7 +72,10 @@ function buildPayloadForSubmitInvoice(jsonInvoice) {
                     Fund: oTo_SuplrInvcItemPurOrdRef.Fund,
                     GrantID: oTo_SuplrInvcItemPurOrdRef.GrantID,
                     ProfitabilitySegment: oTo_SuplrInvcItemPurOrdRef.ProfitabilitySegment,
-                    BudgetPeriod: oTo_SuplrInvcItemPurOrdRef.BudgetPeriod
+                    BudgetPeriod: oTo_SuplrInvcItemPurOrdRef.BudgetPeriod,
+                    SupplierInvoiceItem: String(index+1).padStart(4, '0'),
+                    OrdinalNumber: String(index+1).padStart(4, '0'),
+                    AccountAssignmentNumber: oTo_SuplrInvcItemPurOrdRef.AccountAssignmentNumber
                 }
             ]}
         }

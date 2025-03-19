@@ -321,6 +321,7 @@ async function createLineItemForPO(index, oLineDetail, bodyFatturaElettronica, s
         sGrantID = null,
         sProfitabilitySegment = null,
         sBudgetPeriod = null,
+        sAccountAssignmentNumber = null,
         sIsSubsequentDebitCredit = headerInvoiceIntegrationInfo.transaction === 'Invoice' ||  headerInvoiceIntegrationInfo.transaction === null ? '' : 'X';
     let oResultAccountAssignmentRequest = null;
     if (oLineDetail.purchaseOrder && oLineDetail.purchaseOrderItem) {
@@ -341,6 +342,7 @@ async function createLineItemForPO(index, oLineDetail, bodyFatturaElettronica, s
             sGrantID = oResultAccountAssignmentRequest[0].GrantID != "" ? oResultAccountAssignmentRequest[0].GrantID : null;
             sProfitabilitySegment = oResultAccountAssignmentRequest[0].ProfitabilitySegment_2 != "" ? oResultAccountAssignmentRequest[0].ProfitabilitySegment_2 : null;
             sBudgetPeriod = oResultAccountAssignmentRequest[0].BudgetPeriod != "" ? oResultAccountAssignmentRequest[0].BudgetPeriod : null;
+            sAccountAssignmentNumber = oResultAccountAssignmentRequest[0].AccountAssignmentNumber !== "" ? oResultAccountAssignmentRequest[0].AccountAssignmentNumber  : null 
         }
     }
     let oResultPurchaseOrderItemRefRequest = null;
@@ -400,6 +402,7 @@ async function createLineItemForPO(index, oLineDetail, bodyFatturaElettronica, s
         "Fund": oLineDetail.fund ? oLineDetail.fund : sFund,
         "GrantID": oLineDetail.grantID ? oLineDetail.grantID : sGrantID,
         "ProfitabilitySegment": oLineDetail.profitabilitySegment ? oLineDetail.profitabilitySegment : sProfitabilitySegment,
-        "BudgetPeriod": oLineDetail.budgetPeriod ? oLineDetail.budgetPeriod : sBudgetPeriod
+        "BudgetPeriod": oLineDetail.budgetPeriod ? oLineDetail.budgetPeriod : sBudgetPeriod,
+        "AccountAssignmentNumber": oLineDetail.accountAssignmentNumber ? oLineDetail.accountAssignmentNumber : sAccountAssignmentNumber 
     };
 }
