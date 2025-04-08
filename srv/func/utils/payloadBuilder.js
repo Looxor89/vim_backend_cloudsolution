@@ -17,15 +17,15 @@ function buildPayloadForSubmitInvoice(jsonInvoice) {
     let aTo_SelectedDeliveryNotes = [];
     let aTo_SelectedServiceEntrySheets = [];
 
-    switch(jsonInvoice.RefDocumentCategory) {
+    switch (jsonInvoice.RefDocumentCategory) {
         case 'keyRefDocCategory1':
-            aTo_SelectedPurchaseOrders.push({PurchaseOrder: jsonInvoice.PurchaseOrder, PurchaseOrderItem: jsonInvoice.PurchaseOrderItem});
+            aTo_SelectedPurchaseOrders.push({ PurchaseOrder: jsonInvoice.PurchaseOrder, PurchaseOrderItem: jsonInvoice.PurchaseOrderItem });
             break;
         case 'keyRefDocCategory2':
-            aTo_SelectedDeliveryNotes.push({InboundDeliveryNote: jsonInvoice.InboundDeliveryNote});
+            aTo_SelectedDeliveryNotes.push({ InboundDeliveryNote: jsonInvoice.InboundDeliveryNote });
             break;
         case 'keyRefDocCategoryS':
-            aTo_SelectedServiceEntrySheets.push({ServiceEntrySheet: jsonInvoice.ServiceEntrySheet, ServiceEntrySheetItem: jsonInvoice.ServiceEntrySheetItem});
+            aTo_SelectedServiceEntrySheets.push({ ServiceEntrySheet: jsonInvoice.ServiceEntrySheet, ServiceEntrySheetItem: jsonInvoice.ServiceEntrySheetItem });
             break;
         default:
             aTo_SelectedPurchaseOrders = [];
@@ -34,8 +34,34 @@ function buildPayloadForSubmitInvoice(jsonInvoice) {
     }
 
     let aTo_SuplrInvcItemPurOrdRef = jsonInvoice.PORecords.map((oTo_SuplrInvcItemPurOrdRef, index) => {
+        let aTo_SupplierInvoiceItmAcctAssgmt = [];
+        if (oTo_SuplrInvcItemPurOrdRef.CostCenter !== null || oTo_SuplrInvcItemPurOrdRef.ControllingArea !== null || oTo_SuplrInvcItemPurOrdRef.BusinessArea !== null || oTo_SuplrInvcItemPurOrdRef.ProfitCenter !== null || oTo_SuplrInvcItemPurOrdRef.FunctionalArea !== null || oTo_SuplrInvcItemPurOrdRef.WBSElement !== null || oTo_SuplrInvcItemPurOrdRef.SalesOrder !== null || oTo_SuplrInvcItemPurOrdRef.SalesOrderItem !== null || oTo_SuplrInvcItemPurOrdRef.InternalOrder !== null || oTo_SuplrInvcItemPurOrdRef.CommitmentItem !== null || oTo_SuplrInvcItemPurOrdRef.FundsCenter !== null || oTo_SuplrInvcItemPurOrdRef.Fund !== null || oTo_SuplrInvcItemPurOrdRef.GrantID !== null || oTo_SuplrInvcItemPurOrdRef.ProfitabilitySegment !== null || oTo_SuplrInvcItemPurOrdRef.BudgetPeriod !== null || oTo_SuplrInvcItemPurOrdRef.AccountAssignmentNumber !== null) {
+            aTo_SupplierInvoiceItmAcctAssgmt = [
+                {
+                    CostCenter: oTo_SuplrInvcItemPurOrdRef.CostCenter,
+                    ControllingArea: oTo_SuplrInvcItemPurOrdRef.ControllingArea,
+                    BusinessArea: oTo_SuplrInvcItemPurOrdRef.BusinessArea,
+                    ProfitCenter: oTo_SuplrInvcItemPurOrdRef.ProfitCenter,
+                    FunctionalArea: oTo_SuplrInvcItemPurOrdRef.FunctionalArea,
+                    WBSElement: oTo_SuplrInvcItemPurOrdRef.WBSElement,
+                    SalesOrder: oTo_SuplrInvcItemPurOrdRef.SalesOrder,
+                    SalesOrderItem: oTo_SuplrInvcItemPurOrdRef.SalesOrderItem,
+                    InternalOrder: oTo_SuplrInvcItemPurOrdRef.InternalOrder,
+                    CommitmentItem: oTo_SuplrInvcItemPurOrdRef.CommitmentItem,
+                    FundsCenter: oTo_SuplrInvcItemPurOrdRef.FundsCenter,
+                    Fund: oTo_SuplrInvcItemPurOrdRef.Fund,
+                    GrantID: oTo_SuplrInvcItemPurOrdRef.GrantID,
+                    ProfitabilitySegment: oTo_SuplrInvcItemPurOrdRef.ProfitabilitySegment,
+                    BudgetPeriod: oTo_SuplrInvcItemPurOrdRef.BudgetPeriod,
+                    SupplierInvoiceItem: String(index + 1).padStart(4, '0'),
+                    OrdinalNumber: String(index + 1).padStart(4, '0'),
+                    AccountAssignmentNumber: oTo_SuplrInvcItemPurOrdRef.AccountAssignmentNumber
+                }
+            ]
+        }
+
         return {
-            SupplierInvoiceItem: String(index+1).padStart(4, '0'),
+            SupplierInvoiceItem: String(index + 1).padStart(4, '0'),
             PurchaseOrder: oTo_SuplrInvcItemPurOrdRef.PurchaseOrder,
             PurchaseOrderItem: oTo_SuplrInvcItemPurOrdRef.PurchaseOrderItem,
             ReferenceDocument: oTo_SuplrInvcItemPurOrdRef.ReferenceDocument,
@@ -56,33 +82,12 @@ function buildPayloadForSubmitInvoice(jsonInvoice) {
             ServiceEntrySheetItem: oTo_SuplrInvcItemPurOrdRef.ServiceEntrySheetItem,
             IsFinallyInvoiced: oTo_SuplrInvcItemPurOrdRef.IsFinallyInvoiced,
             TaxDeterminationDate: oTo_SuplrInvcItemPurOrdRef.TaxDeterminationDate,
-            to_SupplierInvoiceItmAcctAssgmt: { results : [
-                {
-                    CostCenter: oTo_SuplrInvcItemPurOrdRef.CostCenter,
-                    ControllingArea: oTo_SuplrInvcItemPurOrdRef.ControllingArea,
-                    BusinessArea: oTo_SuplrInvcItemPurOrdRef.BusinessArea,
-                    ProfitCenter: oTo_SuplrInvcItemPurOrdRef.ProfitCenter,
-                    FunctionalArea: oTo_SuplrInvcItemPurOrdRef.FunctionalArea,
-                    WBSElement: oTo_SuplrInvcItemPurOrdRef.WBSElement,
-                    SalesOrder: oTo_SuplrInvcItemPurOrdRef.SalesOrder,
-                    SalesOrderItem: oTo_SuplrInvcItemPurOrdRef.SalesOrderItem,
-                    InternalOrder: oTo_SuplrInvcItemPurOrdRef.InternalOrder,
-                    CommitmentItem: oTo_SuplrInvcItemPurOrdRef.CommitmentItem,
-                    FundsCenter: oTo_SuplrInvcItemPurOrdRef.FundsCenter,
-                    Fund: oTo_SuplrInvcItemPurOrdRef.Fund,
-                    GrantID: oTo_SuplrInvcItemPurOrdRef.GrantID,
-                    ProfitabilitySegment: oTo_SuplrInvcItemPurOrdRef.ProfitabilitySegment,
-                    BudgetPeriod: oTo_SuplrInvcItemPurOrdRef.BudgetPeriod,
-                    SupplierInvoiceItem: String(index+1).padStart(4, '0'),
-                    OrdinalNumber: String(index+1).padStart(4, '0'),
-                    AccountAssignmentNumber: oTo_SuplrInvcItemPurOrdRef.AccountAssignmentNumber
-                }
-            ]}
+            to_SupplierInvoiceItmAcctAssgmt: { results: aTo_SupplierInvoiceItmAcctAssgmt }
         }
     });
     let aTo_SupplierInvoiceItemGLAcct = jsonInvoice.GLAccountRecords.map((oTo_SupplierInvoiceItemGLAcct, index) => {
         return {
-            SupplierInvoiceItem: String(index+1).padStart(4, '0'),
+            SupplierInvoiceItem: String(index + 1).padStart(4, '0'),
             CompanyCode: oTo_SupplierInvoiceItemGLAcct.CompanyCode,
             GLAccount: oTo_SupplierInvoiceItemGLAcct.GLAccount,
             DebitCreditCode: oTo_SupplierInvoiceItemGLAcct.DebitCreditCode,
@@ -152,7 +157,7 @@ function buildPayloadForSubmitInvoice(jsonInvoice) {
         TaxReportingDate: getDateWithMilliseconds(jsonInvoice.TaxReportingDate),
         TaxFulfillmentDate: getDateWithMilliseconds(jsonInvoice.TaxFulfillmentDate),
         to_SupplierInvoiceWhldgTax: { results: aTo_SupplierInvoiceWhldgTax },
-        to_SuplrInvcItemPurOrdRef: {results: aTo_SuplrInvcItemPurOrdRef},
+        to_SuplrInvcItemPurOrdRef: { results: aTo_SuplrInvcItemPurOrdRef },
         to_SupplierInvoiceItemGLAcct: { results: aTo_SupplierInvoiceItemGLAcct }
     };
     return oPayload;

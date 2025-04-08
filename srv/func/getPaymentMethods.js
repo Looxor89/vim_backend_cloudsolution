@@ -13,6 +13,6 @@ module.exports = async (request, tx) => {
         .where({ ID: header_Id_ItalianInvoiceTrace }));
     const serviceS4_HANA = await cds.connect.to(process.env['Destination_OData_S4HANA']);
     const serviceRequestS4_HANA = serviceS4_HANA.tx(request);
-    const oResultPaymentMethodsRequest = await serviceRequestS4_HANA.get(process.env['Path_API_PAYMENTMETHODS']+"&$filter=Country eq '"+oRecord[0].cedentePrestatore_DatiAnagrafici_IdFiscaleIVA_IdPaese+"'&$select=PaymentMethod,PaymentMethodName");
+    const oResultPaymentMethodsRequest = await serviceRequestS4_HANA.get(process.env['Path_API_PAYMENTMETHODS']+"&$filter=Country eq 'IT'&$select=PaymentMethod,PaymentMethodName");
     return { status: 200, result: oResultPaymentMethodsRequest, message: 'Executed' };
 };

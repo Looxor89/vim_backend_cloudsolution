@@ -19,7 +19,7 @@ module.exports = async (request, tx) => {
 
     try {
         // Build a base query to select all fields from the 'V_DOC_EXTENDED' table.
-        query = SELECT('*').from('V_DOC_EXTENDED').limit(top, skip);
+        query = SELECT('*').from('V_DOC_EXTENDED').orderBy('CREATEDAT desc').limit(top, skip);
 
         // If there are parameters present in the request, proceed to process each one.
         if (params != null && Object.keys(params).length > 0) {

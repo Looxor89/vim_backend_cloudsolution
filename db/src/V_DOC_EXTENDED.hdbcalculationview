@@ -822,7 +822,15 @@
   </calculatedAttributes>
   <baseMeasures/>
   <calculatedMeasures/>
-  <restrictedMeasures/></logicalModel>
+  <restrictedMeasures/>
+
+  <sortAttributes>
+
+    <sortAttribute id="CREATEDAT" direction="DESC"/>
+
+  </sortAttributes>
+
+</logicalModel>
 <layout>
   <shapes>
     <shape expanded="true" modelObjectName="Output" modelObjectNameSpace="MeasureGroup">
