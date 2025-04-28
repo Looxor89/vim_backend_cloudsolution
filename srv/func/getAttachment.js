@@ -25,7 +25,7 @@ module.exports = async (request, tx) => {
 
     if (extension) {
         let upperExtension = extension.toUpperCase();
-        allegati = allegati = allegati.filter(allegato => allegato.formatoAttachment ? allegato.formatoAttachment.toUpperCase() === upperExtension : false );
+        allegati = allegati.filter(allegato => allegato.formatoAttachment ? allegato.formatoAttachment.toUpperCase() === upperExtension : false );
     }
 
     return { status: 200, result: allegati, message: 'Executed' };
