@@ -230,6 +230,7 @@ async function updatePOLineDetails(poRecords, tx) {
             const lineQuery = UPDATE('DettaglioLinee')
                 .set({
                     "prezzoTotale": oLineDetail.SupplierInvoiceItemAmount,
+                    "numeroLinea": oLineDetail.lineNumber,
                     "quantita": oLineDetail.QuantityInPurchaseOrderUnit,
                     "prezzoUnitario": oLineDetail.PurchaseOrderPriceUnit,
                     "unitaMisura": oLineDetail.PurchaseOrderQuantityUnit
@@ -288,6 +289,7 @@ async function insertPOLineDetails(aNewPoLineDetails, header_Id_InvoiceIntegrati
             "ID": lineDetail_ID,
             "body_Id": oLineDetail.bodyInvoiceItalianTrace_Id,
             "bodyPOIntegrationInfo_ID": bodyPOIntegrationInfo_ID,
+            "numeroLinea": oLineDetail.lineNumber,
             "prezzoTotale": oLineDetail.SupplierInvoiceItemAmount,
             "quantita": oLineDetail.QuantityInPurchaseOrderUnit,
             "prezzoUnitario": oLineDetail.PurchaseOrderPriceUnit,
@@ -360,6 +362,7 @@ async function updateGLAccountLineDetails(glRecords, tx) {
         if (oLineDetail.lineDetail_ID) {
             const lineQuery = UPDATE('DettaglioLinee')
                 .set({
+                    "numeroLinea": oLineDetail.lineNumber,
                     "prezzoTotale": oLineDetail.SupplierInvoiceItemAmount,
                     "unitaMisura": oLineDetail.QuantityUnit,
                     "quantita": oLineDetail.Quantity
@@ -412,6 +415,7 @@ async function insertGLAccountLineDetails(aNewGlAccountLineDetails, header_Id_In
             "ID": lineDetail_ID,
             "body_Id": oLineDetail.bodyInvoiceItalianTrace_Id,
             "bodyGLAccountIntegrationInfo_ID": bodyGLAccountIntegrationInfo_ID,
+            "numeroLinea": oLineDetail.lineNumber,
             "prezzoTotale": oLineDetail.SupplierInvoiceItemAmount,
             "unitaMisura": oLineDetail.QuantityUnit,
             "quantita": oLineDetail.Quantity

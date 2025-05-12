@@ -162,6 +162,7 @@ service CatalogService {
         headerPOIntegrationInfo_Id  : String;
         bodyInvoiceItalianTrace_Id  : String;
         bodyPOIntegrationInfo_Id    : String;
+        lineNumber                  : Integer;
         SupplierInvoiceItem         : String;
         PurchaseOrder               : String;
         PurchaseOrderItem           : String;
@@ -206,6 +207,7 @@ service CatalogService {
         headerGLAccountIntegrationInfo_Id : String;
         bodyInvoiceItalianTrace_Id        : String;
         bodyGLAccountIntegrationInfo_Id   : String;
+        lineNumber                        : Integer;
         SupplierInvoiceItem               : String;
         CompanyCode                       : String;
         GLAccount                         : String;
