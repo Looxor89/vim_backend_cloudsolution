@@ -32,8 +32,8 @@ module.exports = async (request, tx) => {
                         let keys = parseMultipleParamsForDocPack(params[i]);
                         whereConditions.push(`${i} LIKE ${keys[0]} OR (ACTION = 'FORWARD' AND ACTIONBY LIKE ${keys[0]})`);
 
-                    } else if (i === 'CREATEDAT' || i === 'MODIFIEDAT') {
-                        // Handle date range parameters ('CREATEDAT' and 'MODIFIEDAT').
+                    } else if (i === 'CREATEDAT' || i === 'MODIFIEDAT' || i === 'DATA') {
+                        // Handle date range parameters ('CREATEDAT', 'MODIFIEDAT' and 'DATE').
                         let paramValues = params[i].split(',');
                         whereConditions.push(`${i} BETWEEN '${paramValues[0]}' AND '${paramValues[1]}'`);
 

@@ -155,7 +155,7 @@ context vim {
         referenceDocumentItem       : String(4);
         plant                       : String(4);
         isSubsequentDebitCredit     : String enum {
-          Debit  = 'X';
+          Debit = 'X';
           Credit = '';
         } default '';
         // documentCurrency            : String;
@@ -556,6 +556,7 @@ entity V_DOC_EXTENDED {
       INVOICEREFERENCE                                       : String(10)   @title: 'INVOICEREFERENCE: INVOICEREFERENCE';
       FISCALYEAR                                             : String(4)    @title: 'FISCALYEAR: FISCALYEAR';
       INVOICENUMBER                                          : String(20)   @title: 'INVOICENUMBER: DATIGENERALI_DATIGENERALIDOCUMENTO_NUMERO';
+      DATA                                                   : Date         @title: 'DATA: DATIGENERALI_DATIGENERALIDOCUMENTO_DATA';
       ID_OCCUR                                               : String(36)   @title: 'ID_OCCUR: ID_OCCUR';
       DOCCATEGORY                                            : String(13)   @title: 'DOCCATEGORY: DOCCATEGORY';
       IMPORTOTOTALEDOCUMENTO                                 : Decimal(15)  @title: 'IMPORTOTOTALEDOCUMENTO: DATIGENERALI_DATIGENERALIDOCUMENTO_IMPORTOTOTALEDOCUMENTO';
