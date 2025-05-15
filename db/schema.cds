@@ -386,7 +386,7 @@ context vim {
   entity Causale {
     key ID          : UUID;
         body_Id     : UUID;
-        descrizione : String(200);
+        descrizione : String(2000);
   }
 
   entity DatiOrdineAcquisto {
@@ -423,7 +423,7 @@ context vim {
         tipoCessazionePrestazione    : String(2);
         codiceArticolo               : Association to many CodiceArticolo
                                          on codiceArticolo.dettaglioLinee_Id = $self.ID;
-        descrizione                  : String(500);
+        descrizione                  : String(5000);
         quantita                     : Decimal(21, 4);
         unitaMisura                  : String(10);
         dataInizioPeriodo            : Date;
@@ -509,7 +509,7 @@ context vim {
         nomeAttachment        : String(60);
         algoritmoCompressione : String(10);
         formatoAttachment     : String(10);
-        descrizioneAttachment : String(100);
+        descrizioneAttachment : String(1000);
         attachment            : LargeString;
   }
 
