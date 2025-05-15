@@ -39,7 +39,7 @@ modules:
       Path_API_YY1_COSTCENTERS_CDS: "/sap/opu/odata/sap/YY1_COSTCENTERS_CDS/YY1_CostCenters?$format=json"
       Path_API_purchaseorder: "/sap/opu/odata4/sap/api_purchaseorder_2/srvd_a2x/sap/purchaseorder/0001/PurchaseOrder"
       Path_API_purchaseorder_2: "_PurchaseOrderItem?$format=json"
-      Path_API_YY1_INBOUNDDELIVERIES_CDS: "/sap/opu/odata/sap/YY1_INBOUNDDELIVERIES_CDS/YY1_InboundDeliveries?$format=json"
+      Path_API_YY1_INBOUNDDELIVERIES_CDS: "/sap/opu/odata/sap/YY1_INBOUNDDELIVERIES_CDS/YY1_InboundDeliveries?$format=json&$select=DeliveryDocumentBySupplier,InboundDelivery,InboundDeliveryItem, CreatedByUser,CreationDate,CreationTime,Supplier,Material,MaterialGroup,MaterialFreightGroup,Plant,DeliveryDocumentItemText,ActualDeliveryQuantity,OriginalDeliveryQuantity,DeliveryQuantityUnit,BaseUnit,StockType,IsCompletelyDelivered,CostCenter,PurchaseOrder,PurchaseOrderItem"
       Path_API_serviceentrysheet: "/sap/opu/odata4/sap/api_serviceentrysheet/srvd_a2x/sap/serviceentrysheet/0001/ServiceEntrySheet"
       Path_API_serviceentrysheet_2: "_ServiceEntrySheetItem?$format=json"
       Path_API_YY1_TAXCODES_CDS: "/sap/opu/odata/sap/YY1_TAXCODES_CDS/YY1_TaxCodes?$format=json"

@@ -394,6 +394,11 @@ module.exports = function (srv) {
     });
 
 
+    srv.on('getPOByDeliveryDocumentBySupplier', '*', async request => {
+        await performRequest(srv, request, './func/getPOByDeliveryDocumentBySupplier');
+    });
+
+
     srv.on('getDeliveryNoteRef', '*', async request => {
         await performRequest(srv, request, './func/getDeliveryNoteRef');
     });
