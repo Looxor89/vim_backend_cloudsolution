@@ -12,9 +12,6 @@ module.exports = async (request, tx) => {
     const top = parseInt(params.$top) || 10;   // Default value for $top is 10
     const skip = parseInt(params.$skip) || 0;  // Default value for $skip is 0
 
-    console.log("REQUEST: ", request.req);
-    console.log('params ', params);
-
     let data, query, whereConditions = [];
 
     try {
@@ -80,12 +77,8 @@ module.exports = async (request, tx) => {
             }
         }
 
-        console.log('QUERY', query);
-        console.log('WHERE CONDITIONS', whereConditions);
-
         // Execute the query and retrieve the data from the database.
         data = await tx.run(query);
-        console.log('data IN DOC_PACK', data.length);
         // Transcode values
         let aData = data.map(item => {
             item.DOCCATEGORY = transcoder.docCategory[item.DOCCATEGORY];

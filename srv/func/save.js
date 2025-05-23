@@ -125,35 +125,39 @@ async function updateHeaders(Invoice, tx) {
 
 // Update invoice body details
 async function updateBodies(invoice, tx) {
-    const bodyId = invoice.PORecords.length > 0
-        ? invoice.PORecords[0].bodyInvoiceItalianTrace_Id
-        : invoice.GLAccountRecords[0].bodyInvoiceItalianTrace_Id;
+    if (invoice.PORecords.length > 0 || invoice.GLAccountRecords.length > 0) {
+        const bodyId = invoice.PORecords.length > 0
+            ? invoice.PORecords[0].bodyInvoiceItalianTrace_Id
+            : invoice.GLAccountRecords[0].bodyInvoiceItalianTrace_Id;
 
-    const queryFatturaElettronicaBody = UPDATE('FatturaElettronicaBody')
-        .set({
-            datiGenerali_DatiGeneraliDocumento_Data: invoice.DocumentDate,
-            datiGenerali_DatiGeneraliDocumento_Divisa: invoice.Currency,
-            datiGenerali_DatiGeneraliDocumento_Numero: invoice.SupplierInvoiceIDByInvcgParty,
-            datiGenerali_DatiGeneraliDocumento_ImportoTotaleDocumento: invoice.InvoiceGrossAmount,
-            // datiGenerali_DatiGeneraliDocumento_TipoDocumento: invoice.AccountingDocumentType
-        })
-        .where({ ID: bodyId });
+        const queryFatturaElettronicaBody = UPDATE('FatturaElettronicaBody')
+            .set({
+                datiGenerali_DatiGeneraliDocumento_Data: invoice.DocumentDate,
+                datiGenerali_DatiGeneraliDocumento_Divisa: invoice.Currency,
+                datiGenerali_DatiGeneraliDocumento_Numero: invoice.SupplierInvoiceIDByInvcgParty,
+                datiGenerali_DatiGeneraliDocumento_ImportoTotaleDocumento: invoice.InvoiceGrossAmount,
+                // datiGenerali_DatiGeneraliDocumento_TipoDocumento: invoice.AccountingDocumentType
+            })
+            .where({ ID: bodyId });
 
-    await executeQuery(tx, queryFatturaElettronicaBody);
+        await executeQuery(tx, queryFatturaElettronicaBody);
+    }
 }
 
 // Update payment details
 async function updatePaymentDetails(invoice, tx) {
-    const bodyId = invoice.PORecords.length > 0
-        ? invoice.PORecords[0].bodyInvoiceItalianTrace_Id
-        : invoice.GLAccountRecords[0].bodyInvoiceItalianTrace_Id;
-    const paymentData = await executeQuery(tx, SELECT('ID').from('DatiPagamento').where({ body_Id: bodyId }));
+    if (invoice.PORecords.length > 0 || invoice.GLAccountRecords.length > 0) {
+        const bodyId = invoice.PORecords.length > 0
+            ? invoice.PORecords[0].bodyInvoiceItalianTrace_Id
+            : invoice.GLAccountRecords[0].bodyInvoiceItalianTrace_Id;
+        const paymentData = await executeQuery(tx, SELECT('ID').from('DatiPagamento').where({ body_Id: bodyId }));
 
-    for (const oPaymentData of paymentData) {
-        // const query = UPDATE('DettaglioPagamento')
-        //     .set({ "modalitaPagamento": invoice.PaymentMethod })
-        //     .where(`datiPagamento_Id = '${oPaymentData.ID}'`);
-        // await executeQuery(tx, query);
+        for (const oPaymentData of paymentData) {
+            // const query = UPDATE('DettaglioPagamento')
+            //     .set({ "modalitaPagamento": invoice.PaymentMethod })
+            //     .where(`datiPagamento_Id = '${oPaymentData.ID}'`);
+            // await executeQuery(tx, query);
+        }
     }
 }
 
@@ -338,8 +342,8 @@ async function insertPOLineDetails(aNewPoLineDetails, header_Id_InvoiceIntegrati
         const poQuery = INSERT.into('POIntegrationInfoBody')
             .entries(aNewPoIntegrationInfoBodyRecords);
 
-        await executeQuery(tx, lineQuery);
-        await executeQuery(tx, poQuery);
+        const resultLineQuery = await executeQuery(tx, lineQuery);
+        const resultPoQuery = await executeQuery(tx, poQuery);
     }
 }
 

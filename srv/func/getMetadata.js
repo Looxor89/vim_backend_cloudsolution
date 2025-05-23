@@ -18,8 +18,6 @@ module.exports = async (request, tx) => {
         // Execute the query and retrieve the data from the database.
         data = await tx.run(query);
 
-        console.log('data IN DOC_EXTRACT', data.length);
-
         // Return the result as a response, with status code, data, and message.
         return {
             status: 200,

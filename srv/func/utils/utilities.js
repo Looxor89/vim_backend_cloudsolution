@@ -6,11 +6,9 @@
  * @returns an object of key-value pairs where each value is part of a where condition query
  */
 function parseMultipleParamsForDocPack(params) {
-    console.log('parseMultipleParamsForDocPack ', params);
     let keys = params.split(',');
 
     for (i in keys) {
-        console.log('keys[i] ', keys[i]);
         // keys[i] = ${keys[i]};
         if (keys[i].includes(' ')) {
             keys[i] = `'%${keys[i].split(' ').join('%')}%'`;
@@ -24,7 +22,6 @@ function parseMultipleParamsForDocPack(params) {
             keys[i] = `'%${keys[i]}%'`;
         }
     }
-    console.log('keys ', keys);
     return keys;
 };
 
