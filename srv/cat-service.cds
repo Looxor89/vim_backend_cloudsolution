@@ -45,6 +45,7 @@ service CatalogService {
     function list()                                                         returns array of String;
     function currency()                                                     returns array of String;
     function getMetadata()                                                  returns array of String;
+    function getBodyId()                                                    returns array of String;
     function getAttachment()                                                returns array of String;
     function getPaymentTerms()                                              returns array of String;
     function getBusinessPartnerBank()                                       returns array of String;

@@ -18,7 +18,6 @@ async function performRequest(srv, request, path) {
     try {
         // Start a transaction to execute the external request handler function defined in the file at 'path'.
         const result = await srv.transaction(async tx => {
-            console.log('REQUIRE: ', path);
             return require(path)(request, tx);  // Load and call the function from the specified file.
         });
 
@@ -59,7 +58,6 @@ async function performSubmitRequest(srv, request, path) {
     try {
         // Start a transaction, attempt to execute the logic in the './func/save' file first
         var result = await srv.transaction(async tx => {
-            console.log('REQUIRE: ', './func/save');
             return require('./func/save')(request, tx);  // Load and call the function from './func/save'.
         });
 
@@ -70,7 +68,6 @@ async function performSubmitRequest(srv, request, path) {
 
         // If the previous transaction did not return an error, proceed with the external file from `path`.
         result = await srv.transaction(async tx => {
-            console.log('REQUIRE: ', path);
             return require(path)(request, tx);  // Load and call the function from the specified file in `path`.
         });
 
@@ -425,6 +422,10 @@ module.exports = function (srv) {
 
     srv.on('getDebitCreditCodes', '*', async request => {
         await performRequest(srv, request, './func/getDebitCreditCodes');
+    });
+
+    srv.on('getBodyId', '*', async request => {
+        await performRequest(srv, request, './func/getBodyId');
     });
 
     /**
