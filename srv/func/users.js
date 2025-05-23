@@ -7,9 +7,6 @@ module.exports = async (request, tx) => {
     // Extract query parameters from the incoming request.
     let params = request.req.query;
 
-    console.log("REQUEST: ", request.req);
-    console.log('params ', params);
-
     let data, query, whereConditions = [];
         // Build a base query to select all fields from the 'AP_USERS' table.
         query = SELECT('*').from('AP_USERS');
@@ -41,13 +38,10 @@ module.exports = async (request, tx) => {
         }
     }
 
-    console.log('QUERY', query);
-    console.log('WHERE CONDITIONS', whereConditions);
 
     // Execute the query and retrieve the data from the database.
     data = await tx.run(query);
 
-    console.log('data in AP_USERS', data.length);
 
     // Return the result as a response, with status code, data, and message.
     return {
