@@ -36,12 +36,31 @@ module.exports = async (request, tx) => {
             .join(' or ');
 
         const url = `${process.env['Path_API_purchaseorder']}/${purchaseOrder}/${process.env['Path_API_purchaseorder_2']}&$filter=${filterString}`;
+        var result = [];
+        try {
+            result = await serviceRequestS4_HANA.get(url);
+            
+        } catch (error) {
+            return { status: 500, message: `Error fetching data for PO ${purchaseOrder}: ${error.message}` };
+        }
+
+        var filterStringPoHistory = `PurchasingHistoryCategory eq 'E' and DocumentReferenceID eq '${InboundDeliveries[0].DeliveryDocumentBySupplier}' and PurchaseOrder eq '${purchaseOrder}'`;
+        filterStringPoHistory = filterStringPoHistory + " and (" + Array.from(itemSet).map(item => `PurchaseOrderItem eq '${item.padStart(5, "0")}'`).join(' or ') + ")";
+        var urlPoHistory = `${process.env['Path_API_pohistory']}&$filter=${filterStringPoHistory}`;
 
         try {
-            const result = await serviceRequestS4_HANA.get(url);
-            if (Array.isArray(result.value)) {
-                allResults.push(...result.value);
-            }
+            var resultPoHistory = await serviceRequestS4_HANA.get(urlPoHistory);
+            result.value.forEach(deliveryItem => {
+                resultPoHistory.forEach(poHistoryItem => {
+                    if (deliveryItem.PurchaseOrderItem.padStart(5, "0") === poHistoryItem.PurchaseOrderItem) {
+                        deliveryItem.ActualDeliveryQuantity = poHistoryItem.PurchaseOrderAmount;
+                        deliveryItem.PurchaseOrderAmount = poHistoryItem.PurchaseOrderAmount;
+                    }
+                })
+            });
+
+            allResults.push(...result.value);
+            
         } catch (error) {
             return { status: 500, message: `Error fetching data for PO ${purchaseOrder}: ${error.message}` };
         }

@@ -87,8 +87,10 @@ service CatalogService {
     };
 
     type PurchaseOrder {
-        PurchaseOrder     : String;
-        PurchaseOrderItem : String;
+        ActualDeliveryQuantity     : String;
+        DeliveryDocumentBySupplier : String;
+        PurchaseOrder              : String;
+        PurchaseOrderItem          : String;
     }
 
     type assignPayload {
