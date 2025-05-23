@@ -36,49 +36,63 @@ service CatalogService {
     entity Causale                      as projection on vim.Causale;
     entity DatiDDT                      as projection on vim.DatiDDT;
     // functions and actions
-    function extended()                                             returns array of String;
-    function capabilities()                                         returns array of String;
-    function users()                                                returns array of String;
-    function lockStatus()                                           returns array of String;
-    function notes()                                                returns array of String;
-    function getInvoice()                                           returns array of String;
-    function list()                                                 returns array of String;
-    function currency()                                             returns array of String;
-    function getMetadata()                                          returns array of String;
-    function getAttachment()                                        returns array of String;
-    function getPaymentTerms()                                      returns array of String;
-    function getBusinessPartnerBank()                               returns array of String;
-    function getPaymentMethods()                                    returns array of String;
-    function getHouseBanks()                                        returns array of String;
-    function getHouseBanksAccounts()                                returns array of String;
-    function getAccountingDocumentType()                            returns array of String;
-    function getGlAccount()                                         returns array of String;
-    function getPOAccountAssignment()                               returns array of String;
-    function getPurchaseOrderRef()                                  returns array of String;
-    function getPurchaseOrderItemRef()                              returns array of String;
-    function getDeliveryNoteRef()                                   returns array of String;
-    function getServiceEntrySheetRef()                              returns array of String;
-    function getServiceEntrySheetItemRef()                          returns array of String;
-    function getTaxCodes()                                          returns array of String;
-    function getTransactionData()                                   returns array of String;
-    function getDebitCreditCodes()                                  returns array of String;
-    function getCostCenters()                                       returns array of String;
-    function getWithholdingTax()                                    returns array of String;
-    function getWithholdingTaxesType()                              returns array of String;
-    function getWithholdingTaxesCode()                              returns array of String;
-    action   assign(payload : assignPayload)                        returns array of String;
-    action   forward(payload : forwardPayload)                      returns array of String;
-    action   unlock(payload : unlockPayload)                        returns array of String;
-    action   lock(payload : lockPayload)                            returns array of String;
-    action   delete(payload : deletePayload)                        returns array of String;
-    action   save(payload : savePayload)                            returns array of String;
-    action   massiveSubmit(payload : array of massiveSubmitPayload) returns array of String;
-    action   submit(payload : submitPayload)                        returns array of String;
-    action   addNotes(payload : addNotesPayload)                    returns array of String;
-    action   addDoc(payload : array of addDocPayload)               returns array of String;
-    action   addAttachment(payload : addAttachmentPayload)          returns array of String;
-    action   removeJob(payload : removeJobPayload)                  returns array of String;
-    action   setMainJob(payload : setMainJobPayload)                returns array of String;
+    function extended()                                                     returns array of String;
+    function capabilities()                                                 returns array of String;
+    function users()                                                        returns array of String;
+    function lockStatus()                                                   returns array of String;
+    function notes()                                                        returns array of String;
+    function getInvoice()                                                   returns array of String;
+    function list()                                                         returns array of String;
+    function currency()                                                     returns array of String;
+    function getMetadata()                                                  returns array of String;
+    function getBodyId()                                                    returns array of String;
+    function getAttachment()                                                returns array of String;
+    function getPaymentTerms()                                              returns array of String;
+    function getBusinessPartnerBank()                                       returns array of String;
+    function getPaymentMethods()                                            returns array of String;
+    function getHouseBanks()                                                returns array of String;
+    function getHouseBanksAccounts()                                        returns array of String;
+    function getAccountingDocumentType()                                    returns array of String;
+    function getGlAccount()                                                 returns array of String;
+    function getPOAccountAssignment()                                       returns array of String;
+    function getPurchaseOrderRef()                                          returns array of String;
+    function getPurchaseOrderItemRef()                                      returns array of String;
+    function getDeliveryNoteRef()                                           returns array of String;
+    function getServiceEntrySheetRef()                                      returns array of String;
+    function getServiceEntrySheetItemRef()                                  returns array of String;
+    function getTaxCodes()                                                  returns array of String;
+    function getTransactionData()                                           returns array of String;
+    function getDebitCreditCodes()                                          returns array of String;
+    function getCostCenters()                                               returns array of String;
+    function getWithholdingTax()                                            returns array of String;
+    function getWithholdingTaxesType()                                      returns array of String;
+    function getWithholdingTaxesCode()                                      returns array of String;
+    action   getPOByDeliveryDocumentBySupplier(payload : inboundDeliveries) returns array of String;
+    action   assign(payload : assignPayload)                                returns array of String;
+    action   forward(payload : forwardPayload)                              returns array of String;
+    action   unlock(payload : unlockPayload)                                returns array of String;
+    action   lock(payload : lockPayload)                                    returns array of String;
+    action   delete(payload : deletePayload)                                returns array of String;
+    action   save(payload : savePayload)                                    returns array of String;
+    action   massiveSubmit(payload : array of massiveSubmitPayload)         returns array of String;
+    action   submit(payload : submitPayload)                                returns array of String;
+    action   addNotes(payload : addNotesPayload)                            returns array of String;
+    action   addDoc(payload : array of addDocPayload)                       returns array of String;
+    action   addAttachment(payload : addAttachmentPayload)                  returns array of String;
+    action   removeJob(payload : removeJobPayload)                          returns array of String;
+    action   setMainJob(payload : setMainJobPayload)                        returns array of String;
+
+
+    type inboundDeliveries {
+        InboundDeliveries : array of PurchaseOrder;
+    };
+
+    type PurchaseOrder {
+        ActualDeliveryQuantity     : String;
+        DeliveryDocumentBySupplier : String;
+        PurchaseOrder              : String;
+        PurchaseOrderItem          : String;
+    }
 
     type assignPayload {
         PackagesId : array of String;
