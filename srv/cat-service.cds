@@ -67,7 +67,6 @@ service CatalogService {
     function getWithholdingTax()                                            returns array of String;
     function getWithholdingTaxesType()                                      returns array of String;
     function getWithholdingTaxesCode()                                      returns array of String;
-    action   getPOByDeliveryDocumentBySupplier(payload : inboundDeliveries) returns array of String;
     action   assign(payload : assignPayload)                                returns array of String;
     action   forward(payload : forwardPayload)                              returns array of String;
     action   unlock(payload : unlockPayload)                                returns array of String;
@@ -81,11 +80,6 @@ service CatalogService {
     action   addAttachment(payload : addAttachmentPayload)                  returns array of String;
     action   removeJob(payload : removeJobPayload)                          returns array of String;
     action   setMainJob(payload : setMainJobPayload)                        returns array of String;
-
-
-    type inboundDeliveries {
-        InboundDeliveries : array of PurchaseOrder;
-    };
 
     type PurchaseOrder {
         ActualDeliveryQuantity     : String;
