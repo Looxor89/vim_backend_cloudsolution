@@ -6,7 +6,7 @@ const schema = require('./utils/validator');
 module.exports = async (request, tx) => {
 
     const aInvoices = request.data.payload;
-    const modifiedBy = request.req.authInfo.getLogonName();
+    const modifiedBy = request.req.authInfo.getEmail();
     const modifiedAt = new Date();
     let aGLAccountInvoices = [], aPOInvoices = [], aErrorInvoicesPackageId = [];
 

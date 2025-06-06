@@ -11,7 +11,7 @@ module.exports = async (request, tx) => {
         PackageId,
         Invoice
     } = request.data.payload,
-        modifiedBy = request.req.authInfo.getLogonName(),
+        modifiedBy = request.req.authInfo.getEmail(),
         modifiedAt = new Date(),
         data;
     let jsonInvoice = JSON.parse(Invoice)

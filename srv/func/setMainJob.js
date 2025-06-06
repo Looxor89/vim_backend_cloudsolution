@@ -13,7 +13,7 @@ module.exports = async (request, tx) => {
             PackageId,
             JobId
         } = request.data.payload,
-            updatedBy = request.req.authInfo.getLogonName(),
+            updatedBy = request.req.authInfo.getEmail(),
             updatedAt = new Date(),
             data,
             updateDocListQuery;

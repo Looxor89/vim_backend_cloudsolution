@@ -14,7 +14,7 @@ module.exports = async (request, tx) => {
             JobId,
             Mode
         } = request.data.payload,
-            updatedBy = request.req.authInfo.getLogonName(),
+            updatedBy = request.req.authInfo.getEmail(),
             updatedAt = new Date(),
             data, query, updateDocListQuery;
 

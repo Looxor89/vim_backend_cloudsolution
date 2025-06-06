@@ -61,7 +61,7 @@ module.exports = async (request, tx) => {
             };
         }
 
-        LockUser = LockUser == null ? request.req.authInfo.getLogonName() : LockUser;
+        LockUser = LockUser == null ? request.req.authInfo.getEmail() : LockUser;
 
         try {
             // Get locked info from dock_pack

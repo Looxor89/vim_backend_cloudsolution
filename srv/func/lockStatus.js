@@ -41,7 +41,7 @@ module.exports = async (request, tx) => {
         // Return the result as a response, with status code, data, and message.
         return {
             status: 200,
-            currentUser: request.req.authInfo.getLogonName(),
+            currentUser: request.req.authInfo.getEmail(),
             result: result
         };
 

@@ -14,8 +14,8 @@ module.exports = async (request, tx) => {
             Subject,
             Note
         } = request.data.payload,
-            createdBy = request.req.authInfo.getLogonName(),
-            updatedBy = request.req.authInfo.getLogonName(),
+            createdBy = request.req.authInfo.getEmail(),
+            updatedBy = request.req.authInfo.getEmail(),
             updatedAt = new Date(),
             createdAt = new Date(),
             data, query, updateDocPackQuery, insertDocPackNotesQuery;

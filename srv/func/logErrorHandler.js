@@ -9,8 +9,8 @@ module.exports = async (request, tx, errorMessage) => {
     // Extract payload data from the incoming request.
     const { PackageId,
         Invoice } = request.data.payload,
-        createdBy = request.req.authInfo.getLogonName(),
-        modifiedBy = request.req.authInfo.getLogonName(),
+        createdBy = request.req.authInfo.getEmail(),
+        modifiedBy = request.req.authInfo.getEmail(),
         createdAt = new Date(),
         modifiedAt = new Date();
     let data, 

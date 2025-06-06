@@ -9,7 +9,7 @@ module.exports = async (request, tx) => {
         RemovedSupplierInvoiceWhldgTaxRecords,
         RemovedPoLineDetails,
         RemovedGlAccountLineDetails } = request.data.payload;
-    const modifiedBy = request.req.authInfo.getLogonName();
+    const modifiedBy = request.req.authInfo.getEmail();
     const modifiedAt = new Date();
 
     const valid = validateInvoice(Invoice);

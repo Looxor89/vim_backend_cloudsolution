@@ -13,7 +13,7 @@ module.exports = async (request, tx) => {
             PackageId,
             ForwardedTo
         } = request.data.payload,
-            updatedBy = request.req.authInfo.getLogonName(),
+            updatedBy = request.req.authInfo.getEmail(),
             updatedAt = new Date(),
             data, query, updateDocPackQuery, insertDocWfQuery;
 
