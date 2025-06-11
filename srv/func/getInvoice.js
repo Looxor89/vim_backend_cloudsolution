@@ -162,12 +162,6 @@ function mergeGLAccountLineDetailsWithIntegrationInfoBody(dataDettaglioLinee, da
     }));
 }
 
-async function getPaymentMethod(dataDettaglioPagamento) { // In the future will be a request to a transcoder service, but currently it is just a placeholder.
-    if (dataDettaglioPagamento.length > 0) {
-        return await transcoder.paymentMethod[dataDettaglioPagamento[0].modalitaPagamento];
-    }
-}
-
 function getAccountingDocumentType(sBodyDocumentType) { // In the future will be a request to a transcoder service, but currently it is just a placeholder.
     return transcoder.accountingDocumentType[sBodyDocumentType];
 }
@@ -180,7 +174,6 @@ async function createResultObject(headerData, bodyData, paymentData, serviceRequ
     const aLineDetailsMergedWithPOIntegrations = mergePOLineDetailsWithIntegrationInfoBody(dataDettaglioLinee, dataPOIntegrationInfoBody);
     const aLineDetailsMergedWithGLAccountIntegrations = mergeGLAccountLineDetailsWithIntegrationInfoBody(dataDettaglioLinee, dataGLAccountIntegrationInfoBody);
 
-    const sPaymentMethod = await getPaymentMethod(dataDettaglioPagamento);
     const sAccountingDocumentType = await getAccountingDocumentType(bodyFatturaElettronica.datiGenerali_DatiGeneraliDocumento_TipoDocumento);
     const sCompanyCode = headerInvoiceIntegrationInfo.companyCode ? headerInvoiceIntegrationInfo.companyCode : null;
     const sTaxDeterminationDate = headerInvoiceIntegrationInfo.taxDeterminationDate ? headerInvoiceIntegrationInfo.taxDeterminationDate : bodyFatturaElettronica.datiGenerali_DatiGeneraliDocumento_Data;
@@ -226,7 +219,7 @@ async function createResultObject(headerData, bodyData, paymentData, serviceRequ
         "FixedCashDiscount": headerInvoiceIntegrationInfo.fixedCashDiscount ? headerInvoiceIntegrationInfo.fixedCashDiscount : null,
         "NetPaymentDays": headerInvoiceIntegrationInfo.netPaymentDays != null ? headerInvoiceIntegrationInfo.netPaymentDays : null,
         "BPBankAccountInternalID": headerInvoiceIntegrationInfo.bPBankAccountInternalID ? headerInvoiceIntegrationInfo.bPBankAccountInternalID : null,
-        "PaymentMethod": headerInvoiceIntegrationInfo.paymentMethod ? headerInvoiceIntegrationInfo.paymentMethod : sPaymentMethod,
+        "PaymentMethod": headerInvoiceIntegrationInfo.paymentMethod ? headerInvoiceIntegrationInfo.paymentMethod : null,
         "InvoiceReference": headerInvoiceIntegrationInfo.invoiceReference ? headerInvoiceIntegrationInfo.invoiceReference : null,
         "InvoiceReferenceFiscalYear": headerInvoiceIntegrationInfo.invoiceReferenceFiscalYear ? headerInvoiceIntegrationInfo.invoiceReferenceFiscalYear : null,
         "HouseBank": headerInvoiceIntegrationInfo.houseBank ? headerInvoiceIntegrationInfo.houseBank : null,
