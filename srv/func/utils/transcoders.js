@@ -34,6 +34,8 @@ const transcoder = {
         "TD20": "X4"
     },
     taxCode : {
+        4.00: "A4",
+        5.00: "B4",
         10.00: "A1",
         22.00: "A2",
         0.00 : {
@@ -54,7 +56,14 @@ const transcoder = {
             "N6.8" : "V6",
             "N6.9" : "V6"
         }
+    },
+    aliquotaIVA : {
+        "A4": 0.4,
+        "B4": 0.5,
+        "A1": 0.10,
+        "A2": 0.22
     }
+
 }
 
 module.exports = transcoder;

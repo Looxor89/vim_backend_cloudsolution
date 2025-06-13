@@ -166,6 +166,81 @@ function getAccountingDocumentType(sBodyDocumentType) { // In the future will be
     return transcoder.accountingDocumentType[sBodyDocumentType];
 }
 
+function getIVA(sTaxCode) {
+    if (!sTaxCode) {
+        let nIVA = transcoder.aliquotaIVA[sTaxCode];
+        if (nIVA) {
+            return nIVA
+        }
+    }
+    return 0.00;
+}
+
+function calculateAmountSummary(aPORecords, aGLAccountRecords) {
+    var oAmountSummary = {
+            TotalNetAmount: 0, 
+            TotalTaxAmount: 0, 
+            TotalGrossAmount: 0,
+            Summary: []
+        },
+        oTaxCodeSet = new Set();
+
+    aPORecords.forEach(record => {
+        oTaxCodeSet.add(record.TaxCode);
+    });
+    aGLAccountRecords.forEach(record => {
+        oTaxCodeSet.add(record.TaxCode);
+    });
+
+    const aTaxCodes = Array.from(oTaxCodeSet);
+    aTaxCodes.forEach(sTaxCode => {
+        let nNetAmount = 0,
+            nTaxAmount = 0,
+            nGrossAmount = 0,
+            nIVA = getIVA(sTaxCode);
+
+        aPORecords.forEach(record => {
+            // Perform calculations or manipulations with each GL account record based on the tax code
+            if (record.TaxCode === sTaxCode) {
+                if (record.SupplierInvoiceItemAmount !== null) {
+                    nNetAmount += parseFloat(record.SupplierInvoiceItemAmount);
+                    nTaxAmount += parseFloat(record.SupplierInvoiceItemAmount) * nIVA; 
+                    nGrossAmount += parseFloat(record.SupplierInvoiceItemAmount) + nIVA; 
+                }
+            }
+        })
+
+        aGLAccountRecords.forEach(record => {
+            // Perform calculations or manipulations with each GL account record based on the tax code
+            if (record.TaxCode === sTaxCode) {
+                if (record.SupplierInvoiceItemAmount !== null) {
+                    nNetAmount += parseFloat(record.SupplierInvoiceItemAmount);
+                    nTaxAmount += parseFloat(record.SupplierInvoiceItemAmount) * nIVA; 
+                    nGrossAmount += parseFloat(record.SupplierInvoiceItemAmount) + nIVA; 
+                }
+            }
+        });
+
+        oAmountSummary.Summary.push({
+            TaxCode: sTaxCode,
+            NetAmount: nNetAmount.toFixed(2),
+            TaxAmount: nTaxAmount.toFixed(2),
+            GrossAmount: nGrossAmount.toFixed(2)
+        })
+    });
+
+    oAmountSummary.Summary.forEach(record => {
+        oAmountSummary.TotalNetAmount += parseFloat(record.NetAmount);
+        oAmountSummary.TotalTaxAmount += parseFloat(record.TaxAmount);
+        oAmountSummary.TotalGrossAmount += parseFloat(record.GrossAmount);
+    });
+    
+    oAmountSummary.TotalNetAmount = oAmountSummary.TotalNetAmount.toFixed(2);
+    oAmountSummary.TotalTaxAmount = oAmountSummary.TotalTaxAmount.toFixed(2);
+    oAmountSummary.TotalGrossAmount = oAmountSummary.TotalGrossAmount.toFixed(2);
+    return oAmountSummary;
+}
+
 // Create the result object containing all invoice details
 async function createResultObject(headerData, bodyData, paymentData, serviceRequestS4_HANA) {
     const { errorLog, headerFatturaElettronica, headerInvoiceIntegrationInfo, dataSupplierInvoiceWhldgTax } = headerData;
@@ -193,6 +268,8 @@ async function createResultObject(headerData, bodyData, paymentData, serviceRequ
             "WhldgTaxBaseIsEnteredManually": oItem.whldgTaxBaseIsEnteredManually ? oItem.whldgTaxBaseIsEnteredManually : null
         }
     });
+
+    const oDataAmountSummary = calculateAmountSummary(aPORecords, aGLAccountRecords);
 
     // Assemble final result object with all relevant data fields
     return {
@@ -236,6 +313,7 @@ async function createResultObject(headerData, bodyData, paymentData, serviceRequ
         "TaxReportingDate": headerInvoiceIntegrationInfo.taxReportingDate ? headerInvoiceIntegrationInfo.taxReportingDate : null,
         "TaxFulfillmentDate": headerInvoiceIntegrationInfo.taxFulfillmentDate ? headerInvoiceIntegrationInfo.taxFulfillmentDate : null,
         "To_SupplierInvoiceWhldgTax": aDataSupplierInvoiceWhldgTax,
+        "AmountSummary": oDataAmountSummary,
         "Allegati": dataAllegati,
         "GLAccountRecords": aGLAccountRecords,
         "PORecords": aPORecords,
