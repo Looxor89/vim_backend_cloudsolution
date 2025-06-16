@@ -167,7 +167,7 @@ function getAccountingDocumentType(sBodyDocumentType) { // In the future will be
 }
 
 function getIVA(sTaxCode) {
-    if (!sTaxCode) {
+    if (sTaxCode) {
         let nIVA = transcoder.aliquotaIVA[sTaxCode];
         if (nIVA) {
             return nIVA
