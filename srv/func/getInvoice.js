@@ -205,7 +205,6 @@ function calculateAmountSummary(aPORecords, aGLAccountRecords) {
                 if (record.SupplierInvoiceItemAmount !== null) {
                     nNetAmount += parseFloat(record.SupplierInvoiceItemAmount);
                     nTaxAmount += parseFloat(record.SupplierInvoiceItemAmount) * nIVA; 
-                    nGrossAmount += parseFloat(record.SupplierInvoiceItemAmount) + nIVA; 
                 }
             }
         })
@@ -216,10 +215,11 @@ function calculateAmountSummary(aPORecords, aGLAccountRecords) {
                 if (record.SupplierInvoiceItemAmount !== null) {
                     nNetAmount += parseFloat(record.SupplierInvoiceItemAmount);
                     nTaxAmount += parseFloat(record.SupplierInvoiceItemAmount) * nIVA; 
-                    nGrossAmount += parseFloat(record.SupplierInvoiceItemAmount) + nIVA; 
                 }
             }
         });
+
+        nGrossAmount = nNetAmount + nTaxAmount;
 
         oAmountSummary.Summary.push({
             TaxCode: sTaxCode,
